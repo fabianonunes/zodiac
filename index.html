@@ -66,8 +66,9 @@
 <script>
 	function handleFileSelect(evt) {
 
-		console.log(evt);
-		console.log($(this).attr('class'));
+		$(this).removeClass('over');
+		$('.drop_zone').removeClass('over');
+
 
 		evt.stopPropagation();
 		evt.preventDefault();
@@ -82,8 +83,6 @@
 			);
 		}
 		// document.getElementById('list').innerHTML = '<ul>' + output.join('') + '</ul>';
-		$(this).removeClass('over');
-		$('.drop_zone').removeClass('over');
 	}
 
 	function handleDragOver(evt) {
