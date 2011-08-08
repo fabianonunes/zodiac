@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>zodiac</title>
+	<style>
+	#drop_zone {
+		border: 1px dotted #ccc;
+		width: 200px;
+		height: 500px;
+	}
+	#drop_zone.over {
+		border: 1px dotted red;
+	}
+	</style>
+</head>
+<body>
+<div id="drop_zone">Drop files here</div>
+<output id="list"></output>
+
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+
+<script>
+	function handleFileSelect(evt) {
+		evt.stopPropagation();
+		evt.preventDefault();
+		evt = evt.originalEvent;
+		var files = evt.dataTransfer.files;
+		var output = [];
+		for (var i = 0, f; f = files[i]; i++) {
+			console.dir(f);
+			output.push(
+				'<li><strong>', f.name, '</strong> (', f.type || 'n/a', ') - ',
+				f.size, ' bytes </li>'
+			);
+		}
+		document.getElementById('list').innerHTML = '<ul>' + output.join('') + '</ul>';
+		$(this).removeClass('over');
+	}
+
+	function handleDragOver(evt) {
+		// console.log(evt);
+		evt.stopPropagation();
+		evt.preventDefault();
+	}
+
+	// Setup the dnd listeners.
+	var dropZone = document.getElementById('drop_zone');
+	dropZone = $('#drop_zone');
+	dropZone.bind('dragenter', function(){
+		console.log('over');
+		$(this).addClass('over');
+	}).bind('dragleave', dropZone.removeClass.bind(dropZone, 'over'));
+
+	dropZone.bind('dragover', handleDragOver);
+	dropZone.bind('drop', handleFileSelect);
+</script>
+
+</body>
+</html>
