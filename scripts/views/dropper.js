@@ -7,7 +7,6 @@
 		events: {
 			'dragover' : 'cancel'
 			, 'dragenter' : 'dragEnter'
-			, 'mouseleave div.mask' : 'dragLeave'
 			, 'dragleave div.mask': 'dragLeave'
 		},
 		
@@ -25,12 +24,10 @@
 
 			var related = document.elementFromPoint(evt.clientX, evt.clientY);
 
-			if(related !== this.mask[0]){
+			if(!related || related !== this.mask[0]){
 				var inside = $.contains(this.mask[0], related);
-				console.log(this.mask[0], related, inside);
-				!inside && this.mask.hide();				
+				!inside && this.mask.hide();
 			}
-
 
 		},
 
