@@ -15,7 +15,6 @@
 }
 
 .drop_zone {
-	border: 1px solid green;
 }
 
 .drop_zone.over {
@@ -23,13 +22,14 @@
 }
 
 .mask {
-	border: 1px solid red;
 	z-index: 10;
-	display: none;
+	/*display: none;*/
+	text-align: center;
+	padding-top: 40px;
 	background: rgba(255, 255, 255, .6);
 }
 
-.actions div {
+.mask div {
 	position: relative;
 	display: inline-block;
 	font-family: 'DejaVu Serif';
@@ -43,6 +43,9 @@
 	font-size: 22px;
 	background: #fff;
 }
-.actions div.over {
-	border: 1px dotted red;
+.mask div.over {
+	border : 1px dotted red;
+}
+.input {
+	white-space : pre-line;
 }
