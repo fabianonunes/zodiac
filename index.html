@@ -3,131 +3,119 @@
 <head>
 	<meta http-equiv="content-type" content="text/html;charset=utf-8" >
 	<title>zodiac</title>
-	<style>
-	.drop_zone {
-		border: 1px dotted #aaa;
-		width: 30px;
-		height: 30px;
-	}
-	.drop_zone.over {
-		border-color: blue;
-	}
-	.drop_zone .actions	{
-		display: none;
-	}
-	.drop_zone.over .actions {
-		display: block;
-	}
-	.actions {
-		position: relative;
-		left: 25px;
-	}
-	.actions div {
-		font-family: 'DejaVu Serif';
-		border: 1px dotted green;
-		height: 40px;
-		width: 40px;
-		line-height: 40px;
-		text-align: center;
-		padding:0;
-		font-size: 22px;
-		background: #fff;
-	}
-	div.over {
-		border: 1px dotted red;
-	}
-	</style>
+	<link rel="stylesheet" type="text/css" href="styles/styles.css"></link>
 </head>
+
 <body>
 
-<div class='dropes'>
-	<div class="drop_zone">
-		<div class='actions'>
-			<div class='union'>∪</div>
-			<div class='intersection'>∩</div>
-			<div class='difference'>∖</div>
-			<div class='symmetric'>⊖</div>
-		</div>
+
+
+
+	<div id="main">
+
+
+
+		<div id="dropper" class="drop_zone">
+
+			<div class='mask'>
+				<div class='actions'>
+					<div class='act union'>∪</div>
+					<div class='act intersection'>∩</div>
+					<div class='act difference'>∖</div>
+					<div class='act symmetric'>⊖</div>
+				</div>
+			</div>
+
+			teste teste teste teste teste teste teste teste teste teste teste teste teste teste 
+			teste teste teste teste teste teste teste teste teste teste teste teste teste teste 
+			teste teste teste teste teste teste teste teste teste teste teste teste teste teste 
+			teste teste teste teste teste teste teste teste teste teste teste teste teste teste 
+			
+		</div>	
+
 	</div>
-	<div class="drop_zone">
-		<div class='actions'>
-			<div class='union'>∪</div>
-			<div class='intersection'>∩</div>
-			<div class='difference'>∖</div>
-			<div class='symmetric'>⊖</div>
-		</div>
-	</div>	
-</div>
 
-<output id="list"></output>
 
-	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+	<output id="list"></output>
+
+	<script type="text/javascript" src="scripts/libs/lab.min.js"></script>
+	<script type="text/javascript" src="scripts/app.js"></script>
 
 <script>
-	function handleFileSelect(evt) {
+	// function handleFileSelect(evt) {
 
-		$(this).removeClass('over');
-		$('.drop_zone').removeClass('over');
+	// 	$(this).removeClass('over');
+	// 	$('.drop_zone').removeClass('over');
 		
-		evt.stopPropagation();
-		evt.preventDefault();
-		evt = evt.originalEvent;
-		var files = evt.dataTransfer.files;
-		var output = [];
-		for (var i = 0, f; f = files[i]; i++) {
-			console.dir(f);
-			output.push(
-				'<li><strong>', f.name, '</strong> (', f.type || 'n/a', ') - ',
-				f.size, ' bytes </li>'
-			);
-		}
-		// document.getElementById('list').innerHTML = '<ul>' + output.join('') + '</ul>';
-	}
+	// 	evt.stopPropagation();
+	// 	evt.preventDefault();
+	// 	evt = evt.originalEvent;
+	// 	var files = evt.dataTransfer.files;
+	// 	var output = [];
+	// 	for (var i = 0, f; f = files[i]; i++) {
+	// 		output.push(
+	// 			'<li><strong>', f.name, '</strong> (', f.type || 'n/a', ') - ',
+	// 			f.size, ' bytes </li>'
+	// 		);
+	// 	}
+	// 	// document.getElementById('list').innerHTML = '<ul>' + output.join('') + '</ul>';
+	// }
 
-	function handleDragOver(evt) {
-		// console.log(evt);
-		evt.stopPropagation();
-		evt.preventDefault();
-	}
+	// function handleDragOver(evt) {
+	// 	evt.stopPropagation();
+	// 	evt.preventDefault();
+	// 	return false;
+	// }
 
-	// Setup the dnd listeners.
-	var dropZone = document.getElementById('drop_zone');
+	// // Setup the dnd listeners.
+	// var dropZone = document.getElementById('drop_zone');
 
-	$('.actions div')
-	.bind('dragenter', actionOver)
-	// .bind('dragleave', dragLeave)
-	.bind('drop', actionDrop);
+	// $('.actions div')
+	// .bind('dragenter', actionOver)
+	// // .bind('dragleave', dragLeave)
+	// .bind('drop', actionDrop);
 
-	function actionOver(evt){
-		evt.stopPropagation();
-		console.log('dragOver', this);
-		$('.actions .over').removeClass('over');
-		$(this).addClass('over');
-	}
+	// function actionOver(evt){
+	// 	evt.preventDefault();
+	// 	evt.stopPropagation();
+	// 	$('.actions .over').removeClass('over');
+	// 	$(this).addClass('over');
+	// }
 
-	function dragLeave(evt){
-		evt.preventDefault();
-		console.log('dragLeave', this);
-		$(this).removeClass('over');
-	}
+	// function dragLeave(evt){
+	// 	evt.preventDefault();
+	// 	evt.stopPropagation();
+	// 	$(this).removeClass('over');
+	// }
 
-	function actionDrop(){
-		evt.stopPropagation();
-		evt.preventDefault();		
-		$(this).removeClass('over');
-	}
+	// function actionDrop(evt){
+	// 	evt.stopPropagation();
+	// 	evt.preventDefault();		
+	// 	$(this).removeClass('over');
+	// }
 
-	dropZone = $('.drop_zone');
-	// dropZone.bind('dragleave', dragLeave);
-	dropZone
-	.bind('dragenter', function(){
-		$('.over').removeClass('over');
-		$(this).addClass('over');
-	})
-	.bind('dragover', handleDragOver)
-	.bind('drop', handleFileSelect)
-	// .bind('mouseout', dragLeave)
-	.delegate('.actions div', 'drop', handleFileSelect);
+	// dropZone = $('.drop_zone');
+	// // dropZone.bind('dragleave', dragLeave);
+	// dropZone
+	// .bind('dragenter', function(evt){
+	// 	evt.stopPropagation();
+	// 	evt.preventDefault();
+	// 	// $('.over').removeClass('over');
+	// 	// $(this).addClass('over');
+	// 	$('.actions').show();
+	// 	console.log('drop_zone', 'dragenter');
+	// })
+	// .bind('dragover', handleDragOver)
+	// .bind('drop', handleFileSelect)
+	// .bind('dragleave', function(evt){
+	// 	evt.stopPropagation();
+	// 	evt.preventDefault();
+	// 	// $('.actions').hide();
+	// })
+	// .bind('dragend', function(){
+	// 	console.log('drop_zone', 'dragend');
+	// });
+	// //.delegate('.actions div', 'drop', handleFileSelect);
 </script>
 
 </body>

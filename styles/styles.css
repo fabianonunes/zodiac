@@ -1,0 +1,48 @@
+#main {
+	border: 1px dotted #aaa;
+	width: 400px;
+	margin: 0 auto;
+	height: 450px;
+	position: relative;
+	
+}
+.drop_zone, .mask {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+}
+
+.drop_zone {
+	border: 1px solid green;
+}
+
+.drop_zone.over {
+	border-color: blue;
+}
+
+.mask {
+	border: 1px solid red;
+	z-index: 10;
+	display: none;
+	background: rgba(255, 255, 255, .6);
+}
+
+.actions div {
+	position: relative;
+	display: inline-block;
+	font-family: 'DejaVu Serif';
+	border: 1px dotted green;
+	height: 40px;
+	width: 40px;
+	line-height: 40px;
+	text-align: center;
+	padding:0;
+	margin:10px;
+	font-size: 22px;
+	background: #fff;
+}
+.actions div.over {
+	border: 1px dotted red;
+}
