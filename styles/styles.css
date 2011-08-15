@@ -15,6 +15,7 @@
 }
 
 .drop_zone {
+	overflow-y: auto;
 }
 
 .drop_zone.over {

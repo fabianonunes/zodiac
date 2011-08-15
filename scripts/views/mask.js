@@ -33,12 +33,12 @@
 
 			this.cancel(evt);
 			this.el.hide();
-			console.log(this.el);
 
 		},
 
 		cancel : function(evt){
 			if (evt.preventDefault) evt.preventDefault();
+			evt.stopPropagation();
 			evt.originalEvent.dataTransfer.dropEffect = 'copy';
 			return false;
 		},
@@ -61,6 +61,8 @@
 
 		actionDrop : function(evt){
 
+			return this.cancel(evt);
+
 			var evt = evt.originalEvent
 			, dt = evt.dataTransfer
 			, files = dt.files
@@ -68,12 +70,13 @@
 
 			reader.onload = function (event) {
 
-				var t = event.target.result.split('\n');
 				var i = $('.input').text().split('\n');
+				var t = event.target.result.split('\n');
 
-				console.log(_.intersection(t, i));
+				var n = _.intersection(t, i);
 
 
+				// $('.input').html(n.join("\n"));
 
 			};
 
