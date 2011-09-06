@@ -15,7 +15,7 @@
 }
 
 .drop_zone {
-	overflow-y: auto;
+	
 }
 
 .drop_zone.over {
@@ -42,11 +42,13 @@
 	padding:0;
 	margin:10px;
 	font-size: 22px;
-	background: #fff;
+	background: #f0f0f0;
 }
 .mask div.over {
 	border : 1px dotted red;
 }
 .input {
 	white-space : pre-line;
+	overflow-y: auto;
+	height: 100%;
 }

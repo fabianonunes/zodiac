@@ -5,50 +5,53 @@
 		el: $('.mask'),
 		
 		events: {
+
 			'dragover' : 'cancel'
-			, 'dragenter' : 'cancel'
-			, 'drop' : 'drop'
-			, 'dragleave div' : 'actionLeave'
 			, 'dragover div' : 'cancel'
-			, 'dragenter div' : 'actionEnter'
-			, 'drop div' : 'actionDrop'
+			
+			, 'dragleave div' : 'onLeave'
+			, 'dragenter div' : 'onEnter'
+
+			// a ordem dos eventos deve ser mantida do mais específico para o mais geral para que o stopImmediatePropagation funcione corretamente
+			, 'drop div' : 'onDrop' 
+			, 'drop' : 'onDrop'
+
 		},
 		
 		initialize: function(){
-			_.bindAll(this, 'drop', 'actionEnter', 'actionDrop');
+			_.bindAll(this, 'onEnter', 'onDrop');
 		},
 
-		drop : function(evt){
+		readFile : function(file){
 
-			var oEvt = evt.originalEvent
-				, dt = oEvt.dataTransfer
-				, files = dt.files
-				, reader = new FileReader();
+			return $.Deferred(function(defer){
 
-			reader.onload = function (event) {
-				$('.input').text(event.target.result);
-			};
+				var reader = new FileReader();
 
-			reader.readAsText(files[0]);			
+				reader.onload = function(event){
+					defer.resolve(event.target.result);
+				}
 
-			this.cancel(evt);
-			this.el.hide();
+				reader.onerror = defer.reject;
+
+				reader.readAsText(file);
+
+			}).promise();
 
 		},
 
 		cancel : function(evt){
 			if (evt.preventDefault) evt.preventDefault();
 			evt.stopPropagation();
-			evt.originalEvent.dataTransfer.dropEffect = 'copy';
+			if(evt.originalEvent) evt.originalEvent.dataTransfer.dropEffect = 'copy';
 			return false;
 		},
 
-		actionEnter : function(evt){		
+		onEnter : function(evt){
 			$(evt.target).addClass('over');
-			return this.cancel(evt);
 		},
 
-		actionLeave : function(evt){
+		onLeave : function(evt){
 
 			var related = document.elementFromPoint(evt.clientX, evt.clientY);
 
@@ -59,35 +62,34 @@
 			
 		},
 
-		actionDrop : function(evt){
+		onDrop : function(evt){
 
-			return this.cancel(evt);
+			this.cancel(evt);
+			evt.stopImmediatePropagation();
 
 			var evt = evt.originalEvent
 			, dt = evt.dataTransfer
-			, files = dt.files
-			, reader = new FileReader();
+			, files = dt.files;
 
-			reader.onload = function (event) {
+			this.readFile(files[0]).done(function(text){
+				$('.input').html(text);
+			});
 
-				var i = $('.input').text().split('\n');
-				var t = event.target.result.split('\n');
-
-				var n = _.intersection(t, i);
-
-
-				// $('.input').html(n.join("\n"));
-
-			};
-
-			reader.readAsText(files[0]);
+			// reader.onload = function (event) {
+			// 	var i = $('.input').text().split('\n');
+			// 	var t = event.target.result.split('\n');
+			// 	var n = _.intersection(t, i);
+			// 	// $('.input').html(n.join("\n"));
+			// };
+			
+			// reader.readAsText(files[0]);
 
 			$(evt.target).removeClass('over');
 
 			this.el.hide();
 
 		}
-
+		
 	});
 
 }();
