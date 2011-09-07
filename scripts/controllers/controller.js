@@ -8,47 +8,34 @@
 
 		initialize: function(){
 
+			this.textPeer = new app.TextPeer();
+
 			new app.DropperView();
-			new app.MaskView();
+			new app.MaskView({
+				collection: this.textPeer
+			});
+			var input = new app.InputView({
+				collection : this.textPeer,
+				router : this
+			});
 
-			// var shipments, listShipments, users, listUsers;
-			
-			// // create the contact collection
-			// shipments = app.shipmentsCollection = new app.ShipmentCollection();
-			// users = app.usersCollection = new app.UserCollection();
-			
-			// // kick off some views
-			// // app.filterView = new app.FilterView({ collection: contacts });
-
-			// listShipments = new app.ShipmentsListView({ collection: shipments });
-			// listUsers = new app.UsersListView({ collection: users });
-			// //new app.AddContactView({ model: new app.Contact });
-			// new app.RenderModeView({ collection: shipments });
-			// new app.ModeView();
-			// // fetch data from server
-			// shipments.fetch();
-			// users.fetch();
-			
-			// // once all data is in, render the table
-			// // and bind some more events on the model.
-			// //listShipments.render();
-			// //listShipments.ready();
+			input.bind('updated', this.navigate);
 
 		},
 
+
+
 		view: function( id ){
 
-			var model = app.shipmentsCollection.get( id );
+			var model = this.textPeer.getByCid(id);
 
-			model && model.view.activate();
+			model.activate();
 
 		}
 
 		
 	});
 
-	// start the app
-	
 	app.controller = new Controller();
 
 	Backbone.history.start();

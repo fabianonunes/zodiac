@@ -41,9 +41,9 @@
 		},
 
 		cancel : function(evt){
-			if (evt.preventDefault) evt.preventDefault();
+			evt.preventDefault();
 			evt.stopPropagation();
-			if(evt.originalEvent) evt.originalEvent.dataTransfer.dropEffect = 'copy';
+			evt.originalEvent && (evt.originalEvent.dataTransfer.dropEffect = 'copy');
 			return false;
 		},
 
@@ -64,6 +64,8 @@
 
 		onDrop : function(evt){
 
+			var self = this;
+
 			this.cancel(evt);
 			evt.stopImmediatePropagation();
 
@@ -72,17 +74,9 @@
 			, files = dt.files;
 
 			this.readFile(files[0]).done(function(text){
-				$('.input').html(text);
+				self.collection.add({ value : text });
+				// $('.input').html(text);
 			});
-
-			// reader.onload = function (event) {
-			// 	var i = $('.input').text().split('\n');
-			// 	var t = event.target.result.split('\n');
-			// 	var n = _.intersection(t, i);
-			// 	// $('.input').html(n.join("\n"));
-			// };
-			
-			// reader.readAsText(files[0]);
 
 			$(evt.target).removeClass('over');
 

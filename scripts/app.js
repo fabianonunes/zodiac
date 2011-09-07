@@ -29,20 +29,20 @@
 
 			dust.render(template, data, function(err, out) {
   				
-  				if(append){
-  					$(el).append($(out));
-  				} else {
-  					$(el).html(out);
-  				}
+  				append ? $(el).append($(out)) : $(el).html(out);
 
 			});
 
 		};
 
 	})
+	.script('models/text.js')
 	.script('views/dropper.js')
 	.script('views/mask.js')
-	// .script('models/shipments.js')
+	.script('views/input.js')
+	.wait(function(){
+		
+	})
 	// .script('models/user.js')
 	// .script('views/details.js')
 	// .script('views/shipment.js')
