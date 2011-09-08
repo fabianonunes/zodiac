@@ -29,7 +29,11 @@
 		view: function( id ){
 
 			var model = this.documents.getByCid(id);
-			model.activate();
+			if(!model){
+				this.navigate('');
+			} else {
+				model.activate();
+			}
 
 		}
 

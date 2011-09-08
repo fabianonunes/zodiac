@@ -9,6 +9,7 @@
 
 	$LAB
 	.script('libs/jquery.min.js')
+	.script('libs/jquery.jqote2.min.js')
 	.script('libs/underscore-min.js')
 	.script('libs/backbone-min.js')
 	.script('libs/dust-full-0.3.0.min.js')
@@ -28,7 +29,7 @@
 			}
 
 			dust.render(template, data, function(err, out) {
-  				
+
   				append ? $(el).append($(out)) : $(el).html(out);
 
 			});

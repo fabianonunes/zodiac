@@ -1,7 +1,3 @@
-* {
-	font-size: 10px;
-}
-
 .red {
 	background: #FFDDFF;
 }
@@ -10,6 +6,10 @@
 }
 .redblue {
 	background: #EAF2F5;
+}
+
+.red, .blue, .redblue {
+	display: block;
 }
 
 

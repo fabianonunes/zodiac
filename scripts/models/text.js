@@ -8,55 +8,7 @@
 
 		activate : function(){
 			this.set({'activate': this.get('activate') + 1});
-		},
-
-		difference : function(lines){
-			var value = _.difference(this.lines, lines);
-			value = _.compact(value).join('\n');
-			return new Text({value:value});			
-		},
-
-		union : function(lines){
-
-			var value = _.union(this.lines, lines);
-			value = _.compact(value);
-
-			var html = this.blame(value, this.lines, lines);
-			return new Text({value:value.join('\n'), html: html});
-
-		},
-
-		intersection : function(lines){
-
-			var value = _.intersection(this.lines, lines);
-			value = _.compact(value);
-
-			var html = this.blame(value, this.lines, lines);
-			return new Text({value:value.join('\n'), html: html});			
-		},
-
-		symmetric : function(lines){
-			var intersection = _.intersection(this.lines, lines);
-			var union = _.union(this.lines, lines);
-			var value = _.difference(union, intersection);
-			value = _.compact(value).join('\n');
-			return new Text({value:value});			
-		},
-
-		initialize : function(attrs){
-			this.lines = _.compact(attrs.value.split('\n'));
-		},
-
-		blame : function(result, op, opr){
-			var r = _.map(result, function(line){
-				var r = "<span class='";
-				r += _.include(op, line) ? 'red' : ''; 
-				r += _.include(opr, line) ? 'blue' : ''; 
-				r += "'>" + line + '</span>';
-				return r;
-			});
-			return r.join('\n');
-		}
+		}		
 				
 	});
 
@@ -66,9 +18,18 @@
 		currentDoc : null,
 		
 		initialize : function(){
+			
+			var self = this;
+			
 			_.bindAll(this, 'updateIndex', 'blend');
 			this.bind('change:activate', this.updateIndex);
 			this.bind('add', this.updateIndex);
+
+			this.worker = new Worker('/scripts/workers/text.js');
+			this.worker.addEventListener('message', function(message){
+				self.add(new Text(message.data));
+			}, false);
+
 		},
 		
 		updateIndex : function(m){
@@ -77,12 +38,22 @@
 		},
 
 		blend : function(text, op){
+
 			if(_.isNull(this.currentDoc)){
-				this.add({ value : text });
+
+				this.add({
+					value : text
+					, lines : text.split('\n')
+				});
+
 			} else {
-				this.add(
-					this.currentDoc[op](text.split('\n'))
-				);
+
+				this.worker.postMessage({
+					lines1 : this.currentDoc.get('lines'),
+					lines2 : text.split('\n'),
+					op : op
+				});
+
 			}
 		}
 

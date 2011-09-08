@@ -22,11 +22,13 @@
 			_.bindAll(this, 'onEnter', 'onDrop');
 		},
 
-		readFile : function(file){
+		readFile : function(file, cb){
 
 			return $.Deferred(function(defer){
 
 				var reader = new FileReader();
+
+				var r;
 
 				reader.onload = function(event){
 					defer.resolve(event.target.result);
@@ -68,8 +70,6 @@
 			, op = $(evt.currentTarget).attr('class').split(' ')[0]
 			, dt = evt.originalEvent.dataTransfer
 			, files = dt.files;
-
-			console.log(files);
 
 			this.cancel(evt);
 

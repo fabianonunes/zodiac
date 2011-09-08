@@ -23,8 +23,11 @@
 
 	</div>
 
-
-	<output id="list"></output>
+	<script id="tmpl-row" type="text/html">
+		{#data}
+			<span class="{classe}">{line}</span>
+		{/data}
+	</script>
 
 	<script type="text/javascript" src="scripts/libs/lab.min.js"></script>
 	<script type="text/javascript" src="scripts/app.js"></script>
