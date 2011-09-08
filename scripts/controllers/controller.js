@@ -8,27 +8,27 @@
 
 		initialize: function(){
 
-			this.textPeer = new app.TextPeer();
+			this.documents = new app.TextPeer();
 
 			new app.DropperView();
 			new app.MaskView({
-				collection: this.textPeer
+				collection: this.documents
 			});
+
 			var input = new app.InputView({
-				collection : this.textPeer,
+				collection : this.documents,
 				router : this
 			});
 
-			input.bind('updated', this.navigate);
+			this.documents.bind('change:currentIndex', function(index){
+				this.navigate('view/' + index);
+			}.bind(this));
 
 		},
 
-
-
 		view: function( id ){
 
-			var model = this.textPeer.getByCid(id);
-
+			var model = this.documents.getByCid(id);
 			model.activate();
 
 		}

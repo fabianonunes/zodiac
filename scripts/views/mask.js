@@ -64,18 +64,17 @@
 
 		onDrop : function(evt){
 
-			var self = this;
-
-			this.cancel(evt);
-			evt.stopImmediatePropagation();
-
-			var evt = evt.originalEvent
-			, dt = evt.dataTransfer
+			var self = this
+			, op = $(evt.currentTarget).attr('class').split(' ')[0]
+			, dt = evt.originalEvent.dataTransfer
 			, files = dt.files;
 
+			this.cancel(evt);
+
+			evt.stopImmediatePropagation();
+
 			this.readFile(files[0]).done(function(text){
-				self.collection.add({ value : text });
-				// $('.input').html(text);
+				self.collection.blend(text, op);
 			});
 
 			$(evt.target).removeClass('over');
