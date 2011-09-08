@@ -15,6 +15,8 @@
 			this.collection.bind("change:activate", this.updateText);
 			this.collection.bind("add", this.updateText);
 
+			 $('#template').jqote({greet: 'Hello', who: 'John'}, '*')
+
 		},
 
 		updateText : function(model){
@@ -28,11 +30,18 @@
 
 			if( !_.isEmpty(data) ){
 
+	
 				// app.template(this.el, { data : data }, this.template);
-				 this.el.jqoteapp(
-				 	'<span class="<%= this.class %>"><%= this.line %></span>'
+				this.el.jqotesub(
+				 	'<span class="<%= this.classe %>"><%= this.line %></span>'
 					, data
     			);
+
+    			// this.el.append($('#template').jqote(data));
+
+    	 // 	this.el.append(
+      //   		$('#template').jqote(data, '*')
+    		// );
 
 			} else {
 				this.el.html(model.get('value'));
