@@ -10,8 +10,10 @@
 			this.set({'activate': this.get('activate') + 1});
 		},
 
-		difference : function(){
-			
+		difference : function(lines){
+			var value = _.difference(this.lines, lines);
+			value = _.compact(value).join('\n');
+			return new Text({value:value});			
 		},
 
 		union : function(lines){
@@ -26,8 +28,12 @@
 			return new Text({value:value});			
 		},
 
-		symmetric : function(){
-			
+		symmetric : function(lines){
+			var intersection = _.intersection(this.lines, lines);
+			var union = _.union(this.lines, lines);
+			var value = _.difference(union, intersection);
+			value = _.compact(value).join('\n');
+			return new Text({value:value});			
 		},
 
 		initialize : function(attrs){
