@@ -1,3 +1,18 @@
+* {
+	font-size: 10px;
+}
+
+.red {
+	background: #FFDDFF;
+}
+.blue {
+	background: #DDDDFF;
+}
+.redblue {
+	background: #EAF2F5;
+}
+
+
 #main {
 	border: 1px dotted #aaa;
 	width: 400px;

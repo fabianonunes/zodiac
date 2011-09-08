@@ -17,15 +17,22 @@
 		},
 
 		union : function(lines){
+
 			var value = _.union(this.lines, lines);
-			value = _.compact(value).join('\n');
-			return new Text({value:value});
+			value = _.compact(value);
+
+			var html = this.blame(value, this.lines, lines);
+			return new Text({value:value.join('\n'), html: html});
+
 		},
 
 		intersection : function(lines){
+
 			var value = _.intersection(this.lines, lines);
-			value = _.compact(value).join('\n');
-			return new Text({value:value});			
+			value = _.compact(value);
+
+			var html = this.blame(value, this.lines, lines);
+			return new Text({value:value.join('\n'), html: html});			
 		},
 
 		symmetric : function(lines){
@@ -37,7 +44,18 @@
 		},
 
 		initialize : function(attrs){
-			this.lines = attrs.value.split('\n');
+			this.lines = _.compact(attrs.value.split('\n'));
+		},
+
+		blame : function(result, op, opr){
+			var r = _.map(result, function(line){
+				var r = "<span class='";
+				r += _.include(op, line) ? 'red' : ''; 
+				r += _.include(opr, line) ? 'blue' : ''; 
+				r += "'>" + line + '</span>';
+				return r;
+			});
+			return r.join('\n');
 		}
 				
 	});

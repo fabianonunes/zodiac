@@ -69,6 +69,8 @@
 			, dt = evt.originalEvent.dataTransfer
 			, files = dt.files;
 
+			console.log(files);
+
 			this.cancel(evt);
 
 			evt.stopImmediatePropagation();

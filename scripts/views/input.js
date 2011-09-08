@@ -5,7 +5,7 @@
 		el: $('.input'),
 		
 		initialize: function(){
-			
+
 			_.bindAll(this, 'updateText');
 
 			this.collection.bind("change:activate", this.updateText);
@@ -14,8 +14,15 @@
 		},
 
 		updateText : function(model){
+
 			this.trigger('updated', 'view/'+model.cid);
-			this.el.html(model.get('value'));
+
+			if(!_.isEmpty(model.get('html'))){
+				this.el.html(model.get('html'));
+			} else {
+				this.el.html(model.get('value'));
+			}
+
 		}
 
 	});
