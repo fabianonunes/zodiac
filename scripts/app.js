@@ -15,7 +15,7 @@
 	.script('libs/dust-full-0.3.0.min.js')
 	.wait(function(){
 
-		app.template = function(el, data, template, append){
+		app.template = function(data, template, append){
 
 			if(!dust.cache[template]){
 				
@@ -28,11 +28,12 @@
 
 			}
 
-			dust.render(template, data, function(err, out) {
-
-  				append ? $(el).append($(out)) : $(el).html(out);
-
-			});
+				return $.Deferred(function(defer){
+					dust.render(template, data, function(err, out) {
+						defer.resolve(out);
+		  				// append ? $(el).append($(out)) : $(el).html(out);
+					});
+				}).promise();
 
 		};
 

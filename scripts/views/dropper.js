@@ -33,7 +33,7 @@
 
 		cancel : function(evt){
 			if (evt.preventDefault) evt.preventDefault();
-			evt.originalEvent.dataTransfer.dropEffect = 'copy';
+			// evt.originalEvent.dataTransfer.dropEffect = 'copy';
 			return false;
 		}
 

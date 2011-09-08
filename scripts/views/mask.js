@@ -45,7 +45,7 @@
 		cancel : function(evt){
 			evt.preventDefault();
 			evt.stopPropagation();
-			evt.originalEvent && (evt.originalEvent.dataTransfer.dropEffect = 'copy');
+			// evt.originalEvent && (evt.originalEvent.dataTransfer.dropEffect = 'copy');
 			return false;
 		},
 
@@ -70,6 +70,8 @@
 			, op = $(evt.currentTarget).attr('class').split(' ')[0]
 			, dt = evt.originalEvent.dataTransfer
 			, files = dt.files;
+
+console.log(files);
 
 			this.cancel(evt);
 

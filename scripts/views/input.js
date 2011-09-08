@@ -30,18 +30,23 @@
 
 			if( !_.isEmpty(data) ){
 
-	
-				// app.template(this.el, { data : data }, this.template);
-				this.el.jqotesub(
-				 	'<span class="<%= this.classe %>"><%= this.line %></span>'
-					, data
-    			);
+				var fragment = document.createDocumentFragment();
 
-    			// this.el.append($('#template').jqote(data));
+				var s = document.createElement('span');
 
-    	 // 	this.el.append(
-      //   		$('#template').jqote(data, '*')
-    		// );
+				app.template({ data : data }, this.template)
+				.done(function(out){
+					s.innerHTML = out;
+				});
+
+				// $(s).jqotesub(
+				// 	'<span class="<%= this.classe %>"><%= this.line %></span>'
+				// 	, data
+				// );
+
+				this.el.empty();
+				fragment.appendChild(s);
+				this.el[0].appendChild(fragment);
 
 			} else {
 				this.el.html(model.get('value'));
