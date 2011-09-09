@@ -4,7 +4,7 @@
 
 		el: $('.input'),
 
-		docFragment : document.createDocumentFragment(),
+		// docFragment : document.createDocumentFragment(),
 
 		template : 'tmpl-row',
 		
@@ -15,7 +15,7 @@
 			this.collection.bind("change:activate", this.updateText);
 			this.collection.bind("add", this.updateText);
 
-			 $('#template').jqote({greet: 'Hello', who: 'John'}, '*')
+			// app.template
 
 		},
 
@@ -30,26 +30,29 @@
 
 			if( !_.isEmpty(data) ){
 
-				var fragment = document.createDocumentFragment();
+				// var fragment = document.createDocumentFragment();
 
 				var s = document.createElement('span');
+				var text = '';
+				app.template({ data : data }, this.template, function(out){
+					if(!out) return;
+					text += out;
+				}, function(){
 
-				app.template({ data : data }, this.template)
-				.done(function(out){
-					s.innerHTML = out;
+					s.innerHTML = text;
+
+					// fragment.appendChild(s);
+
+					if(self.el[0].firstChild){
+						self.el[0].removeChild(self.el[0].firstChild);
+					}				
+
+					self.el[0].appendChild(s);
+
 				});
 
-				// $(s).jqotesub(
-				// 	'<span class="<%= this.classe %>"><%= this.line %></span>'
-				// 	, data
-				// );
-
-				this.el.empty();
-				fragment.appendChild(s);
-				this.el[0].appendChild(fragment);
-
 			} else {
-				this.el.html(model.get('value'));
+				this.el.html(model.get('lines').join('\n'));
 			}
 
 // console.profileEnd();

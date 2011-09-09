@@ -71,14 +71,12 @@
 			, dt = evt.originalEvent.dataTransfer
 			, files = dt.files;
 
-console.log(files);
-
 			this.cancel(evt);
 
 			evt.stopImmediatePropagation();
 
 			this.readFile(files[0]).done(function(text){
-				self.collection.blend(text, op);
+				self.collection.blend(text.split('\n'), op);
 			});
 
 			$(evt.target).removeClass('over');

@@ -15,7 +15,7 @@
 	.script('libs/dust-full-0.3.0.min.js')
 	.wait(function(){
 
-		app.template = function(data, template, append){
+		app.template = function(data, template, cb, end){
 
 			if(!dust.cache[template]){
 				
@@ -28,12 +28,31 @@
 
 			}
 
-				return $.Deferred(function(defer){
-					dust.render(template, data, function(err, out) {
-						defer.resolve(out);
-		  				// append ? $(el).append($(out)) : $(el).html(out);
-					});
-				}).promise();
+				// return $.Deferred(function(defer){
+				// 	dust.stream(template, function(){
+				// 		return {
+				// 			data : function(chunk, context, bodies) {
+				// 				console.log('chunks', arguments);
+				// 			}
+				// 			// data.data
+				// 		}
+				// 	}()).on("data", function(err, out) {
+				// 		console.log(arguments);
+				// 		defer.resolve(out);
+		  // 				// append ? $(el).append($(out)) : $(el).html(out);
+				// 	});
+				// }).promise();
+// console.log(data.data);
+				dust.stream(template, {
+					data : data.data, 
+					stream : function(chunk, context, bodies) {
+						return chunk.map(function(chunk){
+							chunk.render(bodies.block, context).end();
+						});
+					}
+				})
+				.on("data", cb)
+				.on("end", end);
 
 		};
 

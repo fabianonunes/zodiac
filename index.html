@@ -27,13 +27,28 @@
 
 	<script id="tmpl-row" type="text/html">
 		{#data}
-			<span class="{classe}">{line}</span>
+			{#stream}
+				<span class="{clazz}">
+					{#rows}
+						{.}	{@sep}{~n}{/sep}
+					{/rows}
+				</span>
+			{/stream}
 		{/data}
 	</script>
+	<script id="tmpl-row-old" type="text/html">
+		{#data}
+			<span class="{clazz}">
+				{#rows}
+					{.}	{@sep}{~n}{/sep}
+				{/rows}
+			</span>
+		{/data}
+	</script>	
 
 		
 	<script type="text/x-jqote-template" id="template">
-		<span class="<*= this.classe *>"><*= this.line *></span>
+		<span class="<*= this.clazz *>"><*= this.line *></span>
 	</script>
 
 	<script type="text/javascript" src="scripts/libs/lab.min.js"></script>

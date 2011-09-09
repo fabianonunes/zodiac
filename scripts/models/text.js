@@ -37,20 +37,19 @@
 			this.trigger('change:currentIndex', this.currentDoc.cid)
 		},
 
-		blend : function(text, op){
+		blend : function(lines, op){
 
 			if(_.isNull(this.currentDoc)){
 
 				this.add({
-					value : text
-					, lines : text.split('\n')
+					lines : lines
 				});
 
 			} else {
 
 				this.worker.postMessage({
 					lines1 : this.currentDoc.get('lines'),
-					lines2 : text.split('\n'),
+					lines2 : lines,
 					op : op
 				});
 
