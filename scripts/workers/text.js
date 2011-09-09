@@ -3,6 +3,10 @@ importScripts('../libs/underscore-min.js');
 
 var TextWorker = {
 
+	sort : function(lines){
+		return lines.sort();
+	},
+
 	difference : function(lines1, lines2){
 		var value = _.difference(lines1, lines2);
 		var html = this.blame(value, lines1, lines2);
@@ -43,7 +47,7 @@ var TextWorker = {
 
 	blame : function(result, op, opr){
 
-		result.sort();
+		// result.sort();
 
 		var r = [];
 		var last = {};
@@ -76,6 +80,6 @@ var TextWorker = {
 
 onmessage = function(message){
 	var d = message.data;
-	var r = TextWorker[d.op](d.lines1, d.lines2);
+	var r = TextWorker[d.op].apply(TextWorker, d.args);
 	postMessage(r);
 }

@@ -25,7 +25,12 @@
 
 	</div>
 
-	<script id="tmpl-row" type="text/html">
+	<div class="tools">
+		<button class="button next">sort</button>
+	</div>
+
+
+	<script id="tmpl-row-stream" type="text/html">
 		{#data}
 			{#stream}
 				<span class="{clazz}">
@@ -36,7 +41,7 @@
 			{/stream}
 		{/data}
 	</script>
-	<script id="tmpl-row-old" type="text/html">
+	<script id="tmpl-row" type="text/html">
 		{#data}
 			<span class="{clazz}">
 				{#rows}

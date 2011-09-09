@@ -8,7 +8,11 @@
 
 		activate : function(){
 			this.set({'activate': this.get('activate') + 1});
-		}		
+		},
+
+		sort : function(){
+			
+		}
 				
 	});
 
@@ -39,6 +43,8 @@
 
 		blend : function(lines, op){
 
+			var self = this;
+
 			if(_.isNull(this.currentDoc)){
 
 				this.add({
@@ -47,11 +53,18 @@
 
 			} else {
 
-				this.worker.postMessage({
-					lines1 : this.currentDoc.get('lines'),
-					lines2 : lines,
-					op : op
-				});
+				$.work({
+					file : '/scripts/workers/text.js',
+					args : {
+						op : op,
+						args : [this.currentDoc.get('lines'), lines]
+					}
+				}).done(function(message){
+					// console.log(message);
+					self.add(new Text(message.data));
+				})
+
+				// this.worker.postMessage();
 
 			}
 		}

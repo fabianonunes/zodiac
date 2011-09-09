@@ -11,11 +11,12 @@
 			this.documents = new app.TextPeer();
 
 			new app.DropperView();
+			
 			new app.MaskView({
 				collection: this.documents
 			});
 
-			var input = new app.InputView({
+			new app.InputView({
 				collection : this.documents,
 				router : this
 			});
@@ -27,17 +28,10 @@
 		},
 
 		view: function( id ){
-
 			var model = this.documents.getByCid(id);
-			if(!model){
-				this.navigate('');
-			} else {
-				model.activate();
-			}
-
+			!model ? this.navigate('') : model.activate();
 		}
 
-		
 	});
 
 	app.controller = new Controller();

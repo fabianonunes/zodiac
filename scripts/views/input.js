@@ -4,7 +4,7 @@
 
 		el: $('.input'),
 
-		// docFragment : document.createDocumentFragment(),
+		docFragment : document.createDocumentFragment(),
 
 		template : 'tmpl-row',
 		
@@ -15,8 +15,6 @@
 			this.collection.bind("change:activate", this.updateText);
 			this.collection.bind("add", this.updateText);
 
-			// app.template
-
 		},
 
 		updateText : function(model){
@@ -26,38 +24,28 @@
 
 			this.trigger('updated', 'view/'+model.cid);
 
-// console.profile();
-
 			if( !_.isEmpty(data) ){
 
-				// var fragment = document.createDocumentFragment();
+				self.empty();
 
 				var s = document.createElement('span');
-				var text = '';
 				app.template({ data : data }, this.template, function(out){
-					if(!out) return;
-					text += out;
-				}, function(){
-
-					s.innerHTML = text;
-
-					// fragment.appendChild(s);
-
-					if(self.el[0].firstChild){
-						self.el[0].removeChild(self.el[0].firstChild);
-					}				
-
+					s.innerHTML = out;
 					self.el[0].appendChild(s);
-
 				});
 
 			} else {
 				this.el.html(model.get('lines').join('\n'));
 			}
 
-// console.profileEnd();
 
 
+		},
+
+		empty : function(){
+			while(this.el[0].firstChild){
+				this.el[0].removeChild(this.el[0].firstChild);
+			}		
 		}
 
 	});
