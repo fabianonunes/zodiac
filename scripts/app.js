@@ -14,8 +14,17 @@
 	.script('libs/backbone-min.js')
 	.script('libs/dust-full-0.3.0.min.js')
 	.wait(function(){
+		function replaceHtml(el, html) {
+			var oldEl = el;
+			var newEl = oldEl.cloneNode(false);
+			newEl.innerHTML = html;
+			oldEl.parentNode.replaceChild(newEl, oldEl);
+			return newEl;
+		};
 
-		app.template = function(data, template, cb){
+
+
+		app.template = function(data, template, el){
 
 			if(!dust.cache[template]){
 				
@@ -27,9 +36,10 @@
 				dust.loadSource(compiled);
 
 			}
-
+			var s = document.createElement('span');
 			dust.render(template, data, function(err, out) {
-				cb(out);
+				s.innerHTML = out;
+				el.appendChild(s);
 			});
 
 			// dust.stream(template, {

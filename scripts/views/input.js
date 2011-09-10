@@ -15,7 +15,6 @@
 
 			var self = this;
 			$('.button').click(function(evt){
-// debugger;				
 				if(self.collection.currentDoc){
 					self.collection.currentDoc.sort();
 				}
@@ -34,10 +33,7 @@
 			if( !_.isEmpty(data) ){
 
 				var s = document.createElement('span');
-				app.template({ data : data }, this.template, function(out){
-					s.innerHTML = out;
-					self.el[0].appendChild(s);
-				});
+				app.template({ data : data }, this.template, self.el[0]);
 
 			} else {
 				this.el.html(model.get('lines').join('\n'));
