@@ -11,6 +11,17 @@
 		},
 
 		sort : function(){
+
+			var self = this;
+
+			$.work('/scripts/workers/text.js', {
+				op : 'sort',
+				args : [this.get('data')]
+			}).done(function(message){
+				self.set({
+					data : message.data || []
+				});
+			});
 			
 		}
 				
@@ -25,18 +36,13 @@
 			
 			var self = this;
 			
-			_.bindAll(this, 'updateIndex', 'blend');
-			this.bind('change:activate', this.updateIndex);
-			this.bind('add', this.updateIndex);
-
-			this.worker = new Worker('/scripts/workers/text.js');
-			this.worker.addEventListener('message', function(message){
-				self.add(new Text(message.data));
-			}, false);
+			_.bindAll(this, 'updateDocument', 'blend');
+			this.bind('change:activate', this.updateDocument);
+			this.bind('add', this.updateDocument);
 
 		},
 		
-		updateIndex : function(m){
+		updateDocument : function(m){
 			this.currentDoc = m;
 			this.trigger('change:currentIndex', this.currentDoc.cid)
 		},
@@ -47,24 +53,16 @@
 
 			if(_.isNull(this.currentDoc)){
 
-				this.add({
-					lines : lines
-				});
+				this.add({ lines : lines });
 
 			} else {
 
-				$.work({
-					file : '/scripts/workers/text.js',
-					args : {
-						op : op,
-						args : [this.currentDoc.get('lines'), lines]
-					}
+				$.work('/scripts/workers/text.js', {
+					op : op,
+					args : [this.currentDoc.get('lines'), lines]
 				}).done(function(message){
-					// console.log(message);
-					self.add(new Text(message.data));
+					self.add(new Text(message));
 				})
-
-				// this.worker.postMessage();
 
 			}
 		}

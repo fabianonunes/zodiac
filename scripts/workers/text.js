@@ -3,8 +3,42 @@ importScripts('../libs/underscore-min.js');
 
 var TextWorker = {
 
-	sort : function(lines){
-		return lines.sort();
+	sort : function(data){
+
+		var plain = [];
+
+		data.forEach(function(stack){
+			stack.rows.forEach(function(line){
+				if(!line) return;
+				plain.push({
+					line : line,
+					clazz : stack.clazz
+				});
+			});
+		});
+
+		plain = _.sortBy(plain, function(v){ return v.line; });
+
+		var r = [];
+		var last = {};
+
+		plain.forEach(function(row){
+
+			if(row.clazz !== last.clazz || !last.stack){
+				last.stack = {
+					clazz : row.clazz,
+					rows : []
+				}
+				last.clazz = row.clazz;
+				r.push(last.stack);
+			}
+
+			last.stack.rows.push(row.line);
+
+		});
+
+		return { data : r };
+
 	},
 
 	difference : function(lines1, lines2){
@@ -17,7 +51,14 @@ var TextWorker = {
 	},
 
 	union : function(lines1, lines2){
-		var value = _.union(lines1, lines2);
+		var uq = {};
+		lines1.forEach(function(v){
+			uq[v] = null;
+		});
+		lines2.forEach(function(v){
+			uq[v] = null;
+		});
+		var value = Object.keys(uq);		
 		var html = this.blame(value, lines1, lines2);
 		return {
 			data : html
@@ -46,8 +87,6 @@ var TextWorker = {
 	},
 
 	blame : function(result, op, opr){
-
-		// result.sort();
 
 		var r = [];
 		var last = {};

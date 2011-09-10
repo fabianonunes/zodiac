@@ -3,9 +3,6 @@
 	app.InputView = Backbone.View.extend({
 
 		el: $('.input'),
-
-		docFragment : document.createDocumentFragment(),
-
 		template : 'tmpl-row',
 		
 		initialize: function(){
@@ -13,7 +10,16 @@
 			_.bindAll(this, 'updateText');
 
 			this.collection.bind("change:activate", this.updateText);
+			this.collection.bind("change:data", this.updateText);
 			this.collection.bind("add", this.updateText);
+
+			var self = this;
+			$('.button').click(function(evt){
+// debugger;				
+				if(self.collection.currentDoc){
+					self.collection.currentDoc.sort();
+				}
+			})
 
 		},
 
@@ -26,10 +32,10 @@
 
 			if( !_.isEmpty(data) ){
 
-				self.empty();
 
 				var s = document.createElement('span');
 				app.template({ data : data }, this.template, function(out){
+					self.empty();
 					s.innerHTML = out;
 					self.el[0].appendChild(s);
 				});
@@ -37,8 +43,6 @@
 			} else {
 				this.el.html(model.get('lines').join('\n'));
 			}
-
-
 
 		},
 

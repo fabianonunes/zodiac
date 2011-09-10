@@ -17,20 +17,28 @@
 
 		app.template = function(data, template, cb){
 
-			if(!dust.cache[template]){
+			$.work('/scripts/workers/dust.js', {
+				data : data,
+				name : template,
+				template : $('#' + template).html(),
+			}).then(function(message){
+				cb(message);
+			});			
+
+			// if(!dust.cache[template]){
 				
-				var compiled = dust.compile(
-					$('#' + template).html(),
-					template
-				);
+			// 	var compiled = dust.compile(
+			// 		$('#' + template).html(),
+			// 		template
+			// 	);
 
-				dust.loadSource(compiled);
+			// 	dust.loadSource(compiled);
 
-			}
+			// }
 
-			dust.render(template, data, function(err, out) {
-				cb(out);
-			});
+			// dust.render(template, data, function(err, out) {
+			// 	cb(out);
+			// });
 
 			// dust.stream(template, {
 			// 	data : data.data, 
