@@ -27,15 +27,14 @@
 
 			var self = this
 			, data = model.get('data');
+			self.empty();
 
 			this.trigger('updated', 'view/'+model.cid);
 
 			if( !_.isEmpty(data) ){
 
-
 				var s = document.createElement('span');
 				app.template({ data : data }, this.template, function(out){
-					self.empty();
 					s.innerHTML = out;
 					self.el[0].appendChild(s);
 				});

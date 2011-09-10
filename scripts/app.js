@@ -15,15 +15,35 @@
 	.script('libs/dust-full-0.3.0.min.js')
 	.wait(function(){
 
+		var cache = {};
+
+		var worker = new Worker('/scripts/workers/dust.js');
+		var callback;
+		worker.addEventListener('message', function(message){
+			callback(message.data);
+		}, false);		
+
 		app.template = function(data, template, cb){
 
-			$.work('/scripts/workers/dust.js', {
+			callback = cb;
+
+			if(!cache[template]){
+				cache[template] = $('#' + template).html();
+			}
+
+			worker.postMessage({
 				data : data,
 				name : template,
-				template : $('#' + template).html(),
-			}).then(function(message){
-				cb(message);
-			});			
+				template : cache[template]
+			});
+
+			// $.work('/scripts/workers/dust.js', {
+			// 	data : data,
+			// 	name : template,
+			// 	template : $('#' + template).html(),
+			// }).then(function(message){
+			// 	cb(message);
+			// });			
 
 			// if(!dust.cache[template]){
 				
