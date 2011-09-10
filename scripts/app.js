@@ -15,50 +15,22 @@
 	.script('libs/dust-full-0.3.0.min.js')
 	.wait(function(){
 
-		var cache = {};
-
-		var worker = new Worker('/scripts/workers/dust.js');
-		var callback;
-		worker.addEventListener('message', function(message){
-			callback(message.data);
-		}, false);		
-
 		app.template = function(data, template, cb){
 
-			callback = cb;
+			if(!dust.cache[template]){
+				
+				var compiled = dust.compile(
+					$('#' + template).html(),
+					template
+				);
 
-			if(!cache[template]){
-				cache[template] = $('#' + template).html();
+				dust.loadSource(compiled);
+
 			}
 
-			worker.postMessage({
-				data : data,
-				name : template,
-				template : cache[template]
+			dust.render(template, data, function(err, out) {
+				cb(out);
 			});
-
-			// $.work('/scripts/workers/dust.js', {
-			// 	data : data,
-			// 	name : template,
-			// 	template : $('#' + template).html(),
-			// }).then(function(message){
-			// 	cb(message);
-			// });			
-
-			// if(!dust.cache[template]){
-				
-			// 	var compiled = dust.compile(
-			// 		$('#' + template).html(),
-			// 		template
-			// 	);
-
-			// 	dust.loadSource(compiled);
-
-			// }
-
-			// dust.render(template, data, function(err, out) {
-			// 	cb(out);
-			// });
 
 			// dust.stream(template, {
 			// 	data : data.data, 
