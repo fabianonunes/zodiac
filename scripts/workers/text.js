@@ -51,26 +51,26 @@ var TextWorker = {
 	},
 
 	union : function(lines1, lines2){
-		var uq = {};
-		lines1.forEach(function(v){
-			uq[v] = null;
-		});
-		lines2.forEach(function(v){
-			uq[v] = null;
-		});
-		var value = Object.keys(uq);		
+var dt = Date.now();		
+		var value = union(lines1, lines2);
+var t = Date.now() - dt;			
 		var html = this.blame(value, lines1, lines2);
 		return {
-			data : html
+			t : t
+			, data : html
 			, lines : value
 		};
 	},
 
 	intersection : function(lines1, lines2){
-		var value = _.intersection(lines1, lines2);
+var dt = Date.now();		
+		// var value = _.intersection(lines1, lines2);
+		var value = intersecion(lines1, lines2);
+var t = Date.now() - dt;
 		var html = this.blame(value, lines1, lines2);
 		return {
-			data : html
+			t : t
+			, data : html
 			, lines : value
 		};
 	},
@@ -122,3 +122,30 @@ onmessage = function(message){
 	var r = TextWorker[d.op].apply(TextWorker, d.args);
 	postMessage(r);
 }
+
+
+function intersecion(arr1, arr2) {
+	var r = [], o = {};
+
+	arr2.forEach(function(v, k){
+		o[v] = true;
+	});
+
+	arr1.forEach(function(v, k){
+		o[v] && (r[r.length] = v);
+	});	
+
+	return r;
+}
+
+function union(lines1, lines2){
+	var uq = {};
+	lines1.forEach(function(v){
+		uq[v] = true;
+	});
+	lines2.forEach(function(v){
+		uq[v] = true;
+	});
+	return Object.keys(uq);
+}
+

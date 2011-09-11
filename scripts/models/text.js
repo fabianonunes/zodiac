@@ -44,7 +44,7 @@
 		
 		updateDocument : function(m){
 			this.currentDoc = m;
-			this.trigger('change:currentIndex', this.currentDoc.cid)
+			this.trigger('change:currentIndex', m.cid)
 		},
 
 		blend : function(lines, op){
@@ -57,10 +57,12 @@
 
 			} else {
 
+
 				$.work('/scripts/workers/text.js', {
 					op : op,
 					args : [this.currentDoc.get('lines'), lines]
 				}).done(function(message){
+console.log('t->', message.t);
 					self.add(new Text(message));
 				})
 

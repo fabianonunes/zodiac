@@ -21,6 +21,12 @@
 	position: relative;
 	
 }
+
+.tools {
+    width: 500px;
+    margin: 0 auto;
+}
+
 .drop_zone, .mask {
 	position: absolute;
 	top: 0;
@@ -63,6 +69,8 @@
 	border : 1px dotted red;
 }
 .input {
+    font-family: 'monaco';
+    font-size: 12px;
 	white-space : pre;
 	overflow-y: auto;
 	height: 100%;

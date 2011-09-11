@@ -3,6 +3,7 @@
 	app.InputView = Backbone.View.extend({
 
 		el: $('.input'),
+
 		template : 'tmpl-row',
 		
 		initialize: function(){
@@ -26,16 +27,17 @@
 
 			var self = this
 			, data = model.get('data');
+
 			self.empty();
 
-			this.trigger('updated', 'view/'+model.cid);
+			this.trigger('updated', 'view/' + model.cid);
 
 			if( !_.isEmpty(data) ){
 
-				var s = document.createElement('span');
-				app.template({ data : data }, this.template, self.el[0]);
+				app.template(data, this.template, self.el[0]);
 
 			} else {
+				//TODO : optimize
 				this.el.html(model.get('lines').join('\n'));
 			}
 
