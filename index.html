@@ -30,7 +30,7 @@
 	</div>
 
 
-	<script id="tmpl-row-stream" type="text/html">
+	<script id="tmpl-row-stream-old" type="text/html">
 		{#data}
 			{#stream}
 				<span class="{clazz}">
@@ -49,6 +49,18 @@
 				{/rows}
 			</span>
 		{/data}
+	</script>	
+	<script id="tmpl-row-stream" type="text/html">
+		<span>
+		{#data}
+			{#stream}
+				{?clazz}
+					</span><span class="{clazz}">
+				{/clazz}
+				{line} {~n}
+			{/stream}
+		{/data}
+		</span>
 	</script>	
 
 		

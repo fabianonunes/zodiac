@@ -12,6 +12,7 @@
 
 			this.collection.bind("change:activate", this.updateText);
 			this.collection.bind("change:data", this.updateText);
+			this.collection.bind("change:html", this.updateText);
 			this.collection.bind("add", this.updateText);
 
 			var self = this;
@@ -26,7 +27,7 @@
 		updateText : function(model){
 
 			var self = this
-			, data = model.get('data');
+			, data = model.get('html');
 
 			self.empty();
 
@@ -34,7 +35,11 @@
 
 			if( !_.isEmpty(data) ){
 
-				app.template(data, this.template, self.el[0]);
+				var s = document.createElement('span');
+				s.innerHTML = data;
+				this.el[0].appendChild(s);
+
+				// app.template(data, this.template, self.el[0]);
 
 			} else {
 				//TODO : optimize

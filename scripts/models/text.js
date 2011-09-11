@@ -19,7 +19,7 @@
 				args : [this.get('data')]
 			}).done(function(message){
 				self.set({
-					data : message.data || []
+					html : message
 				});
 			});
 			
@@ -62,7 +62,7 @@
 					op : op,
 					args : [this.currentDoc.get('lines'), lines]
 				}).done(function(message){
-console.log('t->', message.t);
+// console.log('message->', message);
 					self.add(new Text(message));
 				})
 
