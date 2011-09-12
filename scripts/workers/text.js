@@ -2,9 +2,7 @@
 importScripts('../libs/underscore-min.js');
 importScripts('../libs/dust-full-0.3.0.min.js');
 
-(function(){dust.register("tmpl-row",body_0);function body_0(chk,ctx){return chk.section(ctx.get("data"),ctx,{"block":body_1},null);}function body_1(chk,ctx){return chk.write("<span class=\"").reference(ctx.get("clazz"),ctx,"h").write("\">").section(ctx.get("rows"),ctx,{"block":body_2},null).write("</span>");}function body_2(chk,ctx){return chk.reference(ctx.getPath(true,[]),ctx,"h").write("\t").helper("sep",ctx,{"block":body_3},null);}function body_3(chk,ctx){return chk.write("\n");}return body_0;})();
 (function(){dust.register("tmpl-row-stream",body_0);function body_0(chk,ctx){return chk.write("<span>").section(ctx.get("data"),ctx,{"block":body_1},null).write("</span>");}function body_1(chk,ctx){return chk.section(ctx.get("stream"),ctx,{"block":body_2},null);}function body_2(chk,ctx){return chk.exists(ctx.get("clazz"),ctx,{"block":body_3},null).reference(ctx.get("line"),ctx,"h").write(" \n");}function body_3(chk,ctx){return chk.write("</span><span class=\"").reference(ctx.get("clazz"),ctx,"h").write("\">");}return body_0;})();
-
 
 var TextWorker = {
 
@@ -22,22 +20,22 @@ var TextWorker = {
 			})
 		});
 
+
 		strut = _.sortBy(strut, function(v){ return v.line; });
 
-		template([strut], function(chunk, context, bodies) {
+		template(strut, function(chunk, context, bodies) {
 
-			context.current().forEach(function(row) {
-				var ck = {
-					line : row.line
-					, clazz : row.clazz !== last.clazz && (last.clazz = row.clazz)
-				};
+			var row = context.current();
 
-				chunk.render(bodies.block, base.push(ck));
+			var ck = {
+				line : row.line
+				, clazz : row.clazz !== last.clazz && (last.clazz = row.clazz)
+			};
 
-			});
+			chunk.render(bodies.block, base.push(ck));
 
 		}, function(out){
-			cb(out);			
+			cb(out);
 		});
 
 	},
