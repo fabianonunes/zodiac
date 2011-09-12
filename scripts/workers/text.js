@@ -8,42 +8,43 @@ importScripts('../libs/dust-full-0.3.0.min.js');
 
 var TextWorker = {
 
-	sort : function(data, cb){
+	sort : function(lines, classes, cb){
 
-		var plain = [];
+		var strut = []
+		, last = { clazz : false }
+		, streamed = '';
 
-		data.forEach(function(stack){
-			stack.rows.forEach(function(line){
-				if(!line) return;
-				plain.push({
-					line : line,
-					clazz : stack.clazz
-				});
-			});
+		lines.forEach(function(v, k){
+			if(!v) return;
+			strut.push({
+				line : v
+				, clazz : classes[k]
+			})
 		});
 
-		plain = _.sortBy(plain, function(v){ return v.line; });
+		strut = _.sortBy(strut, function(v){ return v.line; });
 
-		var r = [];
-		var last = {};
+		var base = dust.makeBase();
 
-		plain.forEach(function(row){
+		dust.stream("tmpl-row-stream", {
+			data : strut,
+			stream : function(chunk, context, bodies) {
 
-			if(row.clazz !== last.clazz || !last.stack){
-				last.stack = {
-					clazz : row.clazz,
-					rows : []
-				}
-				last.clazz = row.clazz;
-				r.push(last.stack);
+				var row = context.current();
+
+				var ck = {
+					line : row.line
+					, clazz : row.clazz !== last.clazz && (last.clazz = row.clazz)
+				};
+
+				chunk.render(bodies.block, base.push(ck));
+
 			}
-
-			last.stack.rows.push(row.line);
-
-		});
-
-		dust.render("tmpl-row", {data:r}, function(err, out) {
-			cb(out);
+		}).on("data", function(data){
+			streamed += data;
+		})
+		.on("end", function(){
+			cb(streamed);
 		});
 
 	},
@@ -61,50 +62,80 @@ var TextWorker = {
 	},
 
 	union : function(lines1, lines2, cb){
-		var value = union(lines1, lines2);
-		var html = this.blame(value, lines1, lines2);
 
-		dust.render("tmpl-row", {data:html}, function(err, out) {
-			cb({
-				html : out
-				, data : html
-				, lines : value
-			});
+		var streamed = ''
+		, value = [] , classes = []
+		, last = { clazz : false }
+		, uq = {}
+		, base = dust.makeBase();
+
+		lines2.forEach(function(v){
+			uq[v] = 'red';
 		});
-		
+		lines1.forEach(function(v){
+			uq[v] = [uq[v]] + 'blue';
+		});
+
+		dust.stream("tmpl-row-stream", {
+			data : Object.keys(uq),
+			stream : function(chunk, context, bodies) {
+
+				var v = context.current();
+
+				var ck = {
+					line : v
+					, clazz : uq[v] !== last.clazz && (last.clazz = uq[v])
+				};
+
+				chunk.render(bodies.block, base.push(ck));
+
+				value.push(v);
+				classes.push(uq[v]);
+
+			}
+		}).on("data", function(data){
+			streamed += data;
+		})
+		.on("end", function(){
+			cb({
+				html : streamed
+				, lines : value
+				, data : classes
+			});			
+		});
+
 	},
 
 	intersection : function(lines1, lines2, cb){
 
-		var streamed = '';
-		var value = [];
-		var lines = [];
-		var o = {},
-		last = {};
+		var streamed = ''
+		, value = []
+		, classes = []
+		, o = {}
+		, last = {}
+		, base = dust.makeBase();
+
+		lines2.forEach(function(v, k){
+			o[v] = true;
+		});
 
 		dust.stream("tmpl-row-stream", {
 			data : [lines1],
 			stream : function(chunk, context, bodies) {
 
-				var base = dust.makeBase();
-
-				lines2.forEach(function(v, k){
-					o[v] = true;
-				});
-
 				context.current().forEach(function(v){
 
 					if(o[v]){
 
-						value.push(v);
-
-						var ck = {line : v};
-
-						if(!last.clazz){
-							ck.clazz = last.clazz = 'redblue';
-						}
+						var ck = {
+							line : v
+							, clazz : !last.clazz && (last.clazz = 'redblue')
+						};
 
 						chunk.render(bodies.block, base.push(ck));
+
+						value.push(v);
+						classes.push(last.clazz);
 
 					}
 
@@ -118,16 +149,9 @@ var TextWorker = {
 			cb({
 				html : streamed
 				, lines : value
+				, data : classes
 			});			
 		});
-
-		// dust.render("tmpl-row", {data:html}, function(err, out) {
-		// 	cb({
-		// 		html : out
-		// 		, data : html
-		// 		, lines : value
-		// 	});
-		// });
 
 	},
 

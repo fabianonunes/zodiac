@@ -16,7 +16,7 @@
 
 			$.work('/scripts/workers/text.js', {
 				op : 'sort',
-				args : [this.get('data')]
+				args : [this.get('lines'), this.get('data')]
 			}).done(function(message){
 				self.set({
 					html : message
@@ -62,7 +62,7 @@
 					op : op,
 					args : [this.currentDoc.get('lines'), lines]
 				}).done(function(message){
-// console.log('message->', message);
+console.log('message->', message);
 					self.add(new Text(message));
 				})
 
