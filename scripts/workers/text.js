@@ -12,7 +12,7 @@ var TextWorker = {
 
 		var strut = []
 		, last = { clazz : false }
-		, streamed = '';
+		, base = dust.makeBase();
 
 		lines.forEach(function(v, k){
 			if(!v) return;
@@ -24,27 +24,20 @@ var TextWorker = {
 
 		strut = _.sortBy(strut, function(v){ return v.line; });
 
-		var base = dust.makeBase();
 
-		dust.stream("tmpl-row-stream", {
-			data : strut,
-			stream : function(chunk, context, bodies) {
+		template(strut, function(chunk, context, bodies) {
 
-				var row = context.current();
+			var row = context.current();
 
-				var ck = {
-					line : row.line
-					, clazz : row.clazz !== last.clazz && (last.clazz = row.clazz)
-				};
+			var ck = {
+				line : row.line
+				, clazz : row.clazz !== last.clazz && (last.clazz = row.clazz)
+			};
 
-				chunk.render(bodies.block, base.push(ck));
+			chunk.render(bodies.block, base.push(ck));
 
-			}
-		}).on("data", function(data){
-			streamed += data;
-		})
-		.on("end", function(){
-			cb(streamed);
+		}, function(out){
+			cb(out);			
 		});
 
 	},
@@ -84,8 +77,7 @@ var TextWorker = {
 
 	union : function(lines1, lines2, cb){
 
-		var streamed = ''
-		, value = [] , classes = []
+		var value = [] , classes = []
 		, last = { clazz : false }
 		, uq = {}, base = dust.makeBase();
 
@@ -122,8 +114,7 @@ var TextWorker = {
 
 	intersection : function(lines1, lines2, cb){
 
-		var streamed = ''
-		, value = [], classes = []
+		var value = [], classes = []
 		, last = { clazz : false }
 		, o = {} , base = dust.makeBase();
 
