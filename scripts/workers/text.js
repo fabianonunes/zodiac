@@ -51,50 +51,34 @@ var TextWorker = {
 
 	difference : function(lines1, lines2, cb){
 
-		var streamed = ''
-		, value = []
+		var value = []
 		, classes = []
-		, o = {}
+		, uq = {}
 		, last = {}
 		, base = dust.makeBase();
 
 		lines2.forEach(function(v, k){
-			o[v] = true;
+			uq[v] = true;
 		});
 
-		dust.stream("tmpl-row-stream", {
-			data : [lines1],
-			stream : function(chunk, context, bodies) {
-
-				context.current().forEach(function(v){
-
-					if(!o[v]){
-
-						var ck = {
-							line : v
-							, clazz : !last.clazz && (last.clazz = 'red')
-						};
-
-						chunk.render(bodies.block, base.push(ck));
-
-						value.push(v);
-						classes.push(last.clazz);
-
-					}
-
-				});	
-
+		template(lines1, function(chunk, context, bodies){
+			var v = context.current();
+			if(!uq[v]){
+				var ck = {
+					line : v
+					, clazz : !last.clazz && (last.clazz = 'red')
+				};
+				chunk.render(bodies.block, base.push(ck));
+				value.push(v);
+				classes.push(last.clazz);
 			}
-		}).on("data", function(data){
-			streamed += data;
-		})
-		.on("end", function(){
+		}, function(out){
 			cb({
-				html : streamed
+				html : out
 				, lines : value
 				, data : classes
-			});			
-		});		
+			});				
+		})
 
 	},
 
@@ -103,8 +87,7 @@ var TextWorker = {
 		var streamed = ''
 		, value = [] , classes = []
 		, last = { clazz : false }
-		, uq = {}
-		, base = dust.makeBase();
+		, uq = {}, base = dust.makeBase();
 
 		lines2.forEach(function(v){
 			uq[v] = 'red';
@@ -113,32 +96,26 @@ var TextWorker = {
 			uq[v] = [uq[v]] + 'blue';
 		});
 
-		dust.stream("tmpl-row-stream", {
-			data : Object.keys(uq),
-			stream : function(chunk, context, bodies) {
+		template(Object.keys(uq), function(chunk, context, bodies) {
 
-				var v = context.current();
+			var v = context.current();
 
-				var ck = {
-					line : v
-					, clazz : uq[v] !== last.clazz && (last.clazz = uq[v])
-				};
+			var ck = {
+				line : v
+				, clazz : uq[v] !== last.clazz && (last.clazz = uq[v])
+			};
 
-				chunk.render(bodies.block, base.push(ck));
+			chunk.render(bodies.block, base.push(ck));
 
-				value.push(v);
-				classes.push(uq[v]);
+			value.push(v);
+			classes.push(uq[v]);
 
-			}
-		}).on("data", function(data){
-			streamed += data;
-		})
-		.on("end", function(){
+		}, function(out){
 			cb({
-				html : streamed
+				html : out
 				, lines : value
 				, data : classes
-			});			
+			});					
 		});
 
 	},
@@ -146,37 +123,33 @@ var TextWorker = {
 	intersection : function(lines1, lines2, cb){
 
 		var streamed = ''
-		, value = []
-		, classes = []
-		, o = {}
-		, last = {}
-		, base = dust.makeBase();
+		, value = [], classes = []
+		, last = { clazz : false }
+		, o = {} , base = dust.makeBase();
 
 		lines2.forEach(function(v, k){
 			o[v] = true;
 		});
 
 		dust.stream("tmpl-row-stream", {
-			data : [lines1],
+			data : lines1,
 			stream : function(chunk, context, bodies) {
 
-				context.current().forEach(function(v){
+				var v = context.current();
 
-					if(o[v]){
+				if(o[v]){
 
-						var ck = {
-							line : v
-							, clazz : !last.clazz && (last.clazz = 'redblue')
-						};
+					var ck = {
+						line : v
+						, clazz : !last.clazz && (last.clazz = 'redblue')
+					};
 
-						chunk.render(bodies.block, base.push(ck));
+					chunk.render(bodies.block, base.push(ck));
 
-						value.push(v);
-						classes.push(last.clazz);
+					value.push(v);
+					classes.push(last.clazz);
 
-					}
-
-				});	
+				}
 
 			}
 		}).on("data", function(data){
@@ -212,4 +185,21 @@ onmessage = function(message){
 	var d = message.data;
 	d.args.push(postMessage);
 	var r = TextWorker[d.op].apply(TextWorker, d.args);
+}
+
+
+function template(data, stream, cb){
+
+	var streamed = '';
+
+	dust.stream("tmpl-row-stream", {
+		data : data,
+		stream : stream
+	}).on("data", function(data){
+		streamed += data;
+	})
+	.on("end", function(){
+		cb(streamed);
+	});
+
 }

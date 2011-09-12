@@ -57,16 +57,15 @@
 
 			} else {
 
-
 				$.work('/scripts/workers/text.js', {
 					op : op,
 					args : [this.currentDoc.get('lines'), lines]
 				}).done(function(message){
-console.log('message->', message);
 					self.add(new Text(message));
 				})
 
 			}
+			
 		}
 
 	});
