@@ -131,33 +131,27 @@ var TextWorker = {
 			o[v] = true;
 		});
 
-		dust.stream("tmpl-row-stream", {
-			data : lines1,
-			stream : function(chunk, context, bodies) {
+		template(lines1, function(chunk, context, bodies) {
 
-				var v = context.current();
+			var v = context.current();
 
-				if(o[v]){
+			if(o[v]){
 
-					var ck = {
-						line : v
-						, clazz : !last.clazz && (last.clazz = 'redblue')
-					};
+				var ck = {
+					line : v
+					, clazz : !last.clazz && (last.clazz = 'redblue')
+				};
 
-					chunk.render(bodies.block, base.push(ck));
+				chunk.render(bodies.block, base.push(ck));
 
-					value.push(v);
-					classes.push(last.clazz);
-
-				}
+				value.push(v);
+				classes.push(last.clazz);
 
 			}
-		}).on("data", function(data){
-			streamed += data;
-		})
-		.on("end", function(){
+
+		}, function(out){
 			cb({
-				html : streamed
+				html : out
 				, lines : value
 				, data : classes
 			});			
