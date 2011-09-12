@@ -12,7 +12,9 @@
 			, 'dragleave div' : 'onLeave'
 			, 'dragenter div' : 'onEnter'
 
-			// a ordem dos eventos deve ser mantida do mais específico para o mais geral para que o stopImmediatePropagation funcione corretamente
+			// a ordem dos eventos deve ser mantida do mais específico
+			// para o mais geral para que o stopImmediatePropagation
+			// funcione corretamente
 			, 'drop div' : 'onDrop' 
 			, 'drop' : 'onDrop'
 
@@ -31,7 +33,10 @@
 				var r;
 
 				reader.onload = function(event){
-					defer.resolve(event.target.result);
+					defer.resolve({
+						text : event.target.result
+						, fileName : file.fileName
+					});
 				}
 
 				reader.onerror = defer.reject;
@@ -45,7 +50,8 @@
 		cancel : function(evt){
 			evt.preventDefault();
 			evt.stopPropagation();
-			// evt.originalEvent && (evt.originalEvent.dataTransfer.dropEffect = 'copy');
+			// evt.originalEvent && (evt.originalEvent.dataTransfer
+			//.dropEffect = 'copy');
 			return false;
 		},
 
@@ -75,8 +81,8 @@
 
 			evt.stopImmediatePropagation();
 
-			this.readFile(files[0]).done(function(text){
-				self.collection.blend(text.split('\n'), op);
+			this.readFile(files[0]).done(function(obj){
+				self.collection.blend(obj.text.split('\n'), obj.fileName, op);
 			});
 
 			$(evt.target).removeClass('over');

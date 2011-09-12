@@ -28,18 +28,15 @@
 	<div class="tools">
 		<button class="button next">sort</button>
 	</div>
+	<div class="details">
+
+	</div>
 
 
-	<script id="tmpl-row-stream-old" type="text/html">
-		{#data}
-			{#stream}
-				<span class="{clazz}">
-					{#rows}
-						{.}	{@sep}{~n}{/sep}
-					{/rows}
-				</span>
-			{/stream}
-		{/data}
+
+	<script id="details" type="text/html">
+		Tamanho: {length}</br>
+		Caminho: {path}		
 	</script>
 	<script id="tmpl-row" type="text/html">
 		{#data}

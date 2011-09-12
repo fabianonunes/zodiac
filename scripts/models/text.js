@@ -2,6 +2,19 @@
 
 	var Text = Backbone.Model.extend({
 
+		initialize : function(){
+
+console.log(this);
+
+			this.bind('change:lines', function(model){
+console.log(model);
+				model.set({
+					length : model.get('lines').length
+				});
+			}, this);
+
+		},
+
 		defaults : {
 			activate : 0
 		},
@@ -47,13 +60,16 @@
 			this.trigger('change:currentIndex', m.cid)
 		},
 
-		blend : function(lines, op){
+		blend : function(lines, fileName, op){
 
 			var self = this;
 
 			if(_.isNull(this.currentDoc)){
 
-				this.add({ lines : lines });
+				this.add({
+					lines : lines
+					, fileName : fileName
+				});
 
 			} else {
 
@@ -61,6 +77,8 @@
 					op : op,
 					args : [this.currentDoc.get('lines'), lines]
 				}).done(function(message){
+					message.op = op;
+					message.fileName = fileName;
 					self.add(new Text(message));
 				})
 

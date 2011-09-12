@@ -4,15 +4,11 @@
 
 		el: $('.input'),
 
-		template : 'tmpl-row',
-		
 		initialize: function(){
 
 			_.bindAll(this, 'updateText');
 
-			this.collection.bind("change:activate", this.updateText);
-			this.collection.bind("change:data", this.updateText);
-			this.collection.bind("change:html", this.updateText);
+			this.collection.bind("change", this.updateText);
 			this.collection.bind("add", this.updateText);
 
 			var self = this;
