@@ -22,26 +22,26 @@
 					html : message
 				});
 			});
-			
+
 		}
-				
+			
 	});
 
 	var TextPeer = Backbone.Collection.extend({
-		
+	
 		model: Text,
 		currentDoc : null,
-		
+	
 		initialize : function(){
-			
+		
 			var self = this;
-			
+		
 			_.bindAll(this, 'updateDocument', 'blend');
 			this.bind('change:activate', this.updateDocument);
 			this.bind('add', this.updateDocument);
 
 		},
-		
+	
 		updateDocument : function(m){
 			this.currentDoc = m;
 			this.trigger('change:currentIndex', m.cid)
@@ -65,12 +65,12 @@
 				})
 
 			}
-			
+		
 		}
 
 	});
 
 	app.Text = Text;
 	app.TextPeer = TextPeer;
-	
+
 }();
