@@ -204,35 +204,6 @@ var TextWorker = {
 				, lines : value
 			});
 		});
-	},
-
-	blame : function(result, op, opr){
-
-		var r = [];
-		var last = {};
-
-		result.forEach(function(line){
-
-			//TODO: sort array and use the second argument of indexOf
-			var clazz = ''
-			clazz += ~op.indexOf(line) ? 'red' : '';
-			clazz += ~opr.indexOf(line) ? 'blue' : '';
-
-			if(clazz !== last.clazz || !last.stack){
-				last.stack = {
-					clazz : clazz,
-					rows : []
-				}
-				last.clazz = clazz;
-				r.push(last.stack);
-			}
-
-			last.stack.rows.push(line);
-
-		});
-
-		return r;
-
 	}
 
 };
