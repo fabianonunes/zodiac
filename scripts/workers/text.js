@@ -50,15 +50,52 @@ var TextWorker = {
 	},
 
 	difference : function(lines1, lines2, cb){
-		var value = _.difference(lines1, lines2);
-		var html = this.blame(value, lines1, lines2);
-		dust.render("tmpl-row", {data:html}, function(err, out) {
-			cb({
-				html : out
-				, data : html
-				, lines : value
-			});
+
+		var streamed = ''
+		, value = []
+		, classes = []
+		, o = {}
+		, last = {}
+		, base = dust.makeBase();
+
+		lines2.forEach(function(v, k){
+			o[v] = true;
 		});
+
+		dust.stream("tmpl-row-stream", {
+			data : [lines1],
+			stream : function(chunk, context, bodies) {
+
+				context.current().forEach(function(v){
+
+					if(!o[v]){
+
+						var ck = {
+							line : v
+							, clazz : !last.clazz && (last.clazz = 'red')
+						};
+
+						chunk.render(bodies.block, base.push(ck));
+
+						value.push(v);
+						classes.push(last.clazz);
+
+					}
+
+				});	
+
+			}
+		}).on("data", function(data){
+			streamed += data;
+		})
+		.on("end", function(){
+			cb({
+				html : streamed
+				, lines : value
+				, data : classes
+			});			
+		});		
+
 	},
 
 	union : function(lines1, lines2, cb){
@@ -205,30 +242,3 @@ onmessage = function(message){
 	d.args.push(postMessage);
 	var r = TextWorker[d.op].apply(TextWorker, d.args);
 }
-
-
-function intersecion(arr1, arr2) {
-	var r = [], o = {};
-
-	arr2.forEach(function(v, k){
-		o[v] = true;
-	});
-
-	arr1.forEach(function(v, k){
-		o[v] && (r[r.length] = v);
-	});	
-
-	return r;
-}
-
-function union(lines1, lines2){
-	var uq = {};
-	lines1.forEach(function(v){
-		uq[v] = true;
-	});
-	lines2.forEach(function(v){
-		uq[v] = true;
-	});
-	return Object.keys(uq);
-}
-
