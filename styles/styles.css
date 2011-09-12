@@ -52,12 +52,13 @@
 }
 
 .mask div {
+    text-indent: -9000px;
 	position: relative;
 	display: inline-block;
 	font-family: 'DejaVu Serif';
 	border: 1px dotted green;
-	height: 40px;
-	width: 40px;
+	height: 42px;
+	width: 42px;
 	line-height: 40px;
 	text-align: center;
 	padding:0;
@@ -74,6 +75,21 @@
 	white-space : pre;
 	overflow-y: auto;
 	height: 100%;
+}
+
+.mask div.intersection {
+    background: #fff url('../images/intersection.png') no-repeat 5px 6px
+}
+
+.mask div.union {
+    background: #fff url('../images/union.png') no-repeat 5px 6px
+}
+
+.mask div.difference {
+    background: #fff url('../images/left-difference.png') no-repeat 5px 6px
+}
+.mask div.symmetric {
+    background: #fff url('../images/symmetric.png') no-repeat 5px 6px
 }
 
  body
