@@ -24,17 +24,17 @@ var TextWorker = {
 
 		strut = _.sortBy(strut, function(v){ return v.line; });
 
+		template([strut], function(chunk, context, bodies) {
 
-		template(strut, function(chunk, context, bodies) {
+			context.current().forEach(function(row) {
+				var ck = {
+					line : row.line
+					, clazz : row.clazz !== last.clazz && (last.clazz = row.clazz)
+				};
 
-			var row = context.current();
+				chunk.render(bodies.block, base.push(ck));
 
-			var ck = {
-				line : row.line
-				, clazz : row.clazz !== last.clazz && (last.clazz = row.clazz)
-			};
-
-			chunk.render(bodies.block, base.push(ck));
+			});
 
 		}, function(out){
 			cb(out);			

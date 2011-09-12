@@ -27,19 +27,17 @@
 		updateText : function(model){
 
 			var self = this
-			, data = model.get('html');
+			, html = model.get('html');
 
 			self.empty();
 
 			this.trigger('updated', 'view/' + model.cid);
 
-			if( !_.isEmpty(data) ){
+			if( !_.isEmpty(html) ){
 
 				var s = document.createElement('span');
-				s.innerHTML = data;
+				s.innerHTML = html;
 				this.el[0].appendChild(s);
-
-				// app.template(data, this.template, self.el[0]);
 
 			} else {
 				//TODO : optimize
