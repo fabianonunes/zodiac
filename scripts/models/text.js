@@ -43,9 +43,7 @@
 			$.work('/scripts/workers/text.js', {
 				op : this.get('op'),
 				args : [this.get('previous').get('lines'), this.get('origin')]
-			}, function(message){
-				self.afterWork(added, message);
-			});
+			}, self.afterWork.bind(self, added));
 
 			//this.afterWork.bind(this, added)
 
@@ -53,7 +51,7 @@
 
 		afterWork : function(added, message){
 			this.findPath(this.get('previous'));
-			(added === true) ? this.activate(message) : this.set(message);
+			(added === true) ? this.activate(message.data) : this.set(message.data);
 			this.trigger('change:performed', this);
 		},
 		

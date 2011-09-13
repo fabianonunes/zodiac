@@ -24,7 +24,7 @@
 			_.bindAll(this, 'onEnter', 'onDrop');
 		},
 
-		readFile : function(file, cb){
+		readFile : function(file, readFileCallback){
 
 			// return $.Deferred(function(defer){
 
@@ -33,7 +33,7 @@
 				var r;
 
 				reader.onload = function(event){
-					cb({
+					readFileCallback({
 						text : event.target.result
 						, fileName : file.name
 					});

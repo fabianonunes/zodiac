@@ -11,11 +11,11 @@ $.work = (function(){
 			// cache[file] || (cache[file] = new Worker(file));
 
 			var worker = new Worker(file);//cache[file];
-		
-			worker.addEventListener('message', function(event) {
-				cb(event.data);
-				// dfd.resolve(event.data); 
-			}, false);
+			worker.onmessage = cb;
+			// worker.addEventListener('message', function(event) {
+			// 	cb(event.data);
+			// 	// dfd.resolve(event.data); 
+			// }, false);
 
 			// worker.addEventListener('error', dfd.reject, false);
 			worker.postMessage(options);
