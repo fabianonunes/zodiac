@@ -1,12 +1,5 @@
 !function(){
 
-	var CurrentText = Backbone.Model.extend({
-		currentCid : function(){
-			return this.get('doc').cid;
-		}
-	});
-
-	var currentText = new CurrentText({});
 
 	window.models = {};
 
@@ -20,102 +13,97 @@
 	var Text = Backbone.Model.extend({
 
 		defaults : { activate : 0 },
-
+		
 		initialize : function(){
-
-window.models[this.cid] = this;
+			
+			window.models[this.cid] = this;
 
 			var previous = this.get('previous');
 
-			this.set({
-				path : [
-					previous && previous.get('path')
-					, previous && ops[this.get('op')]
-					, this.get('fileName')
-				].join('')
-			});
-
 			if(previous){
-
+		
 				this.perform(true);
 				this.bind('change:op', this.perform, this);
 				previous.bind('change:lines', this.perform, this);
-
+			
 			} else {
 				// needs to defer to force triggering change event
-				_.defer(this.activate.bind(this, { length : this.get('lines').length }, true))
+				_.defer(this.activate.bind(this, { length : this.get('lines').length }));
 			}
 
 		},
-
 		perform : function(added){
-			added = (added === true);
 			var self = this;
 			$.work('/scripts/workers/text.js', {
 				op : this.get('op'),
-				args : [this.get('previous').get('lines'), this.get('lines')]
+				args : [this.get('previous').get('lines'), this.get('origin')]
 			}).done(function(message){
-				self.activate(message, added);
-				if(!added){
-					self.trigger('change:lines', message.lines);
-				}
+				(added === true) ? self.activate(message) : self.set(message);
+				self.trigger('change:performed', self);
 			});
 		},
-
 		sort : function(){
 			$.work('/scripts/workers/text.js', {
 				op : 'sort',
 				args : [this.get('lines'), this.get('data')]
 			}).done(this.set.bind(this));
 		},
-
-		activate : function(args, added){
+		activate : function(args){
 			var params = args || {};
 			params.activate = this.get('activate') + 1;
-			var currentCid = currentText.get('doc') && currentText.get('doc').cid;
-console.log('added->', added);
-console.log('this.cid->', this.cid);
-console.log('currentCid->', currentCid);
-console.log('silent->', (!added && this.cid !== currentCid));
-			this.set(params, { silent : (!added && this.cid !== currentCid) });
+			this.set(params);
 		}
 			
 	});
 
+	var CurrentText = Backbone.Collection.extend({
+
+		initialize : function(){
+			_.bindAll(this, 'set', 'sameAs');
+		},
+		
+		set : function(m){
+			this.reset([_.extend({id:m.cid}, m.toJSON())]);
+		},
+
+		sameAs : function(m){
+			if(m.cid == this.first().get('id')){
+				m.trigger("change:activate", m);
+			}
+		}
+
+	});
 
 	var TextPeer = Backbone.Collection.extend({
 	
 		model: Text,
-		currentDoc : currentText,
+		document : new CurrentText([{}]),
 	
 		initialize : function(){
-		
+
 			var self = this;
-		
+
 			_.bindAll(this, 'updateDocument', 'blend');
+
 			this.bind('change:activate', this.updateDocument);
-			// this.bind('add', this.updateDocument);
-// 			this.currentDoc.bind('all', function(){
-// console.log(arguments);
-// 			});
+			this.bind('change:added', this.updateDocument);
+			this.bind('change:performed', this.document.sameAs);
 
 		},
 	
 		updateDocument : function(m){
-console.log('activated->', m.cid);
-			this.currentDoc.set({ doc : m });
+			this.document.set(m);
 			this.trigger('change:currentIndex', m.cid)
 		},
 
 		blend : function(lines, fileName, op){
-
 			this.add({
-				previous : this.currentDoc.get('doc')
+				previous : this.getByCid(this.document.first().get('id'))
 				, op : op
 				, fileName : fileName
 				, lines : lines
+				, origin : lines
 			});
-
 		}
 
 	});
@@ -124,3 +112,12 @@ console.log('activated->', m.cid);
 	app.TextPeer = TextPeer;
 
 }();
+
+
+			// this.set({
+			// 	path : [
+			// 		previous && previous.get('path')
+			// 		, previous && ops[this.get('op')]
+			// 		, this.get('fileName')
+			// 	].join('')
+			// });

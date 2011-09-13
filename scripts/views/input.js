@@ -8,25 +8,28 @@
 
 			_.bindAll(this, 'updateText');
 
-			this.collection.currentDoc.bind("change", this.updateText);
+			this.collection.document.bind("reset", this.updateText);
 
 			var self = this;
 			$('.button').click(function(evt){
-				if(self.collection.currentDoc){
-					self.collection.currentDoc.get('doc').sort();
+				if(self.collection.document){
+					self.collection.document.get('doc').sort();
 				}
 			})
 
 		},
 
-		updateText : function(model, name){
+		updateText : function(collection, name){
+console.log('reset->', arguments);
+
+			var model = collection.first();
 
 			var self = this
-			, html = model.get('doc').get('html');
+			, html = model.get('html');
 
 			self.empty();
 
-			this.trigger('updated', 'view/' + model.get('doc').cid);
+			this.trigger('updated', 'view/' + model.cid);
 
 			if( !_.isEmpty(html) ){
 
@@ -36,7 +39,7 @@
 
 			} else {
 				//TODO : optimize
-				this.el.html(model.get('doc').get('lines').join('\n'));
+				this.el.html(model.get('lines').join('\n'));
 			}
 
 		},
