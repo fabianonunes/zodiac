@@ -3,8 +3,8 @@
 	window.app = {};
 
 	$LAB.setGlobalDefaults({
-		AlwaysPreserveOrder:true,
-		BasePath: 'scripts/'
+		AlwaysPreserveOrder : true,
+		BasePath : 'scripts/'
 	});
 
 	$LAB
@@ -15,7 +15,7 @@
 	.script('libs/dust-full-0.3.0.min.js')
 	.wait(function(){
 
-		app.template = function(data, template, cb){
+		app.template = function(data, template, el, cb){
 
 			if(!dust.cache[template]){
 				
@@ -23,25 +23,16 @@
 					$('#' + template).html(),
 					template
 				);
-
 				dust.loadSource(compiled);
 
 			}
 
+			var s = document.createElement('span');
 			dust.render(template, data, function(err, out) {
-				cb(out);
+				s.innerHTML = out;
+				el.appendChild(s);
+				cb && cb();
 			});
-
-			// dust.stream(template, {
-			// 	data : data.data, 
-			// 	stream : function(chunk, context, bodies) {
-			// 		return chunk.map(function(chunk){
-			// 			chunk.render(bodies.block, context).end();
-			// 		});
-			// 	}
-			// })
-			// .on("data", cb)
-			// .on("end", end);
 
 		};
 
@@ -50,6 +41,7 @@
 	.script('views/dropper.js')
 	.script('views/mask.js')
 	.script('views/input.js')
+	.script('views/details.js')
 	// .script('models/user.js')
 	// .script('views/details.js')
 	// .script('views/shipment.js')

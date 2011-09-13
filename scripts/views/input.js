@@ -4,41 +4,37 @@
 
 		el: $('.input'),
 
-		docFragment : document.createDocumentFragment(),
-
-		template : 'tmpl-row',
-		
 		initialize: function(){
 
 			_.bindAll(this, 'updateText');
 
-			this.collection.bind("change:activate", this.updateText);
-			this.collection.bind("add", this.updateText);
+			this.collection.bind("change:currentIndex", this.updateText);
+
+			var self = this;
+			$('.button').click(function(evt){
+				self.collection.sortDocument();
+			})
 
 		},
 
-		updateText : function(model){
+		updateText : function(cid, model){
 
-			var self = this
-			, data = model.get('data');
+			var html = model.get('html');
 
-			this.trigger('updated', 'view/'+model.cid);
+			this.empty();
 
-			if( !_.isEmpty(data) ){
+			this.trigger('updated', 'view/' + cid);
 
-				self.empty();
+			if( !_.isEmpty(html) ){
 
 				var s = document.createElement('span');
-				app.template({ data : data }, this.template, function(out){
-					s.innerHTML = out;
-					self.el[0].appendChild(s);
-				});
+				s.innerHTML = html;
+				this.el[0].appendChild(s);
 
 			} else {
+				//TODO : optimize
 				this.el.html(model.get('lines').join('\n'));
 			}
-
-
 
 		},
 
