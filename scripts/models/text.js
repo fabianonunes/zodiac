@@ -20,6 +20,8 @@
 
 			var previous = this.get('previous');
 
+			this.findPath(previous);
+
 			if(previous){
 		
 				this.perform(true);
@@ -32,26 +34,47 @@
 			}
 
 		},
+		
 		perform : function(added){
+
 			var self = this;
+
 			$.work('/scripts/workers/text.js', {
 				op : this.get('op'),
 				args : [this.get('previous').get('lines'), this.get('origin')]
 			}).done(function(message){
+
+				self.findPath(self.get('previous'));
 				(added === true) ? self.activate(message) : self.set(message);
 				self.trigger('change:performed', self);
+
 			});
+
 		},
+		
 		sort : function(){
+
 			$.work('/scripts/workers/text.js', {
 				op : 'sort',
 				args : [this.get('lines'), this.get('data')]
-			}).done(this.set.bind(this));
+			}).done(this.activate.bind(this));
+
 		},
+		
 		activate : function(args){
 			var params = args || {};
 			params.activate = this.get('activate') + 1;
 			this.set(params);
+		},
+		
+		findPath : function(previous){
+			 this.set({
+				path : [
+					previous && previous.get('path')
+					, previous && ops[this.get('op')]
+					, this.get('fileName')
+				].join('')
+			});			
 		}
 			
 	});
@@ -68,15 +91,12 @@
 			_.bindAll(this, 'updateDocument', 'blend');
 
 			this.bind('change:activate', this.updateDocument);
-			this.bind('change:added', this.updateDocument);
 			this.bind('change:performed', this.performed);
 
 		},
 
 		performed : function(m){
-			if(m.cid === this.currentIndex){
-				m.trigger("change:activate", m);
-			}
+			m.cid === this.currentIndex && m.trigger("change:activate", m);
 		},
 	
 		updateDocument : function(m){
@@ -86,12 +106,20 @@
 
 		blend : function(lines, fileName, op){
 			this.add({
-				previous : this.getByCid(this.currentIndex)
+				previous : this.currentDocument()
 				, op : op
 				, fileName : fileName
 				, lines : lines
 				, origin : lines
 			});
+		},
+
+		sortDocument : function(){
+			this.currentIndex && this.currentDocument().sort();
+		},
+
+		currentDocument : function(){
+			return this.getByCid(this.currentIndex);
 		}
 
 	});
@@ -102,10 +130,4 @@
 }();
 
 
-			// this.set({
-			// 	path : [
-			// 		previous && previous.get('path')
-			// 		, previous && ops[this.get('op')]
-			// 		, this.get('fileName')
-			// 	].join('')
-			// });
+			//

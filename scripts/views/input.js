@@ -12,20 +12,16 @@
 
 			var self = this;
 			$('.button').click(function(evt){
-				if(self.collection.document){
-					self.collection.document.get('doc').sort();
-				}
+				self.collection.sortDocument();
 			})
 
 		},
 
 		updateText : function(cid, model){
-console.log('reset->', arguments);
 
-			var self = this
-			, html = model.get('html');
+			var html = model.get('html');
 
-			self.empty();
+			this.empty();
 
 			this.trigger('updated', 'view/' + cid);
 
