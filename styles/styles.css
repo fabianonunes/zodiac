@@ -1,8 +1,10 @@
 .path {
     position: relative;
     float:right;
-    width: 200px;
-    border: 1px solid red;
+    width: 300px;
+    border: 1px dotted #aaa;
+    padding: 10px;
+    line-height: 30px;
 }
 .red {
 	background: #FFDDFF;

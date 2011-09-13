@@ -16,8 +16,6 @@
 		
 		initialize : function(){
 			
-			window.models[this.cid] = this;
-
 			var previous = this.get('previous');
 
 			this.findPath(previous);
@@ -45,7 +43,7 @@
 			$.work('/scripts/workers/text.js', {
 				op : this.get('op'),
 				args : [this.get('previous').get('lines'), this.get('origin')]
-			}).done(function(message){
+			}, function(message){
 
 				self.findPath(self.get('previous'));
 				(added === true) ? self.activate(message) : self.set(message);
@@ -60,7 +58,7 @@
 			$.work('/scripts/workers/text.js', {
 				op : 'sort',
 				args : [this.get('lines'), this.get('data')]
-			}).done(this.activate.bind(this));
+			}, this.activate.bind(this));
 
 		},
 		

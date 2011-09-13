@@ -39,7 +39,18 @@
 
 	<script id="path" type="text/html">
 		{#documents}
-			<span class='{cid}'>[{cid} - {op}]</span> {fileName} - {length}</br>
+			{?op}
+				<select class='{cid}'>	
+					{#ops}
+						<option value='{type}' 
+						{?selected}
+							selected='{selected}'
+						{/selected}
+						>{symbol}</option>
+					{/ops}
+				</select>
+			{/op}
+			<a href='#view/{cid}'>{fileName}</a> - {length}</br>
 		{/documents}
 	</script>
 	<script id="details" type="text/html">
