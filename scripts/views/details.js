@@ -10,18 +10,13 @@
 
 			_.bindAll(this, 'updateText');
 
-			this.collection.bind("change", this.updateText);
-			this.collection.bind("add", this.updateText);
+			this.collection.bind("change:currentIndex", this.updateText);
 
 		},
 
-		updateText : function(model, name){
-
-console.log(model);
+		updateText : function(cid, model){
 
 			this.empty();
-
-console.log(arguments);
 
 			app.template(model.toJSON(), this.template, this.el[0]);
 

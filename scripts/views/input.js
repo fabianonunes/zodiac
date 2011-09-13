@@ -8,26 +8,22 @@
 
 			_.bindAll(this, 'updateText');
 
-			this.collection.bind("change", this.updateText);
-			this.collection.bind("add", this.updateText);
+			this.collection.bind("change:currentIndex", this.updateText);
 
 			var self = this;
 			$('.button').click(function(evt){
-				if(self.collection.currentDoc){
-					self.collection.currentDoc.sort();
-				}
+				self.collection.sortDocument();
 			})
 
 		},
 
-		updateText : function(model){
+		updateText : function(cid, model){
 
-			var self = this
-			, html = model.get('html');
+			var html = model.get('html');
 
-			self.empty();
+			this.empty();
 
-			this.trigger('updated', 'view/' + model.cid);
+			this.trigger('updated', 'view/' + cid);
 
 			if( !_.isEmpty(html) ){
 

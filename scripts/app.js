@@ -23,7 +23,6 @@
 					$('#' + template).html(),
 					template
 				);
-
 				dust.loadSource(compiled);
 
 			}
