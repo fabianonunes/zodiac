@@ -17,6 +17,8 @@
 
 		updateText : function(model, name){
 
+console.log(model);
+
 			this.empty();
 
 console.log(arguments);

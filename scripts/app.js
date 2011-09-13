@@ -29,7 +29,7 @@
 			}
 
 			var s = document.createElement('span');
-			dust.render(template, {data : data}, function(err, out) {
+			dust.render(template, data, function(err, out) {
 				s.innerHTML = out;
 				el.appendChild(s);
 				cb && cb();

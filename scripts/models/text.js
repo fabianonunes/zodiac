@@ -1,17 +1,24 @@
 !function(){
 
+	var ops = {
+		union : '∪'
+		, intersection : '∩'
+		, difference : '∖'
+		, symmetric : '⊖'
+	};
+
 	var Text = Backbone.Model.extend({
 
 		initialize : function(){
 
-console.log(this);
-
-			this.bind('change:lines', function(model){
-console.log(model);
-				model.set({
-					length : model.get('lines').length
-				});
-			}, this);
+			this.set({
+				length : this.get('lines').length
+				, path : [
+					this.get('previous') && this.get('previous').get('path')
+					, ops[this.get('op')]
+					, this.get('fileName')
+				].join('')
+			});
 
 		},
 
@@ -77,6 +84,7 @@ console.log(model);
 					op : op,
 					args : [this.currentDoc.get('lines'), lines]
 				}).done(function(message){
+					self.currentDoc && (message.previous = self.currentDoc);
 					message.op = op;
 					message.fileName = fileName;
 					self.add(new Text(message));
