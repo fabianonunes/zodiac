@@ -17,11 +17,7 @@
 
 		updateText : function(model, name){
 
-console.log(model);
-
 			this.empty();
-
-console.log(arguments);
 
 			app.template(model.toJSON(), this.template, this.el[0]);
 

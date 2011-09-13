@@ -11,15 +11,39 @@
 
 		initialize : function(){
 
+			var previous = this.get('previous');
+
 			this.set({
-				length : this.get('lines').length
-				, path : [
-					this.get('previous') && this.get('previous').get('path')
-					, ops[this.get('op')]
+				path : [
+					previous && previous.get('path')
+					, previous && ops[this.get('op')]
 					, this.get('fileName')
 				].join('')
 			});
 
+			if(previous){
+
+				this.perform(this.get('op'));
+
+				previous.bind('change:op', this.perform, this);
+
+			} else {
+				this.set({ length : this.get('lines').length });
+				// needs to defer to force triggering change event
+				_.defer(this.activate.bind(this))
+
+			}
+
+
+		},
+
+		perform : function(op){
+
+			$.work('/scripts/workers/text.js', {
+				op : op,
+				args : [this.get('previous').get('lines'), this.get('lines')]
+			}).done(this.set.bind(this));
+			
 		},
 
 		defaults : {
@@ -69,29 +93,13 @@
 
 		blend : function(lines, fileName, op){
 
-			var self = this;
+			this.add({
+				previous : this.currentDoc
+				, op : op
+				, fileName : fileName
+				, lines : lines
+			});
 
-			if(_.isNull(this.currentDoc)){
-
-				this.add({
-					lines : lines
-					, fileName : fileName
-				});
-
-			} else {
-
-				$.work('/scripts/workers/text.js', {
-					op : op,
-					args : [this.currentDoc.get('lines'), lines]
-				}).done(function(message){
-					self.currentDoc && (message.previous = self.currentDoc);
-					message.op = op;
-					message.fileName = fileName;
-					self.add(new Text(message));
-				})
-
-			}
-		
 		}
 
 	});

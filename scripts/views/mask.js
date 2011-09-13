@@ -35,7 +35,7 @@
 				reader.onload = function(event){
 					defer.resolve({
 						text : event.target.result
-						, fileName : file.fileName
+						, fileName : file.name
 					});
 				}
 

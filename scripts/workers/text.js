@@ -20,7 +20,6 @@ var TextWorker = {
 			})
 		});
 
-
 		strut = _.sortBy(strut, function(v){ return v.line; });
 
 		template(strut, function(chunk, context, bodies) {
@@ -67,6 +66,7 @@ var TextWorker = {
 			cb({
 				html : out
 				, lines : value
+				, length : value.length
 				, data : classes
 			});				
 		})
@@ -104,6 +104,7 @@ var TextWorker = {
 			cb({
 				html : out
 				, lines : value
+				, length : value.length
 				, data : classes
 			});					
 		});
@@ -142,6 +143,7 @@ var TextWorker = {
 			cb({
 				html : out
 				, lines : value
+				, length : value.length
 				, data : classes
 			});			
 		});

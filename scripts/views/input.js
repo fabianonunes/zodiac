@@ -9,7 +9,6 @@
 			_.bindAll(this, 'updateText');
 
 			this.collection.bind("change", this.updateText);
-			this.collection.bind("add", this.updateText);
 
 			var self = this;
 			$('.button').click(function(evt){
@@ -20,7 +19,7 @@
 
 		},
 
-		updateText : function(model){
+		updateText : function(model, name){
 
 			var self = this
 			, html = model.get('html');
