@@ -56,30 +56,10 @@
 			
 	});
 
-	// TODO: isso aqui não precisa ser uma Collection. O método set é muito caro.
-	var CurrentText = Backbone.Collection.extend({
-
-		initialize : function(){
-			_.bindAll(this, 'set', 'sameAs');
-		},
-		
-		set : function(m){
-			this.reset([_.extend({id:m.cid}, m.toJSON())]);
-		},
-
-		sameAs : function(m){
-			if(m.cid == this.first().get('id')){
-				m.trigger("change:activate", m);
-			}
-		}
-
-	});
-
 	var TextPeer = Backbone.Collection.extend({
 	
 		model: Text,
-		document : new CurrentText([{}]),
-		documentId : null,
+		currentIndex : null,
 	
 		initialize : function(){
 
@@ -94,19 +74,19 @@
 		},
 
 		performed : function(m){
-			if(m.cid === this.documentId){
+			if(m.cid === this.currentIndex){
 				m.trigger("change:activate", m);
 			}
 		},
 	
 		updateDocument : function(m){
-			this.documentId = m.cid;
+			this.currentIndex = m.cid;
 			this.trigger('change:currentIndex', m.cid, m)
 		},
 
 		blend : function(lines, fileName, op){
 			this.add({
-				previous : this.getByCid(this.document.first().get('id'))
+				previous : this.getByCid(this.currentIndex)
 				, op : op
 				, fileName : fileName
 				, lines : lines
