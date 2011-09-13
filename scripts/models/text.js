@@ -56,6 +56,7 @@
 			
 	});
 
+	// TODO: isso aqui não precisa ser uma Collection. O método set é muito caro.
 	var CurrentText = Backbone.Collection.extend({
 
 		initialize : function(){
