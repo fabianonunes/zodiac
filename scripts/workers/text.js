@@ -38,6 +38,7 @@ var TextWorker = {
 				html : out
 				, length : strut.length
 			});
+			close();
 		});
 
 	},

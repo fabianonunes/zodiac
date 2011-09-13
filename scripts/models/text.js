@@ -44,13 +44,17 @@
 				op : this.get('op'),
 				args : [this.get('previous').get('lines'), this.get('origin')]
 			}, function(message){
-
-				self.findPath(self.get('previous'));
-				(added === true) ? self.activate(message) : self.set(message);
-				self.trigger('change:performed', self);
-
+				self.afterWork(added, message);
 			});
 
+			//this.afterWork.bind(this, added)
+
+		},
+
+		afterWork : function(added, message){
+			this.findPath(this.get('previous'));
+			(added === true) ? this.activate(message) : this.set(message);
+			this.trigger('change:performed', this);
 		},
 		
 		sort : function(){

@@ -26,24 +26,24 @@
 
 		readFile : function(file, cb){
 
-			return $.Deferred(function(defer){
+			// return $.Deferred(function(defer){
 
 				var reader = new FileReader();
 
 				var r;
 
 				reader.onload = function(event){
-					defer.resolve({
+					cb({
 						text : event.target.result
 						, fileName : file.name
 					});
 				}
 
-				reader.onerror = defer.reject;
+				// reader.onerror = defer.reject;
 
 				reader.readAsText(file);
 
-			}).promise();
+			// }).promise();
 
 		},
 
@@ -81,14 +81,16 @@
 
 			evt.stopImmediatePropagation();
 
-			this.readFile(files[0]).done(function(obj){
-				self.collection.blend(obj.text.split('\n'), obj.fileName, op);
-			});
+			this.readFile(files[0], this.blend.bind(this, op));
 
 			$(evt.target).removeClass('over');
 
 			this.el.hide();
 
+		},
+
+		blend : function(op, obj){
+			this.collection.blend(obj.text.split('\n'), obj.fileName, op);
 		}
 		
 	});
