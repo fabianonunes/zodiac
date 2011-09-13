@@ -42,6 +42,7 @@
 	.script('views/mask.js')
 	.script('views/input.js')
 	.script('views/details.js')
+	.script('views/path.js')
 	// .script('models/user.js')
 	// .script('views/details.js')
 	// .script('views/shipment.js')
