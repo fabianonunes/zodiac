@@ -8,6 +8,10 @@
 
 <body>
 
+	<div class="path">
+
+	</div>
+
 	<div id="main">
 
 		<div id="dropper" class="drop_zone">
@@ -31,12 +35,13 @@
 	<div class="details">
 
 	</div>
-	<div class="path">
-
-	</div>
 
 
-
+	<script id="path" type="text/html">
+		{#documents}
+			<span class='{cid}'>[{cid} - {op}]</span> {fileName} - {length}</br>
+		{/documents}
+	</script>
 	<script id="details" type="text/html">
 		Tamanho: {length}</br>
 		Caminho: {path}		

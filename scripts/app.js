@@ -43,13 +43,6 @@
 	.script('views/input.js')
 	.script('views/details.js')
 	.script('views/path.js')
-	// .script('models/user.js')
-	// .script('views/details.js')
-	// .script('views/shipment.js')
-	// .script('views/user.js')
-	// .script('views/shipmentslist.js')
-	// .script('views/userslist.js')
-	// .script('views/rendermode.js')
 	.script('controllers/controller.js');
 
 

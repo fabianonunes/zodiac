@@ -22,6 +22,8 @@
 
 			this.findPath(previous);
 
+			this.set({ cid : this.cid });
+
 			if(previous){
 		
 				this.perform(true);
@@ -30,6 +32,7 @@
 			
 			} else {
 				// needs to defer to force triggering change event
+				this.set({op : null});
 				_.defer(this.activate.bind(this, { length : this.get('lines').length }));
 			}
 

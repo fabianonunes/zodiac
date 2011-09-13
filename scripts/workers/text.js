@@ -34,7 +34,10 @@ var TextWorker = {
 			chunk.render(bodies.block, base.push(ck));
 
 		}, function(out){
-			cb({ html : out });
+			cb({
+				html : out
+				, length : strut.length
+			});
 		});
 
 	},

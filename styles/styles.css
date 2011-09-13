@@ -1,3 +1,9 @@
+.path {
+    position: relative;
+    float:right;
+    width: 200px;
+    border: 1px solid red;
+}
 .red {
 	background: #FFDDFF;
 }

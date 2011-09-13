@@ -8,10 +8,19 @@
 
 		initialize: function(){
 
+			_.bindAll(this, 'render');
+
+			this.collection.bind('change', this.render);
+
+		},
+
+		render : function(){
+console.log('rendering->');
+			this.empty();
+			app.template({ documents : this.collection.toJSON() }, this.template, this.el[0]);
 		},
 
 
-		// app.template(model.toJSON(), this.template, this.el[0]);
 
 		empty : function(){
 			while(this.el[0].firstChild){
