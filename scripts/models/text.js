@@ -79,6 +79,7 @@
 	
 		model: Text,
 		document : new CurrentText([{}]),
+		documentId : null,
 	
 		initialize : function(){
 
@@ -88,13 +89,19 @@
 
 			this.bind('change:activate', this.updateDocument);
 			this.bind('change:added', this.updateDocument);
-			this.bind('change:performed', this.document.sameAs);
+			this.bind('change:performed', this.performed);
 
+		},
+
+		performed : function(m){
+			if(m.cid === this.documentId){
+				m.trigger("change:activate", m);
+			}
 		},
 	
 		updateDocument : function(m){
-			this.document.set(m);
-			this.trigger('change:currentIndex', m.cid)
+			this.documentId = m.cid;
+			this.trigger('change:currentIndex', m.cid, m)
 		},
 
 		blend : function(lines, fileName, op){

@@ -8,7 +8,7 @@
 
 			_.bindAll(this, 'updateText');
 
-			this.collection.document.bind("reset", this.updateText);
+			this.collection.bind("change:currentIndex", this.updateText);
 
 			var self = this;
 			$('.button').click(function(evt){
@@ -19,17 +19,15 @@
 
 		},
 
-		updateText : function(collection, name){
+		updateText : function(cid, model){
 console.log('reset->', arguments);
-
-			var model = collection.first();
 
 			var self = this
 			, html = model.get('html');
 
 			self.empty();
 
-			this.trigger('updated', 'view/' + model.cid);
+			this.trigger('updated', 'view/' + cid);
 
 			if( !_.isEmpty(html) ){
 
