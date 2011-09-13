@@ -34,7 +34,7 @@ var TextWorker = {
 			chunk.render(bodies.block, base.push(ck));
 
 		}, function(out){
-			cb(out);
+			cb({ html : out });
 		});
 
 	},

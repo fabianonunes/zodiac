@@ -8,12 +8,12 @@
 
 			_.bindAll(this, 'updateText');
 
-			this.collection.bind("change", this.updateText);
+			this.collection.currentDoc.bind("change", this.updateText);
 
 			var self = this;
 			$('.button').click(function(evt){
 				if(self.collection.currentDoc){
-					self.collection.currentDoc.sort();
+					self.collection.currentDoc.get('doc').sort();
 				}
 			})
 
@@ -22,11 +22,11 @@
 		updateText : function(model, name){
 
 			var self = this
-			, html = model.get('html');
+			, html = model.get('doc').get('html');
 
 			self.empty();
 
-			this.trigger('updated', 'view/' + model.cid);
+			this.trigger('updated', 'view/' + model.get('doc').cid);
 
 			if( !_.isEmpty(html) ){
 
@@ -36,7 +36,7 @@
 
 			} else {
 				//TODO : optimize
-				this.el.html(model.get('lines').join('\n'));
+				this.el.html(model.get('doc').get('lines').join('\n'));
 			}
 
 		},
