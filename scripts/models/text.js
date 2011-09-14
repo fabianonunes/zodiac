@@ -1,6 +1,5 @@
 !function(){
 
-
 	window.models = {};
 
 	var ops = {
@@ -26,7 +25,7 @@
 		
 				this.perform(true);
 				this.bind('change:op', this.perform, this);
-				previous.bind('change:lines', this.perform, this);
+				// previous.bind('change:lines', this.perform, this);
 			
 			} else {
 				// needs to defer to force triggering change event
@@ -38,7 +37,7 @@
 		
 		perform : function(added){
 
-			$.work('/scripts/workers/text.js', {
+			$.work('/scripts/workers/text-worker.js', {
 				op : this.get('op'),
 				args : [this.get('previous').get('lines'), this.get('origin')]
 			}, this.afterWork.bind(this, added));
@@ -55,7 +54,7 @@
 		
 		sort : function(){
 
-			$.work('/scripts/workers/text.js', {
+			$.work('/scripts/workers/text-worker.js', {
 				op : 'sort',
 				args : [this.get('lines'), this.get('data')]
 			}, this.activate.bind(this));
@@ -105,13 +104,13 @@
 			this.trigger('change:currentIndex', m.cid, m)
 		},
 
-		blend : function(lines, fileName, op){
+		blend : function(file, lines, op){
 			this.add({
 				previous : this.currentDocument()
 				, op : op
-				, fileName : fileName
+				, fileName : file.name
 				, lines : lines
-				, origin : lines
+				, origin : file
 			});
 		},
 
