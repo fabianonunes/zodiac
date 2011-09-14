@@ -29,8 +29,18 @@
 
 		render : function(){
 			this.empty();
+
+			var docs = this.collection.toJSON().map(function(doc){
+				return {
+					op : doc.op
+					, fileName : doc.fileName
+					, length : doc.length
+					, cid : doc.cid
+				};
+			});
+
 			app.template({
-				documents : this.collection.toJSON()
+				documents : docs
 				, ops : function(chunk, context, bodies){
 					var document = context.current();
 					var retval = [];

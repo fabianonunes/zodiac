@@ -18,7 +18,12 @@
 
 			this.empty();
 
-			app.template(model.toJSON(), this.template, this.el[0]);
+			var doc = model.toJSON();
+
+			app.template({
+				length : doc.length
+				, path : doc.path
+			}, this.template, this.el[0]);
 
 		},
 
