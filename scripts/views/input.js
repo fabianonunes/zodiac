@@ -28,7 +28,7 @@
 			if( !_.isEmpty(html) ){
 
 				var s = document.createElement('span');
-				s.innerHTML = html;
+				$(s).html(html);
 				this.el[0].appendChild(s);
 
 			} else {
