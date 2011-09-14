@@ -17,9 +17,7 @@
 
 		},
 
-		updateText : function(cid, model){
-
-			var html = model.get('html');
+		updateText : function(cid, model, html){
 
 			this.el.empty();
 
@@ -28,12 +26,12 @@
 			if( !_.isEmpty(html) ){
 
 				var s = document.createElement('span');
-				$(s).html(html);
+				s.innerHTML = html;
 				this.el[0].appendChild(s);
 
 			} else {
 				//TODO : optimize
-				this.el.html(model.get('lines').join('\n'));
+				this.el.html(model.lines.join('\n'));
 			}
 
 		},
