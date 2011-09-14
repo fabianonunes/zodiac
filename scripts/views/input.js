@@ -21,7 +21,7 @@
 
 			var html = model.get('html');
 
-			this.empty();
+			this.el.empty();
 
 			this.trigger('updated', 'view/' + cid);
 
@@ -39,6 +39,7 @@
 		},
 
 		empty : function(){
+
 			while(this.el[0].firstChild){
 				this.el[0].removeChild(this.el[0].firstChild);
 			}		

@@ -172,7 +172,10 @@ var TextWorker = {
 
 onmessage = function(message){
 	var d = message.data;
-	d.args.push(postMessage);
+	d.args.push(function(args){
+		postMessage(args);
+		close();
+	});
 	var r = TextWorker[d.op].apply(TextWorker, d.args);
 }
 

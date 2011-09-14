@@ -38,12 +38,10 @@
 		
 		perform : function(added){
 
-			var self = this;
-
 			$.work('/scripts/workers/text.js', {
 				op : this.get('op'),
 				args : [this.get('previous').get('lines'), this.get('origin')]
-			}, self.afterWork.bind(self, added));
+			}, this.afterWork.bind(this, added));
 
 			//this.afterWork.bind(this, added)
 
