@@ -37,8 +37,6 @@
 		
 		perform : function(added){
 
-console.log('perform->', arguments);
-
 			$.work('/scripts/workers/text-worker.js', {
 				op : this.get('op')
 				, previous : this.getPrevious().lines
@@ -137,6 +135,3 @@ console.log('perform->', arguments);
 	app.TextPeer = TextPeer;
 
 }();
-
-
-			//
