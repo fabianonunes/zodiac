@@ -16,11 +16,11 @@
 		
 		initialize : function(){
 			
-			window.models[this.cid] = this;
-
 			var previous = this.get('previous');
 
 			this.findPath(previous);
+
+			this.set({ cid : this.cid });
 
 			if(previous){
 		
@@ -30,6 +30,7 @@
 			
 			} else {
 				// needs to defer to force triggering change event
+				this.set({op : null});
 				_.defer(this.activate.bind(this, { length : this.get('lines').length }));
 			}
 
@@ -37,19 +38,19 @@
 		
 		perform : function(added){
 
-			var self = this;
-
 			$.work('/scripts/workers/text.js', {
 				op : this.get('op'),
 				args : [this.get('previous').get('lines'), this.get('origin')]
-			}).done(function(message){
+			}, this.afterWork.bind(this, added));
 
-				self.findPath(self.get('previous'));
-				(added === true) ? self.activate(message) : self.set(message);
-				self.trigger('change:performed', self);
+			//this.afterWork.bind(this, added)
 
-			});
+		},
 
+		afterWork : function(added, message){
+			this.findPath(this.get('previous'));
+			(added === true) ? this.activate(message.data) : this.set(message.data);
+			this.trigger('change:performed', this);
 		},
 		
 		sort : function(){
@@ -57,7 +58,7 @@
 			$.work('/scripts/workers/text.js', {
 				op : 'sort',
 				args : [this.get('lines'), this.get('data')]
-			}).done(this.activate.bind(this));
+			}, this.activate.bind(this));
 
 		},
 		

@@ -21,14 +21,14 @@
 
 			var html = model.get('html');
 
-			this.empty();
+			this.el.empty();
 
 			this.trigger('updated', 'view/' + cid);
 
 			if( !_.isEmpty(html) ){
 
 				var s = document.createElement('span');
-				s.innerHTML = html;
+				$(s).html(html);
 				this.el[0].appendChild(s);
 
 			} else {
@@ -39,6 +39,7 @@
 		},
 
 		empty : function(){
+
 			while(this.el[0].firstChild){
 				this.el[0].removeChild(this.el[0].firstChild);
 			}		

@@ -1,28 +1,17 @@
 
-$.work = (function(){
+$.work = function(file, options, cb) {
 
-	var cache = {};
-	return function(file, options) {
+	if (window.Worker) {
 
-		var dfd = new $.Deferred();
-			
-		if (window.Worker) {
+		// cache[file] || (cache[file] = new Worker(file));
 
-			cache[file] || (cache[file] = new Worker(file));
-
-			var worker = cache[file];
-		
-			worker.addEventListener('message', function(event) {
-				dfd.resolve(event.data); 
-			}, false);
-
-			worker.addEventListener('error', dfd.reject, false);
-			worker.postMessage(options);
-
+		var worker = new Worker(file);//cache[file];
+		worker.onmessage = function(event){
+			cb(event);
+			worker.terminate();
 		}
+		worker.postMessage(options);
 
-		return dfd.promise();
+	}
 
-	};
-
-})();
+};
