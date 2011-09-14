@@ -97,7 +97,7 @@
 		},
 
 		performed : function(m){
-			m.cid === this.currentIndex && m.trigger("change:activate", m);
+			m.cid === this.currentIndex && this.updateDocument(m);
 		},
 	
 		updateDocument : function(m){
