@@ -4,9 +4,13 @@
 
 		el: $('.input'),
 
+		events : {
+			'click' : 'selectText'
+		},
+
 		initialize: function(){
 
-			_.bindAll(this, 'updateText');
+			_.bindAll(this, 'updateText', 'selectText');
 
 			this.collection.bind("change:currentIndex", this.updateText);
 
@@ -15,6 +19,12 @@
 				self.collection.sortDocument();
 			})
 
+		},
+
+		selectText : function(){
+			var range = document.createRange();
+			range.selectNode(this.el[0]);
+			window.getSelection().addRange(range);						
 		},
 
 		updateText : function(cid, model, html){
