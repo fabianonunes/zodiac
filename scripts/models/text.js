@@ -1,6 +1,5 @@
 !function(){
 
-
 	window.models = {};
 
 	var ops = {
@@ -14,48 +13,57 @@
 
 		defaults : { activate : 0 },
 		
-		initialize : function(){
-			
-			var previous = this.get('previous');
+		initialize : function(attrs, options){
 
-			this.findPath(previous);
-
+			this.lines = options.lines;
+			this.collection = options.collection;
 			this.set({ cid : this.cid });
 
-			if(previous){
+			// this.findPath(this.getPrevious());
+
+			if(this.get('previous')){
 		
 				this.perform(true);
 				this.bind('change:op', this.perform, this);
-				previous.bind('change:lines', this.perform, this);
+				this.getPrevious().bind('change:length', this.perform, this);
 			
 			} else {
 				// needs to defer to force triggering change event
 				this.set({op : null});
-				_.defer(this.activate.bind(this, { length : this.get('lines').length }));
+				_.defer(this.activate.bind(this));
 			}
 
 		},
 		
 		perform : function(added){
 
-			$.work('/scripts/workers/text.js', {
-				op : this.get('op'),
-				args : [this.get('previous').get('lines'), this.get('origin')]
+			$.work('/scripts/workers/text-worker.js', {
+				op : this.get('op')
+				, previous : this.getPrevious().lines
+				, file : this.get('origin')
 			}, this.afterWork.bind(this, added));
-
-			//this.afterWork.bind(this, added)
 
 		},
 
-		afterWork : function(added, message){
-			this.findPath(this.get('previous'));
-			(added === true) ? this.activate(message.data) : this.set(message.data);
-			this.trigger('change:performed', this);
+		afterWork : function(added, message){			
+
+			this.findPath(this.getPrevious());
+
+			this.lines = message.data.lines;
+
+			var data = { length : message.data.length };
+
+			(added === true) ? this.activate(data) : this.set(data);
+			
+			if(this.cid === this.collection.currentIndex){
+				this.collection.updateDocument(this, message.data.html);
+			} 
+
 		},
 		
 		sort : function(){
 
-			$.work('/scripts/workers/text.js', {
+			$.work('/scripts/workers/text-worker.js', {
 				op : 'sort',
 				args : [this.get('lines'), this.get('data')]
 			}, this.activate.bind(this));
@@ -66,6 +74,10 @@
 			var params = args || {};
 			params.activate = this.get('activate') + 1;
 			this.set(params);
+		},
+
+		getPrevious : function(){
+			return this.collection.getByCid(this.get('previous'));
 		},
 		
 		findPath : function(previous){
@@ -88,31 +100,25 @@
 		initialize : function(){
 
 			var self = this;
-
 			_.bindAll(this, 'updateDocument', 'blend');
-
 			this.bind('change:activate', this.updateDocument);
-			this.bind('change:performed', this.performed);
 
 		},
 
-		performed : function(m){
-			m.cid === this.currentIndex && this.updateDocument(m);
-		},
-	
-		updateDocument : function(m){
+		updateDocument : function(m, html){
 			this.currentIndex = m.cid;
-			this.trigger('change:currentIndex', m.cid, m)
+			this.trigger('change:currentIndex', m.cid, m, html)
 		},
 
-		blend : function(lines, fileName, op){
-			this.add({
-				previous : this.currentDocument()
+		blend : function(file, lines, op){
+			var m = new Text({
+				previous : this.currentIndex
 				, op : op
-				, fileName : fileName
-				, lines : lines
-				, origin : lines
-			});
+				, fileName : file.name
+				, length : lines.length
+				, origin : file
+			}, { lines : lines, collection : this });
+			this.add(m);
 		},
 
 		sortDocument : function(){
@@ -129,6 +135,3 @@
 	app.TextPeer = TextPeer;
 
 }();
-
-
-			//

@@ -77,7 +77,7 @@ var TextWorker = {
 
 	},
 
-	union : function(lines1, lines2, cb){
+	union : function(lines2, lines1){
 
 		var value = [] , classes = []
 		, last = { clazz : false }
@@ -105,17 +105,17 @@ var TextWorker = {
 			classes.push(uq[v]);
 
 		}, function(out){
-			cb({
+			postMessage({
 				html : out
 				, lines : value
 				, length : value.length
-				, data : classes
+				// , data : classes
 			});					
 		});
 
 	},
 
-	intersection : function(lines1, lines2, cb){
+	intersection : function(lines2, lines1){
 
 		var value = [], classes = []
 		, last = { clazz : false }
@@ -144,11 +144,11 @@ var TextWorker = {
 			}
 
 		}, function(out){
-			cb({
+			postMessage({
 				html : out
 				, lines : value
 				, length : value.length
-				, data : classes
+				// , data : classes
 			});			
 		});
 
@@ -172,11 +172,7 @@ var TextWorker = {
 
 onmessage = function(message){
 	var d = message.data;
-	d.args.push(function(args){
-		postMessage(args);
-		close();
-	});
-	var r = TextWorker[d.op].apply(TextWorker, d.args);
+	readFile(d.file, TextWorker[d.op].bind(TextWorker, d.previous));
 }
 
 
@@ -194,4 +190,14 @@ function template(data, stream, cb){
 		cb(streamed);
 	});
 
+}
+
+function readFile(file, pmcb){
+	var reader = new FileReader();
+	reader.onload = function(event){
+		var r = event.target.result.trim();
+		pmcb(r.split('\n'), r);
+	};
+	reader.onerror = postMessage
+	reader.readAsText(file);
 }

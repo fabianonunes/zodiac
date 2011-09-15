@@ -24,7 +24,6 @@
 					template
 				);
 				dust.loadSource(compiled);
-				console.log(compiled);
 
 			}
 
