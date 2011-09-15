@@ -1,7 +1,5 @@
 !function(){
 
-	window.models = {};
-
 	var ops = {
 		union : '∪'
 		, intersection : '∩'
