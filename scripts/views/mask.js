@@ -24,16 +24,6 @@
 			_.bindAll(this, 'onEnter', 'onDrop');
 		},
 
-		readFile : function(file, readFileCallback){
-
-			var reader = new FileReader();
-
-			reader.onload = readFileCallback.bind(null, file);
-
-			reader.readAsText(file);
-
-		},
-
 		cancel : function(evt){
 			evt.preventDefault();
 			evt.stopPropagation();
@@ -59,30 +49,20 @@
 
 		onDrop : function(evt){
 
-			var self = this
-			, op = $(evt.currentTarget).attr('class').split(' ')[0]
-			, dt = evt.originalEvent.dataTransfer
-			, files = dt.files;
-
 			this.cancel(evt);
-
 			evt.stopImmediatePropagation();
+			
+			var target = $(evt.target)
+			, op = target.attr('class').split(' ')[0]
+			, dt = evt.originalEvent.dataTransfer;
 
-			this.readFile(files[0], this.blend.bind(this, op));
+			this.collection.blend(dt.files[0], op);
 
-			$(evt.target).removeClass('over');
-
+			target.removeClass('over');
 			this.el.hide();
 
-		},
-
-		blend : function(op, file, event){
-			var lines = event.target.result.split('\n').map(function(v){
-				return v.trim();
-			});
-			this.collection.blend(file, lines, op);
 		}
-		
+
 	});
 
 }();

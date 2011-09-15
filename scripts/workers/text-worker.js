@@ -195,7 +195,18 @@ var TextWorker = {
 			});			
 		});
 
+	},
+
+	charge : function(lines2, lines1){
+		
+		postMessage({
+			html : lines1.join('\n')
+			, lines : lines1
+			, length : lines1.length
+		});					
+	
 	}
+
 };
 
 onmessage = function(message){

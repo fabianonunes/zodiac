@@ -30,7 +30,6 @@
 		updateText : function(cid, model, html){
 
 			this.el.empty();
-console.log(html);
 
 			this.trigger('updated', 'view/' + cid);
 
