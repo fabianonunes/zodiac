@@ -45,8 +45,6 @@
 
 		afterWork : function(added, message){
 
-console.log('afterWork->', added, message.data);
-
 			this.findPath(this.getPrevious());
 
 			this.lines = message.data.lines;

@@ -51,11 +51,11 @@ var TextWorker = {
 		, last = {}
 		, base = dust.makeBase();
 
-		lines2.forEach(function(v, k){
+		lines1.forEach(function(v, k){
 			uq[v] = true;
 		});
 
-		template(lines1, function(chunk, context, bodies){
+		template(lines2, function(chunk, context, bodies){
 			var v = context.current();
 			if(!uq[v]){
 				var ck = {

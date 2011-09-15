@@ -52,13 +52,12 @@
 			this.cancel(evt);
 			evt.stopImmediatePropagation();
 			
-			var target = $(evt.target)
+			var target = $(evt.target).removeClass('over')
 			, op = target.attr('class').split(' ')[0]
 			, dt = evt.originalEvent.dataTransfer;
 
 			this.collection.blend(dt.files[0], op);
 
-			target.removeClass('over');
 			this.el.hide();
 
 		}
