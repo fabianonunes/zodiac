@@ -77,7 +77,10 @@
 		},
 
 		blend : function(op, file, event){
-			this.collection.blend(file, event.target.result.split('\n'), op);
+			var lines = event.target.result.split('\n').map(function(v){
+				return v.trim();
+			});
+			this.collection.blend(file, lines, op);
 		}
 		
 	});
