@@ -43,7 +43,7 @@ var TextWorker = {
 
 	},
 
-	difference : function(lines1, lines2, cb){
+	difference : function(lines2, lines1){
 
 		var value = []
 		, classes = []
@@ -67,11 +67,11 @@ var TextWorker = {
 				classes.push(last.clazz);
 			}
 		}, function(out){
-			cb({
+			postMessage({
 				html : out
 				, lines : value
 				, length : value.length
-				, data : classes
+				// , data : classes
 			});				
 		})
 
@@ -154,20 +154,48 @@ var TextWorker = {
 
 	},
 
-	symmetric : function(lines1, lines2, cb){
-		var intersection = _.intersection(lines1, lines2);
-		var union = _.union(lines1, lines2);
-		var value = _.difference(union, intersection);
-		var html = this.blame(value, lines1, lines2);
-		dust.render("tmpl-row", {data:html}, function(err, out) {
-			cb({
-				html : out
-				, data : html
-				, lines : value
-			});
-		});
-	}
+	symmetric : function(lines2, lines1){
 
+		var value = [], classes = []
+		, last = { clazz : false }
+		, o = {} , base = dust.makeBase();
+
+		lines2.forEach(function(v){
+			o[v] = +[o[v]] + 1;
+		});
+
+		lines1.forEach(function(v){
+			o[v] = +[o[v]] + 1;
+		});		
+
+		template(Object.keys(o), function(chunk, context, bodies) {
+
+			var v = context.current();
+
+			if(o[v] == 1){
+
+				var ck = {
+					line : v
+					, clazz : !last.clazz && (last.clazz = 'redblue')
+				};
+
+				chunk.render(bodies.block, base.push(ck));
+
+				value.push(v);
+				classes.push(last.clazz);
+
+			}
+
+		}, function(out){
+			postMessage({
+				html : out
+				, lines : value
+				, length : value.length
+				// , data : classes
+			});			
+		});
+
+	}
 };
 
 onmessage = function(message){

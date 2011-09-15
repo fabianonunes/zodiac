@@ -43,7 +43,8 @@
 
 		},
 
-		afterWork : function(added, message){			
+		afterWork : function(added, message){		
+// console.log('afterWork->', message);
 
 			this.findPath(this.getPrevious());
 
