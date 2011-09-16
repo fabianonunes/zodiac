@@ -234,8 +234,11 @@ function template(data, stream, cb){
 function readFile(file, pmcb){
 	var reader = new FileReader();
 	reader.onload = function(event){
-		var r = event.target.result.trim();
-		pmcb(r.split('\n'), r);
+		var r = [];
+		event.target.result.split('\n').forEach(function(v){
+			if(v = v.trim()) r.push(v);
+		});
+		pmcb(r, event.target.result.trim());
 	};
 	reader.onerror = postMessage
 	reader.readAsText(file);

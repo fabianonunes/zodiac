@@ -45,8 +45,6 @@
 
 		afterWork : function(added, message){
 
-			this.findPath(this.getPrevious());
-
 			this.lines = message.data.lines;
 
 			var data = { length : message.data.length };
