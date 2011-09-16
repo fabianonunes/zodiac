@@ -1,1 +1,0 @@
-(function(){dust.register("details",body_0);function body_0(chk,ctx){return chk.write("Tamanho: ").reference(ctx.get("length"),ctx,"h").write("</br>Caminho: ").reference(ctx.get("path"),ctx,"h").write("\t\t");}return body_0;})();
