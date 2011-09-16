@@ -8,9 +8,7 @@
 
 <body>
 
-	<div class="path">
-
-	</div>
+	<div class="path"></div>
 
 	<div id="main">
 
@@ -32,31 +30,8 @@
 	<div class="tools">
 		<button class="button next">sort</button>
 	</div>
-	<div class="details">
 
-	</div>
-
-	<script id="path" type="text/html">
-		{#documents}
-			{?op}
-				<select class='{cid}'>	
-					{#ops}
-						<option value='{type}' 
-						{?selected}
-							selected='{selected}'
-						{/selected}
-						>{symbol}</option>
-					{/ops}
-				</select>
-			{/op}
-			<a href='#view/{cid}'>{fileName}</a> - {length}</br>
-		{/documents}
-	</script>
-
-	<script id="details" type="text/html">
-		Tamanho: {length}</br>
-		Caminho: {path}		
-	</script>
+	<div class="details"></div>
 
 	<script type="text/javascript" src="scripts/libs/steal.production.js?../app.js"></script>
 
