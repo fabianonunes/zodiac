@@ -33,16 +33,11 @@
 
 			this.trigger('updated', 'view/' + cid);
 
-			if( !_.isEmpty(html) ){
+			var s = document.createElement('span');
 
-				var s = document.createElement('span');
-				s.innerHTML = html;
-				this.el[0].appendChild(s);
+			s.innerHTML = html || model.lines.join('\n');;
 
-			} else {
-				//TODO : optimize
-				this.el.html(model.lines.join('\n'));
-			}
+			this.el[0].appendChild(s);
 
 		},
 

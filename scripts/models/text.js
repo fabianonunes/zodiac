@@ -13,23 +13,23 @@
 		
 		initialize : function(attrs, options){
 
-			this.lines = options.lines;
 			this.collection = options.collection;
 			this.set({ cid : this.cid });
 
-			// this.findPath(this.getPrevious());
-
 			if(this.get('previous')){
-		
-				this.perform(true);
+
 				this.bind('change:op', this.perform, this);
 				this.getPrevious().bind('change:length', this.perform, this);
 			
 			} else {
-				// needs to defer to force triggering change event
-				this.set({op : null});
-				_.defer(this.activate.bind(this));
+
+				this.set({ op : 'charge' });
+
 			}
+
+			this.perform(true);
+
+			// this.findPath(this.getPrevious());
 
 		},
 		
@@ -37,16 +37,13 @@
 
 			$.work('/scripts/workers/text-worker.js', {
 				op : this.get('op')
-				, previous : this.getPrevious().lines
+				, previous : this.getPrevious() && this.getPrevious().lines
 				, file : this.get('origin')
 			}, this.afterWork.bind(this, added));
 
 		},
 
-		afterWork : function(added, message){		
-// console.log('afterWork->', message);
-
-			this.findPath(this.getPrevious());
+		afterWork : function(added, message){
 
 			this.lines = message.data.lines;
 
@@ -70,9 +67,8 @@
 		},
 		
 		activate : function(args){
-			var params = args || {};
-			params.activate = this.get('activate') + 1;
-			this.set(params);
+			this.set(args);
+			this.collection.updateDocument(this);
 		},
 
 		getPrevious : function(){
@@ -109,14 +105,13 @@
 			this.trigger('change:currentIndex', m.cid, m, html)
 		},
 
-		blend : function(file, lines, op){
+		blend : function(file, op){
 			var m = new Text({
 				previous : this.currentIndex
 				, op : op
-				, fileName : file.name
-				, length : lines.length
 				, origin : file
-			}, { lines : lines, collection : this });
+				, fileName : file.name
+			}, { collection : this });
 			this.add(m);
 		},
 

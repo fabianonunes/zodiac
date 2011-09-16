@@ -51,11 +51,11 @@ var TextWorker = {
 		, last = {}
 		, base = dust.makeBase();
 
-		lines2.forEach(function(v, k){
+		lines1.forEach(function(v, k){
 			uq[v] = true;
 		});
 
-		template(lines1, function(chunk, context, bodies){
+		template(lines2, function(chunk, context, bodies){
 			var v = context.current();
 			if(!uq[v]){
 				var ck = {
@@ -195,7 +195,18 @@ var TextWorker = {
 			});			
 		});
 
+	},
+
+	charge : function(lines2, lines1){
+		
+		postMessage({
+			html : lines1.join('\n')
+			, lines : lines1
+			, length : lines1.length
+		});					
+	
 	}
+
 };
 
 onmessage = function(message){
@@ -223,8 +234,11 @@ function template(data, stream, cb){
 function readFile(file, pmcb){
 	var reader = new FileReader();
 	reader.onload = function(event){
-		var r = event.target.result.trim();
-		pmcb(r.split('\n'), r);
+		var r = [];
+		event.target.result.split('\n').forEach(function(v){
+			if(v = v.trim()) r.push(v);
+		});
+		pmcb(r, event.target.result.trim());
 	};
 	reader.onerror = postMessage
 	reader.readAsText(file);
