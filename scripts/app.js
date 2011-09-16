@@ -39,7 +39,6 @@
 		, 'views/dropper'
 		, 'views/mask'
 		, 'views/input'
-		, 'views/details'
 		, 'views/path'
 		, 'controllers/controller'
 	);
