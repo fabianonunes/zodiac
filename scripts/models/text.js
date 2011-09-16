@@ -35,7 +35,7 @@
 		
 		perform : function(added){
 
-			$.work('/scripts/workers/text-worker.js', {
+			$.work('/scripts/workers/text-worker.min.js', {
 				op : this.get('op')
 				, previous : this.getPrevious() && this.getPrevious().lines
 				, file : this.get('origin')
@@ -59,7 +59,7 @@
 		
 		sort : function(){
 
-			$.work('/scripts/workers/text-worker.js', {
+			$.work('/scripts/workers/text-worker.min.js', {
 				op : 'sort',
 				args : [this.get('lines'), this.get('data')]
 			}, this.activate.bind(this));

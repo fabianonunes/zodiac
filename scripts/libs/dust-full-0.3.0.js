@@ -3052,13 +3052,13 @@ var parser = (function(){
         }
         
         
-        if (input.substr(pos).match(/^[	 \xA0\uFEFF]/) !== null) {
+        if (input.substr(pos).match(/^[  \xA0\uFEFF]/) !== null) {
           var result0 = input.charAt(pos);
           pos++;
         } else {
           var result0 = null;
           if (reportMatchFailures) {
-            matchFailed("[	 \\xA0\\uFEFF]");
+            matchFailed("[   \\xA0\\uFEFF]");
           }
         }
         
