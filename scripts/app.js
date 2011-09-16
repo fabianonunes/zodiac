@@ -7,8 +7,11 @@
 		'libs/worker_utils',
 		'libs/underscore-min',
 		'libs/backbone-min',
-		'libs/dust-full-0.3.0.min'
-	).then(function(){
+		'libs/dust-core-0.3.0.min'
+	)
+	.then('templates/path.js')
+	.then('templates/details.js')
+	.then(function(){
 
 		app.template = function(data, template, el, cb){
 
