@@ -27,11 +27,11 @@
 			window.getSelection().addRange(range);						
 		},
 
-		updateText : function(cid, model, html){
+		updateText : function(id, model, html){
 
 			this.el.empty();
 
-			this.trigger('updated', 'view/' + cid);
+			this.trigger('updated', 'view/' + id);
 
 			var s = document.createElement('span');
 

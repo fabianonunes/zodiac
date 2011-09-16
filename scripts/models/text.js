@@ -14,7 +14,6 @@
 		initialize : function(attrs, options){
 
 			this.collection = options.collection;
-			this.set({ cid : this.cid });
 
 			if(this.get('previous')){
 
@@ -47,7 +46,7 @@
 
 			this.set({ length : message.data.length });
 
-			if(this.cid === this.collection.currentIndex || added === true){
+			if(this.id === this.collection.currentIndex || added === true){
 				this.collection.updateDocument(this, message.data.html);
 			} 
 
@@ -64,7 +63,7 @@
 		},
 		
 		getPrevious : function(){
-			return this.collection.getByCid(this.get('previous'));
+			return this.collection.get(this.get('previous'));
 		}
 			
 	});
@@ -83,8 +82,8 @@
 		},
 
 		updateDocument : function(m, html){
-			this.currentIndex = m.cid;
-			this.trigger('change:currentIndex', m.cid, m, html)
+			this.currentIndex = m.id;
+			this.trigger('change:currentIndex', m.id, m, html)
 		},
 
 		blend : function(file, op){
@@ -93,6 +92,7 @@
 				, op : op
 				, origin : file
 				, fileName : file.name
+				, id : _.uniqueId('text')
 			}, { collection : this });
 			this.add(m);
 		},
@@ -102,7 +102,7 @@
 		},
 
 		currentDocument : function(){
-			return this.getByCid(this.currentIndex);
+			return this.get(this.currentIndex);
 		}
 
 	});

@@ -1,7 +1,7 @@
 <script id="path" type="text/html">
 	{#documents}
 		{?op}
-			<select class='{cid}'>	
+			<select class='{id}'>	
 				{#ops}
 					<option value='{type}' 
 					{?selected}
@@ -11,6 +11,6 @@
 				{/ops}
 			</select>
 		{/op}
-		<a href='#view/{cid}'>{fileName}</a> - {length}</br>
+		<a href='#view/{id}'>{fileName}</a> - {length}</br>
 	{/documents}
 </script>

@@ -10,7 +10,6 @@
 		, 'libs/dust-core-0.3.0'
 	)
 	.then('templates/path.js')
-	.then('templates/details.js')
 	.then(function(){
 
 		app.template = function(data, template, el, cb){
