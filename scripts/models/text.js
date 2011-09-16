@@ -40,18 +40,6 @@
 
 		},
 
-		afterWork : function(added, message){
-
-			!_.isUndefined(message.data.lines) && (this.lines = message.data.lines);
-
-			this.set({ length : message.data.length });
-
-			if(this.id === this.collection.currentIndex || added === true){
-				this.collection.updateDocument(this, message.data.html);
-			} 
-
-		},
-		
 		sort : function(){
 
 			$.work('/scripts/workers/text-worker.js', {
@@ -59,6 +47,24 @@
 				, lines : this.lines
 				, classes : this.classes
 			}, this.afterWork.bind(this, false));
+
+		},
+
+		activate : function(){
+			this.collection.updateDocument(this);
+		},
+
+		afterWork : function(added, message){
+
+			!_.isUndefined(message.data.lines) && (this.lines = message.data.lines);
+
+			this.html = message.data.html;
+
+			this.set({ length : message.data.length });
+
+			if(this.id === this.collection.currentIndex || added === true){
+				this.collection.updateDocument(this, this.html);
+			} 
 
 		},
 		
@@ -81,9 +87,9 @@
 
 		},
 
-		updateDocument : function(m, html){
+		updateDocument : function(m){
 			this.currentIndex = m.id;
-			this.trigger('change:currentIndex', m.id, m, html)
+			this.trigger('change:currentIndex', m.id, m, m.html)
 		},
 
 		blend : function(file, op){
