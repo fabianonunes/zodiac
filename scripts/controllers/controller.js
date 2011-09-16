@@ -32,7 +32,7 @@
 		},
 
 		view: function( id ){
-			var model = this.documents.getByCid(id);
+			var model = this.documents.get(id);
 			!model ? this.navigate('') : model.activate();
 		}
 

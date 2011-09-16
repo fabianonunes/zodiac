@@ -23,11 +23,12 @@
 
 		change : function(e){
 			var select = $(e.target);
-			var cid = select.attr('class');
-			this.collection.getByCid(cid).set({op:select.val()});
+			var id = select.attr('class');
+			this.collection.get(id).set({op:select.val()});
 		},
 
 		render : function(){
+			
 			this.empty();
 
 			var docs = this.collection.toJSON().map(function(doc){
@@ -35,7 +36,7 @@
 					op : doc.op
 					, fileName : doc.fileName
 					, length : doc.length
-					, cid : doc.cid
+					, id : doc.id
 				};
 			});
 
