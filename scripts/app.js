@@ -3,11 +3,11 @@
 	window.app = {};
 
 	steal(
-		'libs/jquery.min',
-		'libs/worker_utils',
-		'libs/underscore-min',
-		'libs/backbone-min',
-		'libs/dust-core-0.3.0.min'
+		'libs/jquery.min'
+		, 'libs/worker_utils'
+		, 'libs/underscore-min'
+		, 'libs/backbone-min'
+		, 'libs/dust-core-0.3.0.min'
 	)
 	.then('templates/path.js')
 	.then('templates/details.js')
@@ -35,13 +35,13 @@
 		};
 
 	}).then(
-		'models/text',
-		'views/dropper',
-		'views/mask',
-		'views/input',
-		'views/details',
-		'views/path',
-		'controllers/controller'
+		'models/text'
+		, 'views/dropper'
+		, 'views/mask'
+		, 'views/input'
+		, 'views/details'
+		, 'views/path'
+		, 'controllers/controller'
 	);
 
 
