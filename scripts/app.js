@@ -3,11 +3,11 @@
 	window.app = {};
 
 	steal(
-		'libs/jquery.min'
-		, 'libs/worker_utils'
-		, 'libs/underscore-min'
-		, 'libs/backbone-min'
-		, 'libs/dust-core-0.3.0.min'
+		'libs/jquery-1.6.4'
+		, 'libs/worker-utils'
+		, 'libs/underscore-1.1.7'
+		, 'libs/backbone-0.5.3'
+		, 'libs/dust-core-0.3.0'
 	)
 	.then('templates/path.js')
 	.then('templates/details.js')
