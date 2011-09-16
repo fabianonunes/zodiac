@@ -43,7 +43,7 @@
 
 		afterWork : function(added, message){
 
-			this.lines = message.data.lines;
+			!_.isUndefined(message.data.lines) && (this.lines = message.data.lines);
 
 			this.set({ length : message.data.length });
 
