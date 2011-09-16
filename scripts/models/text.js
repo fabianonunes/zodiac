@@ -29,13 +29,11 @@
 
 			this.perform(true);
 
-			// this.findPath(this.getPrevious());
-
 		},
 		
 		perform : function(added){
 
-			$.work('/scripts/workers/text-worker.min.js', {
+			$.work('/scripts/workers/text-worker.js', {
 				op : this.get('op')
 				, previous : this.getPrevious() && this.getPrevious().lines
 				, file : this.get('origin')
@@ -47,11 +45,9 @@
 
 			this.lines = message.data.lines;
 
-			var data = { length : message.data.length };
+			this.set({ length : message.data.length });
 
-			(added === true) ? this.activate(data) : this.set(data);
-			
-			if(this.cid === this.collection.currentIndex){
+			if(this.cid === this.collection.currentIndex || added === true){
 				this.collection.updateDocument(this, message.data.html);
 			} 
 
@@ -59,30 +55,16 @@
 		
 		sort : function(){
 
-			$.work('/scripts/workers/text-worker.min.js', {
-				op : 'sort',
-				args : [this.get('lines'), this.get('data')]
-			}, this.activate.bind(this));
+			$.work('/scripts/workers/text-worker.js', {
+				op : 'sort'
+				, lines : this.lines
+				, classes : this.classes
+			}, this.afterWork.bind(this, false));
 
 		},
 		
-		activate : function(args){
-			this.set(args);
-			this.collection.updateDocument(this);
-		},
-
 		getPrevious : function(){
 			return this.collection.getByCid(this.get('previous'));
-		},
-		
-		findPath : function(previous){
-			 this.set({
-				path : [
-					previous && previous.get('path')
-					, previous && ops[this.get('op')]
-					, this.get('fileName')
-				].join('')
-			});			
 		}
 			
 	});

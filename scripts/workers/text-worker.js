@@ -6,11 +6,12 @@ importScripts('libs/dust-core-0.3.0.min.js');
 
 var TextWorker = {
 
-	sort : function(lines, classes, cb){
+	sort : function(lines, classes){
 
 		var strut = []
 		, last = { clazz : false }
-		, base = dust.makeBase();
+		, base = dust.makeBase()
+		, classes = classes || [];
 
 		lines.forEach(function(v, k){
 			if(!v) return;
@@ -20,7 +21,7 @@ var TextWorker = {
 			})
 		});
 
-		strut = _.sortBy(strut, function(v){ return v.line; });
+		strut = sortBy(strut, 'line');
 
 		template(strut, function(chunk, context, bodies) {
 
@@ -34,7 +35,7 @@ var TextWorker = {
 			chunk.render(bodies.block, base.push(ck));
 
 		}, function(out){
-			cb({
+			postMessage({
 				html : out
 				, length : strut.length
 			});
@@ -211,7 +212,11 @@ var TextWorker = {
 
 onmessage = function(message){
 	var d = message.data;
-	readFile(d.file, TextWorker[d.op].bind(TextWorker, d.previous));
+	if(d.op === 'sort'){
+		TextWorker.sort(d.lines, d.classes);
+	} else {
+		readFile(d.file, TextWorker[d.op].bind(TextWorker, d.previous));
+	}
 }
 
 
@@ -242,4 +247,13 @@ function readFile(file, pmcb){
 	};
 	reader.onerror = postMessage
 	reader.readAsText(file);
+}
+
+function sortBy(obj, field, context){
+	
+	return obj.sort(function(left, right) {
+		var a = left[field], b = right[field];
+		return a < b ? -1 : a > b ? 1 : 0;
+	});
+
 }

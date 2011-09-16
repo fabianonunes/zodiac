@@ -21,14 +21,9 @@
 				router : this
 			});
 
-			new app.DetailsView({
-				collection : this.documents
-			});		
-
 			new app.PathView({
 				collection : this.documents
 			});		
-			
 
 			this.documents.bind('change:currentIndex', function(index){
 				this.navigate('view/' + index);
