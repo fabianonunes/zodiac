@@ -12,7 +12,9 @@
 	.then('templates/path.js')
 	.then(function(){
 
-		app.template = function(data, template, el, cb){
+		app.template = function(data, template, el, replace, cb){
+
+			cb && (cb = cb.bind(null, el));
 
 			if(!dust.cache[template]){
 				
@@ -25,10 +27,17 @@
 			}
 
 			var s = document.createElement('span');
+			
 			dust.render(template, data, function(err, out) {
+
 				s.innerHTML = out;
+				
+				replace && $(el).empty();
+
 				el.appendChild(s);
+
 				cb && cb();
+
 			});
 
 		};

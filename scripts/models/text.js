@@ -66,6 +66,10 @@
 				this.collection.updateDocument(this, this.html);
 			} 
 
+			if(added === true){
+				this.trigger('change:added', this);
+			}
+
 		},
 		
 		getPrevious : function(){
