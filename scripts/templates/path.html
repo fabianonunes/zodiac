@@ -1,16 +1,14 @@
-<script id="path" type="text/html">
-	{#documents}
-		{?op}
-			<select class='{id}'>	
-				{#ops}
-					<option value='{type}' 
-					{?selected}
-						selected='{selected}'
-					{/selected}
-					>{symbol}</option>
-				{/ops}
-			</select>
-		{/op}
-		<a href='#view/{id}'>{fileName}</a> - {length}</br>
-	{/documents}
-</script>
+{#documents}
+	{?op}
+		<select class='{id}'>	
+			{#ops}
+				<option value='{type}' 
+				{?selected}
+					selected='{selected}'
+				{/selected}
+				>{symbol}</option>
+			{/ops}
+		</select>
+	{/op}
+	<a href='#view/{id}'>{fileName}</a> - {length}</br>
+{/documents}

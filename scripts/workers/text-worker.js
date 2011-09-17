@@ -1,8 +1,7 @@
 
 importScripts('libs/underscore-1.1.7.min.js');
 importScripts('libs/dust-core-0.3.0.min.js');
-
-(function(){dust.register("tmpl-row-stream",body_0);function body_0(chk,ctx){return chk.write("<span>").section(ctx.get("data"),ctx,{"block":body_1},null).write("</span>");}function body_1(chk,ctx){return chk.section(ctx.get("stream"),ctx,{"block":body_2},null);}function body_2(chk,ctx){return chk.exists(ctx.get("clazz"),ctx,{"block":body_3},null).reference(ctx.get("line"),ctx,"h").write(" \n");}function body_3(chk,ctx){return chk.write("</span><span class=\"").reference(ctx.get("clazz"),ctx,"h").write("\">");}return body_0;})();
+importScripts('../templates/row-stream.js');
 
 var TextWorker = {
 
@@ -224,7 +223,7 @@ function template(data, stream, cb){
 
 	var streamed = '';
 
-	dust.stream("tmpl-row-stream", {
+	dust.stream("row-stream", {
 		data : data,
 		stream : stream
 	}).on("data", function(data){
