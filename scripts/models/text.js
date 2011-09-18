@@ -44,15 +44,13 @@
 			(previous = this.getPrevious()) && previous.unbind('change:length');
 			(next = this.getNext()) && next.setPrevious(previous);
 
-			// (next = this.getNext()) && next.unbind('change:length');
-
 
 		},
 
 		setPrevious : function(previous){
-			// this.unbind('change:length');
-			this.set({ id : previous.id });
+			this.set({ previous : previous.id });
 			previous.bind('change:length', this.perform, this);
+			previous.trigger('change:length', previous);
 		},
 				
 		perform : function(added){
