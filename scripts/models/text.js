@@ -1,12 +1,5 @@
 !function(){
 
-	var ops = {
-		union : '∪'
-		, intersection : '∩'
-		, difference : '∖'
-		, symmetric : '⊖'
-	};
-
 	var Text = Backbone.Model.extend({
 
 		defaults : { activate : 0 },
@@ -30,29 +23,6 @@
 
 		},
 
-		destroy : function(){
-			this.unbindAll();
-			this.collection.remove(this);
-		},
-
-		unbindAll : function(){
-			
-			this.unbind();
-
-			var next, previous;
-
-			(previous = this.getPrevious()) && previous.unbind('change:length');
-			(next = this.getNext()) && next.setPrevious(previous);
-
-
-		},
-
-		setPrevious : function(previous){
-			this.set({ previous : previous.id });
-			previous.bind('change:length', this.perform, this);
-			previous.trigger('change:length', previous);
-		},
-				
 		perform : function(added){
 
 			$.work('/scripts/workers/text-worker.js', {
@@ -62,6 +32,40 @@
 			}, this.afterWork.bind(this, added));
 
 		},
+
+		destroy : function(){
+			this.unbind();
+			this.joinSibilings();
+			this.collection.remove(this);
+		},
+
+		joinSibilings : function(){
+			
+			var activate
+			, next = this.getNext()
+			, previous = this.getPrevious();
+
+			previous && previous.unbind('change:length');
+			next && next.setPrevious(previous);
+
+			(activate = next || previous) && activate.activate();
+
+		},
+
+		setPrevious : function(previous){
+			if(previous){
+				this.set({ previous : previous.id });
+				previous.bind('change:length', this.perform, this);
+				previous.trigger('change:length', previous);
+			} else {
+				this.set({ op : 'charge' });
+			}
+		},
+
+		isActivated : function(){
+			return this.collection.currentIndex === this.id;
+		},
+				
 
 		sort : function(){
 
@@ -100,11 +104,10 @@
 		},
 
 		getNext : function(){
-			return this.collection.detect(function(model){
+			return this.collection && this.collection.detect(function(model){
 				return model.get('previous') === this.id;
 			}.bind(this));
 		}
-
 			
 	});
 
@@ -131,7 +134,7 @@
 
 		blend : function(file, op){
 			var m = new Text({
-				previous : this.currentIndex
+				previous : this.currentDocument() && this.currentIndex
 				, op : op
 				, origin : file
 				, fileName : file.name

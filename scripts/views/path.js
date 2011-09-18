@@ -22,8 +22,8 @@
 
 		destroy : function(){
 			this.unbind();
-			this.model.destroy();
 			this.remove();
+			this.model.destroy();
 		},
 
 		render : function(){
