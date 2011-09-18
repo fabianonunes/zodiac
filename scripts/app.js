@@ -14,6 +14,8 @@
 
 		app.template = function(data, template, el, cb){
 
+			cb && (cb = cb.bind(null, el));
+
 			if(!dust.cache[template]){
 				
 				var compiled = dust.compile(
@@ -25,10 +27,15 @@
 			}
 
 			var s = document.createElement('span');
+			
 			dust.render(template, data, function(err, out) {
+
 				s.innerHTML = out;
+				
 				el.appendChild(s);
+
 				cb && cb();
+
 			});
 
 		};

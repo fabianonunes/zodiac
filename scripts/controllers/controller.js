@@ -21,7 +21,7 @@
 				router : this
 			});
 
-			new app.PathView({
+			new app.PathListView({
 				collection : this.documents
 			});		
 
