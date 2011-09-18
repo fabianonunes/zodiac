@@ -2,22 +2,13 @@
 
 	var Text = Backbone.Model.extend({
 
-		defaults : { activate : 0 },
-		
 		initialize : function(attrs, options){
 
+			this.bind('change:op', this.perform, this);
+			this.bind('change:previous', this.perform, this);
+
 			this.collection = options.collection;
-
-			if(this.get('previous')){
-
-				this.bind('change:op', this.perform, this);
-				this.getPrevious().bind('change:length', this.perform, this);
-			
-			} else {
-
-				this.set({ op : 'charge' });
-
-			}
+			this.setPrevious(options.previous, { silent : true });
 
 			this.perform(true);
 
@@ -46,26 +37,24 @@
 			, previous = this.getPrevious();
 
 			previous && previous.unbind('change:length');
-			next && next.setPrevious(previous);
-
-			(activate = next || previous) && activate.activate();
+			next ? next.setPrevious(previous) : previous && previous.activate();
 
 		},
 
-		setPrevious : function(previous){
+		setPrevious : function(previous, options){
+
 			if(previous){
-				this.set({ previous : previous.id });
+				this.set({ previous : previous.id }, options);
 				previous.bind('change:length', this.perform, this);
-				previous.trigger('change:length', previous);
 			} else {
 				this.set({ op : 'charge' });
 			}
+
 		},
 
 		isActivated : function(){
 			return this.collection.currentIndex === this.id;
 		},
-				
 
 		sort : function(){
 
@@ -89,8 +78,8 @@
 
 			this.set({ length : message.data.length });
 
-			if(this.id === this.collection.currentIndex || added === true){
-				this.collection.updateDocument(this, this.html);
+			if(this.isActivated() || added === true){
+				this.activate();
 			} 
 
 			if(added === true){
@@ -104,7 +93,7 @@
 		},
 
 		getNext : function(){
-			return this.collection && this.collection.detect(function(model){
+			return this.collection.detect(function(model){
 				return model.get('previous') === this.id;
 			}.bind(this));
 		}
@@ -117,14 +106,8 @@
 		currentIndex : null,
 	
 		initialize : function(){
-
-			var self = this;
 			_.bindAll(this, 'updateDocument', 'blend');
-			this.bind('change:activate', this.updateDocument);
-			this.bind('destroy', function(m){
-				self.remove(m);
-			});
-
+			this.bind('destroy', this.remove);
 		},
 
 		updateDocument : function(m){
@@ -134,12 +117,14 @@
 
 		blend : function(file, op){
 			var m = new Text({
-				previous : this.currentDocument() && this.currentIndex
-				, op : op
+				op : op
 				, origin : file
 				, fileName : file.name
 				, id : _.uniqueId('text')
-			}, { collection : this });
+			}, {
+				collection : this
+				, previous : this.currentDocument()
+			});
 			this.add(m);
 		},
 

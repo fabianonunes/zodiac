@@ -32,8 +32,6 @@
 
 				s.innerHTML = out;
 				
-				// replace && $(el).empty();
-
 				el.appendChild(s);
 
 				cb && cb();
