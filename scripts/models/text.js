@@ -29,6 +29,18 @@
 			this.perform(true);
 
 		},
+
+		destroy : function(){
+			this.unbindAll();
+			this.collection.remove(this);
+		},
+
+		unbindAll : function(){
+			var next, previous;
+			(next = this.getNext()) && next.unbind('change:length');
+			(previous = this.getPrevious()) && previous.unbind('change:length');
+			this.unbind();
+		}
 		
 		perform : function(added){
 
@@ -74,7 +86,14 @@
 		
 		getPrevious : function(){
 			return this.collection.get(this.get('previous'));
+		},
+
+		getNext : function(){
+			return this.collection.detect(function(model){
+				return model.get('previous') === this.id;
+			}.bind(this));
 		}
+
 			
 	});
 
@@ -88,6 +107,9 @@
 			var self = this;
 			_.bindAll(this, 'updateDocument', 'blend');
 			this.bind('change:activate', this.updateDocument);
+			this.bind('destroy', function(m){
+				self.remove(m);
+			});
 
 		},
 

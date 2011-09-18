@@ -12,7 +12,7 @@
 	.then('templates/path.js')
 	.then(function(){
 
-		app.template = function(data, template, el, replace, cb){
+		app.template = function(data, template, el, cb){
 
 			cb && (cb = cb.bind(null, el));
 
@@ -32,7 +32,7 @@
 
 				s.innerHTML = out;
 				
-				replace && $(el).empty();
+				// replace && $(el).empty();
 
 				el.appendChild(s);
 

@@ -4,23 +4,31 @@
 
 		tagName : 'div',
 
-		events : {},
+		events : {
+			'click .remove' : 'destroy'
+		},
 
 		template : 'path', 
 
 		initialize : function(){
 			
-			_.bindAll(this, 'render');
+			_.bindAll(this, 'render', 'destroy');
 
-			// this.model.bind('change', this.render);
+			this.model.bind('change:length', this.render);
 
 			this.model.view = this;
 
 		},
 
-		render : function(cb){
+		destroy : function(){
+			this.unbind();
+			this.model.destroy();
+			this.remove();
+		},
 
-			console.log(this.model.get('length'));
+		render : function(){
+
+			var dfd = $.Deferred();
 
 			var doc = {
 				op : this.model.get('op')
@@ -28,11 +36,15 @@
 				, length : this.model.get('length')
 				, id : this.model.id
 			};
+
+			$(this.el).empty();
 			
 			app.template({
 				documents : [doc]
 				, ops : oprs
-			}, this.template, this.el, true, cb);
+			}, this.template, this.el, dfd.resolve.bind(dfd, this.el));
+
+			return dfd.promise();
 				
 		}
 
@@ -64,22 +76,7 @@
 
 			var view = new app.PathView({ model : model });
 
-			view.render(this.el.append.bind(this.el));
-
-			// this.empty();
-			// var docs = this.collection.toJSON().map(function(doc){
-			// 	return {
-			// 		op : doc.op
-			// 		, fileName : doc.fileName
-			// 		, length : doc.length
-			// 		, id : doc.id
-			// 	};
-			// });
-			// 
-			// app.template({
-			// 	documents : docs
-			// 	, ops : ops
-			// }, this.template, this.el[0]);
+			view.render().then(this.el.append.bind(this.el));
 
 		},
 
@@ -104,13 +101,13 @@ function oprs(chunk, context, bodies){
 
 	var document = context.current(), retval = [];
 
-	Object.keys(ops).forEach(function(document, ops, k){
+	Object.keys(ops).forEach(function(k){
 		retval.push({
 			type : k
 			, symbol : ops[k]
 			, selected : document.op === k
 		});
-	}.bind(null, document, ops));
+	});
 
 	return retval;
 
