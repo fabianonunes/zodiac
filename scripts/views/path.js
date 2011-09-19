@@ -14,7 +14,7 @@
 			
 			_.bindAll(this, 'render', 'destroy');
 
-			this.model.bind('change:length', this.render);
+			this.model.bind('change', this.render);
 
 			this.model.view = this;
 
@@ -71,13 +71,9 @@
 		},
 
 		render : function(model){
-
-			var self = this;
-
-			var view = new app.PathView({ model : model });
-
-			view.render().then(this.el.append.bind(this.el));
-
+			new app.PathView({ model : model })
+			.render()
+			.then(this.el.append.bind(this.el));
 		},
 
 		empty : function(){
