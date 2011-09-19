@@ -26,19 +26,7 @@
 
 		destroy : function(){
 			this.unbind();
-			this.joinSibilings();
-			this.collection.remove(this);
-		},
-
-		joinSibilings : function(){
-			
-			var activate
-			, next = this.getNext()
-			, previous = this.getPrevious();
-
-			previous && previous.unbind('change:length');
-			next ? next.setPrevious(previous) : previous && previous.activate();
-
+			this.collection.destroy(this);
 		},
 
 		setPrevious : function(previous, options){
@@ -113,6 +101,17 @@
 		updateDocument : function(m){
 			this.currentIndex = m.id;
 			this.trigger('change:currentIndex', m.id, m, m.html)
+		},
+
+		destroy : function(m){
+			var next = m.getNext(), previous = m.getPrevious();
+			this.remove(m);
+			this.tie(next, previous);
+		},
+
+		tie : function(next, previous){
+			previous && previous.unbind('change:length');
+			next ? next.setPrevious(previous) : previous && previous.activate();			
 		},
 
 		blend : function(file, op){
