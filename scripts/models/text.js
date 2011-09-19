@@ -106,7 +106,7 @@
 		destroy : function(m){
 			var next = m.getNext(), previous = m.getPrevious();
 			this.remove(m);
-			this.tie(next, previous);
+			this.length ? this.tie(next, previous) : this.reset();
 		},
 
 		tie : function(next, previous){

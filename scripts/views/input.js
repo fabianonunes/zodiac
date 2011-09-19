@@ -10,9 +10,10 @@
 
 		initialize: function(){
 
-			_.bindAll(this, 'updateText', 'selectText');
+			_.bindAll(this, 'updateText', 'selectText', 'empty');
 
 			this.collection.bind("change:currentIndex", this.updateText);
+			this.collection.bind("reset", this.empty)
 
 			var self = this;
 			$('.button').click(function(evt){
