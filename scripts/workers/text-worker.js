@@ -227,7 +227,7 @@ onmessage = function(message){
 	if(d.op === 'sort'){
 		TextWorker.sort(d.lines, d.classes);
 	} else {
-		readFile(d.file, TextWorker[d.op].bind(TextWorker, d.previous));
+		readFile(d.file, d.mask, TextWorker[d.op].bind(TextWorker, d.previous));
 	}
 }
 
@@ -248,14 +248,15 @@ function template(data, stream, cb){
 
 }
 
-function readFile(file, pmcb){
+function readFile(file, mask, pmcb){
 	var reader = new FileReader();
 	reader.onload = function(event){
 		var r = [];
 		event.target.result.split('\n').forEach(function(v){
-			if(v = v.trim()) r.push(v);
+			v = mask ? mask.exec(v) : v.trim();
+			if(v) r.push(v);
 		});
-		pmcb(r, event.target.result.trim());
+		pmcb(r);
 	};
 	reader.onerror = postMessage
 	reader.readAsText(file);

@@ -4,11 +4,11 @@
 
 		initialize : function(attrs, options){
 
-			this.bind('change:op', this.perform, this);
-			this.bind('change:previous', this.perform, this);
-
 			this.collection = options.collection;
 			this.setPrevious(options.previous, { silent : true });
+
+			this.bind('change:op', this.perform, this);
+			this.bind('change:previous', this.perform, this);
 
 			this.perform(true);
 
@@ -20,6 +20,7 @@
 				op : this.get('op')
 				, previous : this.getPrevious() && this.getPrevious().lines
 				, file : this.get('origin')
+				, mask : this.collection.mask
 			}, this.afterWork.bind(this, added));
 
 		},
@@ -92,8 +93,9 @@ console.log('message->', message);
 
 	var TextPeer = Backbone.Collection.extend({
 	
-		model: Text,
+		model : Text,
 		currentIndex : null,
+		mask : /[^0]\d{0,6}-\d{2}\.\d{4}\.\d\.\d{2}\.\d{4}/, 
 	
 		initialize : function(){
 			_.bindAll(this, 'updateDocument', 'blend');
