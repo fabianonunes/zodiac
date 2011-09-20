@@ -60,6 +60,8 @@
 
 		afterWork : function(added, message){
 
+console.log('message->', message);
+
 			!_.isUndefined(message.data.lines) && (this.lines = message.data.lines);
 
 			this.html = message.data.html;
