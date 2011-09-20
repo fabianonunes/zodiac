@@ -4,11 +4,11 @@
 
 		initialize : function(attrs, options){
 
-			this.bind('change:op', this.perform, this);
-			this.bind('change:previous', this.perform, this);
-
 			this.collection = options.collection;
 			this.setPrevious(options.previous, { silent : true });
+
+			this.bind('change:op', this.perform, this);
+			this.bind('change:previous', this.perform, this);
 
 			this.perform(true);
 

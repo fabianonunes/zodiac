@@ -243,7 +243,7 @@ function readFile(file, mask, pmcb){
 			v = mask ? mask.exec(v) : v.trim();
 			if(v) r.push(v);
 		});
-		pmcb(r, event.target.result.trim());
+		pmcb(r);
 	};
 	reader.onerror = postMessage
 	reader.readAsText(file);
