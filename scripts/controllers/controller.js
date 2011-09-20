@@ -10,12 +10,10 @@
 
 			this.documents = new app.TextPeer();
 
-			new app.DropperView();
-			
-			new app.MaskView({
+			new app.DropperView({
 				collection: this.documents
 			});
-
+			
 			new app.InputView({
 				collection : this.documents,
 				router : this

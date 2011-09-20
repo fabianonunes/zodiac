@@ -43,7 +43,6 @@
 	}).then(
 		'models/text'
 		, 'views/dropper'
-		, 'views/mask'
 		, 'views/input'
 		, 'views/path'
 		, 'controllers/controller'
