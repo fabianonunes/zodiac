@@ -83,26 +83,25 @@ var TextWorker = {
 		, last = { clazz : false }
 		, uq = {}, base = dust.makeBase();
 
-		lines2.forEach(function(v){
-			uq[v] = 'red';
-		});
-		lines1.forEach(function(v){
-			uq[v] = [uq[v]] + 'blue';
-		});
+		lines2.forEach(iterator(uq, 'red'));
+		lines1.forEach(iterator(uq, 'blue'));
 
 		template(Object.keys(uq), function(chunk, context, bodies) {
 
-			var v = context.current();
+			var v = context.current()
+			, i = uq[v].qtd;
 
 			var ck = {
 				line : v
-				, clazz : uq[v] !== last.clazz && (last.clazz = uq[v])
+				, clazz : uq[v].clazz !== last.clazz && (last.clazz = uq[v].clazz)
 			};
 
-			chunk.render(bodies.block, base.push(ck));
+			for( ; i > 0 ; i--){
+				chunk.render(bodies.block, base.push(ck));
+				value.push(v);
+				classes.push(uq[v]);
+			}
 
-			value.push(v);
-			classes.push(uq[v]);
 
 		}, function(out){
 			postMessage({
@@ -112,6 +111,20 @@ var TextWorker = {
 				// , data : classes
 			});					
 		});
+
+		function iterator(stack, clazz){
+			return function(v){
+				if(!stack[v]){
+					stack[v] = {
+						qtd : 0
+						, clazz : ''
+					}
+				};
+				if(stack[v].qtd++ < 2){
+					stack[v].clazz += clazz;
+				}
+			}
+		}
 
 	},
 
