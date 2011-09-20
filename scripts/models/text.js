@@ -20,6 +20,7 @@
 				op : this.get('op')
 				, previous : this.getPrevious() && this.getPrevious().lines
 				, file : this.get('origin')
+				, mask : this.collection.mask
 			}, this.afterWork.bind(this, added));
 
 		},
@@ -90,8 +91,9 @@
 
 	var TextPeer = Backbone.Collection.extend({
 	
-		model: Text,
+		model : Text,
 		currentIndex : null,
+		mask : /[^0]\d{0,6}-\d{2}\.\d{4}\.\d\.\d{2}\.\d{4}/, 
 	
 		initialize : function(){
 			_.bindAll(this, 'updateDocument', 'blend');
