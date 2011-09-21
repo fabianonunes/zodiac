@@ -16,9 +16,12 @@
 			this.collection.bind("reset", this.empty)
 
 			var self = this;
-			$('.button').click(function(evt){
+			$('.sort').click(function(evt){
 				self.collection.sortDocument();
-			})
+			});
+			$('.uniq').click(function(evt){
+				self.collection.uniqDocument();
+			})			
 
 		},
 
