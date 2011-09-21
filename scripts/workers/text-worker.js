@@ -272,7 +272,7 @@ var TextWorker = {
 
 		template(lines2, function(chunk, context, bodies) {
 
-			var v = context.current();
+			var v = original = context.current();
 
 			var found = regexes.some(function(r){
 				return v !== (v = v.replace(r, '<b>$&</b>'));
@@ -286,7 +286,7 @@ var TextWorker = {
 				};			
 
 				chunk.render(bodies.block, base.push(ck));
-				value.push(v);
+				value.push(original);
 				classes.push(uq[v]);
 
 			}
