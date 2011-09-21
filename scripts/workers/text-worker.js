@@ -43,6 +43,44 @@ var TextWorker = {
 
 	},
 
+	uniq : function(lines, classes){
+
+		var strut = {}
+		, last = { clazz : false }
+		, base = dust.makeBase()
+		, classes = classes || []
+		, value = [];
+
+		lines.forEach(function(v, k){
+			if(!v) return;
+			strut[v] = classes[k];
+		});
+
+		template(Object.keys(strut), function(chunk, context, bodies) {
+
+			var row = context.current();
+
+			var ck = {
+				line : row
+				, clazz : strut[row] !== last.clazz && (last.clazz = strut[row])
+			};
+
+			chunk.render(bodies.block, base.push(ck));
+
+			value.push(row);
+
+		}, function(out){
+			postMessage({
+				html : out
+				, lines : value
+				, length : value.length
+			});
+			close();
+		});
+
+			
+	},
+
 	difference : function(lines2, lines1){
 
 		var value = []
@@ -218,14 +256,58 @@ var TextWorker = {
 			, length : lines1.length
 		});					
 	
+	},
+
+	grep : function(lines2, lines1){
+
+		var value = []
+		, classes = []
+		, last = { clazz : false }
+		, uq = {}
+		, base = dust.makeBase();
+
+		var regexes = lines1.map(function(v){
+			return new RegExp(v, "i");
+		});
+
+		template(lines2, function(chunk, context, bodies) {
+
+			var v = context.current();
+
+			regexes.some(function(r){
+				return v !== (v = v.replace(r, '<b>$&</b>'));
+			});
+
+			var ck = {
+				line : v
+				// , clazz : !last.clazz && (last.clazz = 'red')
+			};			
+
+			chunk.render(bodies.block, base.push(ck));
+			value.push(v);
+			classes.push(uq[v]);
+
+
+		}, function(out){
+			postMessage({
+				html : out
+				, lines : value
+				, length : value.length
+				, regexes : regexes
+				// , data : classes
+			});					
+		});
+
 	}
 
 };
 
 onmessage = function(message){
 	var d = message.data;
-	if(d.op === 'sort'){
-		TextWorker.sort(d.lines, d.classes);
+	if(d.op === 'sort' || d.op === 'uniq'){
+		TextWorker[d.op](d.lines, d.classes);
+	} else if(d.op === 'grep') {
+		readFile(d.file, null, TextWorker[d.op].bind(TextWorker, d.previous));
 	} else {
 		readFile(d.file, d.mask, TextWorker[d.op].bind(TextWorker, d.previous));
 	}
@@ -253,8 +335,8 @@ function readFile(file, mask, pmcb){
 	reader.onload = function(event){
 		var r = [];
 		event.target.result.split('\n').forEach(function(v){
-			v = mask ? mask.exec(v) : v.trim();
-			if(v) r.push(v);
+			mask && (v = mask.exec(v));
+			if(v) r.push(v.toString().trim());
 		});
 		pmcb(r);
 	};
