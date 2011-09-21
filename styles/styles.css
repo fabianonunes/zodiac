@@ -85,6 +85,10 @@
 	height: 100%;
 }
 
+.input b {
+    color: #f00;
+}
+
 .mask div.intersection {
     background: #fff url('../images/intersection.png') no-repeat 5px 6px
 }
