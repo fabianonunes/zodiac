@@ -1,13 +1,12 @@
 
-var FileList = require('file_list').FileList
-, fs = require('fs');
+var fs = require('fs');
 require('colors');
 
 desc('Compile dust templates.');
 task('compile-templates', function (params) {
 
 	var dust = require('dust');
-	var list = new FileList();
+	var list = new jake.FileList();
 	list.include('scripts/templates/*html');
 
 	list.toArray().forEach(function(v){
