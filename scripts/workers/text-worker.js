@@ -274,26 +274,28 @@ var TextWorker = {
 
 			var v = context.current();
 
-			regexes.some(function(r){
+			var found = regexes.some(function(r){
 				return v !== (v = v.replace(r, '<b>$&</b>'));
 			});
 
-			var ck = {
-				line : v
-				// , clazz : !last.clazz && (last.clazz = 'red')
-			};			
+			if(found){
 
-			chunk.render(bodies.block, base.push(ck));
-			value.push(v);
-			classes.push(uq[v]);
+				var ck = {
+					line : v
+					// , clazz : !last.clazz && (last.clazz = 'red')
+				};			
 
+				chunk.render(bodies.block, base.push(ck));
+				value.push(v);
+				classes.push(uq[v]);
+
+			}
 
 		}, function(out){
 			postMessage({
 				html : out
 				, lines : value
 				, length : value.length
-				, regexes : regexes
 				// , data : classes
 			});					
 		});

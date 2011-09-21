@@ -56,7 +56,7 @@
 		},
 
 		uniq : function(){
-			
+
 			$.work('/scripts/workers/text-worker.js', {
 				op : 'uniq'
 				, lines : this.lines
@@ -70,8 +70,6 @@
 		},
 
 		afterWork : function(added, message){
-
-console.log('message->', message);
 
 			!_.isUndefined(message.data.lines) && (this.lines = message.data.lines);
 
