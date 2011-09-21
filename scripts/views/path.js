@@ -92,7 +92,8 @@ function oprs(chunk, context, bodies){
 		union : '∪' ,
 		intersection : '∩' ,
 		difference : '∖' ,
-		symmetric : '⊖'
+		symmetric : '⊖',
+		grep : '*'
 	};
 
 	var document = context.current(), retval = [];
