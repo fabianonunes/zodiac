@@ -85,6 +85,10 @@
 	height: 100%;
 }
 
+.input b {
+    color: #f00;
+}
+
 .mask div.intersection {
     background: #fff url('../images/intersection.png') no-repeat 5px 6px
 }
@@ -98,6 +102,9 @@
 }
 .mask div.symmetric {
     background: #fff url('../images/symmetric.png') no-repeat 5px 6px
+}
+.mask div.grep {
+    background: #fff url('../images/grep.png') no-repeat 5px 6px
 }
 
  body

@@ -55,13 +55,21 @@
 
 		},
 
+		uniq : function(){
+
+			$.work('/scripts/workers/text-worker.js', {
+				op : 'uniq'
+				, lines : this.lines
+				, classes : this.classes
+			}, this.afterWork.bind(this, false));
+
+		},		
+
 		activate : function(){
 			this.collection.updateDocument(this);
 		},
 
 		afterWork : function(added, message){
-
-console.log('message->', message);
 
 			!_.isUndefined(message.data.lines) && (this.lines = message.data.lines);
 
@@ -133,6 +141,10 @@ console.log('message->', message);
 
 		sortDocument : function(){
 			this.currentIndex && this.currentDocument().sort();
+		},
+
+		uniqDocument : function(){
+			this.currentIndex && this.currentDocument().uniq();
 		},
 
 		currentDocument : function(){
