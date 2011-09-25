@@ -1,3 +1,2 @@
-scripts/production.*
 steal
 node_modules/*
