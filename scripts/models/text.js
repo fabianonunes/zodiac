@@ -103,7 +103,7 @@
 	
 		model : Text,
 		currentIndex : null,
-		mask : /[^0]\d{0,6}-\d{2}\.\d{4}\.\d\.\d{2}\.\d{4}/, 
+		mask : /[1-9]\d{0,6}-\d{2}\.\d{4}\.\d\.\d{2}\.\d{4}/, 
 	
 		initialize : function(){
 			_.bindAll(this, 'updateDocument', 'blend');
