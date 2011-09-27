@@ -10,6 +10,15 @@ task('build', function (params) {
 
 });
 
+desc('push current directory tree to dotcloud');
+task('push', function (params) {
+
+	var sh = require('sh');
+	sh('dotcloud push --all zodiac');
+
+});
+
+
 desc('Compile dust templates.');
 task('compile-templates', function (params) {
 
