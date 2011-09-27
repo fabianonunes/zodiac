@@ -2,6 +2,14 @@
 var fs = require('fs');
 require('colors');
 
+desc('steal build javascript/css');
+task('build', function (params) {
+
+	var sh = require('sh');
+	sh.cd('steal').and('./js steal/buildjs ../index.html -to ../scripts/');
+
+});
+
 desc('Compile dust templates.');
 task('compile-templates', function (params) {
 
