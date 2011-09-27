@@ -4,5 +4,6 @@
 	"dependencies" : {
 		"colors" : "*"
 		, "dust" : "*"
+		, "sh" : "*"
 	}
 }
