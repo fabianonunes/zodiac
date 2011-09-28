@@ -6,7 +6,7 @@ desc('steal build javascript/css');
 task('build', function (params) {
 
 	var sh = require('sh');
-	sh.cd('steal').and('./js steal/buildjs ../index.html -to ../scripts/');
+	sh('steal/js steal/buildjs dev.html -to production');
 
 });
 
