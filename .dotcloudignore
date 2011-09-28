@@ -1,6 +1,3 @@
 steal
 node_modules/*
-scripts/*
-!scripts/production.*
-!scripts/app.js
-!scripts/workers/*
+scripts
