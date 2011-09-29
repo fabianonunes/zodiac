@@ -1,14 +1,16 @@
 {#documents}
-	{?op}
-		<select class='{id}'>	
-			{#ops}
-				<option value='{type}' 
-				{?selected}
-					selected='{selected}'
-				{/selected}
-				>{symbol}</option>
-			{/ops}
-		</select>
-	{/op}
+	{?previous}
+		{?op}
+			<select class='{id}'>	
+				{#ops}
+					<option value='{type}' 
+					{?selected}
+						selected='{selected}'
+					{/selected}
+					>{symbol}</option>
+				{/ops}
+			</select>
+		{/op}
+	{/previous}
 	<a href='#view/{id}'>{fileName}</a> - {length} <span class='remove'>X</span></br>
 {/documents}
