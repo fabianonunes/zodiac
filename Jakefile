@@ -6,7 +6,9 @@ desc('steal build javascript/css');
 task('build', function (params) {
 
 	var sh = require('sh');
-	sh('steal/js steal/buildjs dev.html -to production');
+	sh('git submodule init')
+	.then('git submodule update')
+	.then('steal/js steal/buildjs dev.html -to production');
 
 });
 
@@ -19,7 +21,7 @@ task('push', function (params) {
 });
 
 
-desc('Compile dust templates.');
+desc('compile dust templates');
 task('compile-templates', function (params) {
 
 	var dust = require('dust');
