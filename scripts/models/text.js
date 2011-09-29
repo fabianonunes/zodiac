@@ -95,6 +95,24 @@
 			return this.collection.detect(function(model){
 				return model.get('previous') === this.id;
 			}.bind(this));
+		},
+
+		getPath : function(){
+			var ops = {
+				union : '∪' ,
+				intersection : '∩' ,
+				difference : '∖' ,
+				symmetric : '⊖',
+				grep : '*'
+			};
+			for(var path = [], m = this; m != null; m = m.getPrevious()){
+				path.push(m.get('fileName'), ops[m.get('op')]);
+			}
+
+			path.pop();
+
+			return path.reverse().join('');
+
 		}
 			
 	});
