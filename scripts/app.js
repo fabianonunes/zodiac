@@ -4,6 +4,7 @@
 
 	steal(
 		'libs/jquery-1.6.4'
+		, 'libs/base64'
 		, 'libs/worker-utils'
 		, 'libs/underscore-1.1.7'
 		, 'libs/backbone-0.5.3'
