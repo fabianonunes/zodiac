@@ -6,6 +6,7 @@
 
 		events : {
 			'click .remove' : 'destroy'
+			, 'dragstart' : 'drag'
 		},
 
 		template : 'path', 
@@ -16,8 +17,20 @@
 
 			this.model.bind('change', this.render);
 
+			$(this.el).attr('draggable', 'true');
+
 			this.model.view = this;
 
+		},
+
+		drag : function(event){
+			event = event.originalEvent;
+			event.dataTransfer.setData(
+				'DownloadURL'
+				, 'text/plain:' + this.model.getPath() +
+				'.txt:data:text/plain;base64,' +
+				btoa(this.model.lines.join('\n'))
+			);
 		},
 
 		destroy : function(){
@@ -45,7 +58,7 @@
 			}, this.template, this.el, dfd.resolve.bind(dfd, this.el));
 
 			return dfd.promise();
-				
+
 		}
 
 	});
