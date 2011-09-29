@@ -45,6 +45,7 @@
 
 			var doc = {
 				op : this.model.get('op')
+				, previous : this.model.getPrevious()
 				, fileName : this.model.get('fileName')
 				, length : this.model.get('length')
 				, id : this.model.id
