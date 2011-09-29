@@ -5,7 +5,7 @@
 		el: $('.input'),
 
 		events : {
-			'click' : 'selectText'
+			'dblclick' : 'selectText'
 		},
 
 		initialize: function(){
