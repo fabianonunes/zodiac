@@ -70,10 +70,10 @@
 			, type = dt.types[0];
 
 			if(~dt.types.indexOf('text')){
+				
 				createFile(dt.getData('text'))
-				.then(function(fileEntry){
-					fileEntry.file(self.collection.blend.bind(self, op));
-				});
+					.then(self.collection.blend.bind(self, op));
+
 			} else {
 				this.collection.blend(op, dt.files[0]);
 			}

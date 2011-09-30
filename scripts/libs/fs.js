@@ -5,24 +5,48 @@ var fs = null;
 
 function createFile(data){
 
-	var dfd = $.Deferred();
+	var dfd = $.Deferred()
+	, path = _.uniqueId('selection_');
 
-	fs.root.getFile(_.uniqueId('selection_'), {create: true}, function(fileEntry) {
+	deleteFile(path).then(function(){
 
-		fileEntry.createWriter(function(fileWriter) {
+		fs.root.getFile(path, { create: true }, function(fileEntry) {
 
-			fileWriter.onwriteend = dfd.resolve.bind(dfd, fileEntry);
-			fileWriter.onerror = dfd.reject;
+			fileEntry.createWriter(function(fileWriter) {
 
-			var bb = new BlobBuilder();
-			bb.append(data);
-			fileWriter.write(bb.getBlob('text/plain'));
+				fileWriter.onwriteend = function(){
+					fileEntry.file(dfd.resolve);
+				}
+				fileWriter.onerror = dfd.reject;
+			
+				var bb = new BlobBuilder();
+				bb.append(data);
+				fileWriter.write(bb.getBlob('text/plain'));
+	
+			}, errorHandler);
 
 		}, errorHandler);
-
-	}, errorHandler);
+		
+	});
 
 	return dfd.promise();
+	
+}
+
+function deleteFile(path){
+
+	var dfd = $.Deferred();
+
+	fs.root.getFile(
+		path
+		, { create: false }
+		, function(fileEntry){
+			fileEntry.remove(dfd.resolve, dfd.fail);
+		}
+		, errorHandler
+	);
+			
+	return dfd.promise();	
 	
 }
 
@@ -59,5 +83,5 @@ function errorHandler(e) {
 			msg = 'Unknown Error';
 			break;
 	};
-	document.querySelector('#example-list-fs-ul').innerHTML = 'Error: ' + msg;
+	console.log('Error: ' + msg);
 }
