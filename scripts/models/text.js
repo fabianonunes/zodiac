@@ -108,11 +108,8 @@
 			for(var path = [], m = this; m != null; m = m.getPrevious()){
 				path.push(m.get('fileName'), ops[m.get('op')]);
 			}
-
 			path.pop();
-
 			return path.reverse().join('');
-
 		}
 			
 	});

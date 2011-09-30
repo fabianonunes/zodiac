@@ -9,6 +9,7 @@
 		, 'libs/underscore-1.1.7'
 		, 'libs/backbone-0.5.3'
 		, 'libs/dust-core-0.3.0'
+		, 'libs/fs.js'
 	)
 	.then('templates/path.js')
 	.then(function(){
