@@ -70,16 +70,13 @@
 			, type = dt.types[0];
 
 			if(~dt.types.indexOf('text')){
-				createFile(dt.getData('text')).then(function(fileEntry){
-					fileEntry.file(function(file){
-						self.collection.blend(file, op);
-					});
+				createFile(dt.getData('text'))
+				.then(function(fileEntry){
+					fileEntry.file(self.collection.blend.bind(self, op));
 				});
-
 			} else {
-				this.collection.blend(dt.files[0], op);
+				this.collection.blend(op, dt.files[0]);
 			}
-
 
 			this.mask.hide();
 

@@ -141,7 +141,7 @@
 			next ? next.setPrevious(previous) : previous && previous.activate();			
 		},
 
-		blend : function(file, op){
+		blend : function(op, file){
 			var m = new Text({
 				op : op
 				, origin : file
