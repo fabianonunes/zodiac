@@ -8,17 +8,16 @@ function createFile(data){
 	var dfd = $.Deferred()
 	, path = _.uniqueId('selection_');
 
-	deleteFile(path).then(function(){
+	truncateFile(path).then(function(){
 
 		fs.root.getFile(path, { create: true }, function(fileEntry) {
 
 			fileEntry.createWriter(function(fileWriter) {
 
-				fileWriter.onwriteend = function(){
-					fileEntry.file(dfd.resolve);
-				}
+				fileWriter.onwriteend = fileEntry.file.bind(fileEntry, dfd.resolve);	
+
 				fileWriter.onerror = dfd.reject;
-			
+
 				var bb = new BlobBuilder();
 				bb.append(data);
 				fileWriter.write(bb.getBlob('text/plain'));
@@ -33,17 +32,38 @@ function createFile(data){
 	
 }
 
+function truncateFile(path){
+
+	var dfd = $.Deferred();
+
+	fs.root.getFile(path, { create: true }, function(fileEntry) {
+
+		fileEntry.createWriter(function(fileWriter) {
+
+			fileWriter.onwriteend = dfd.resolve;
+			fileWriter.onerror = dfd.reject;
+
+			fileWriter.truncate(0);
+
+		}, errorHandler);
+
+	}, errorHandler);
+		
+
+	return dfd.promise();
+	
+}
+
 function deleteFile(path){
 
 	var dfd = $.Deferred();
 
 	fs.root.getFile(
 		path
-		, { create: false }
+		, { create: true }
 		, function(fileEntry){
 			fileEntry.remove(dfd.resolve, dfd.fail);
 		}
-		, errorHandler
 	);
 			
 	return dfd.promise();	
@@ -84,4 +104,6 @@ function errorHandler(e) {
 			break;
 	};
 	console.log('Error: ' + msg);
+	console.trace();
+
 }
