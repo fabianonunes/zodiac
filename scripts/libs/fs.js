@@ -12,16 +12,16 @@ function createFile(data){
 
 		fs.root.getFile(path, { create: true }, function(fileEntry) {
 
-			fileEntry.createWriter(function(fileWriter) {
+			fileEntry.createWriter(function(writer) {
 
-				fileWriter.onwriteend = fileEntry.file.bind(fileEntry, dfd.resolve);	
+				writer.onwriteend = fileEntry.file.bind(fileEntry, dfd.resolve);	
 
-				fileWriter.onerror = dfd.reject;
+				writer.onerror = dfd.reject;
 
 				var bb = new BlobBuilder();
 				bb.append(data);
-				fileWriter.write(bb.getBlob('text/plain'));
-	
+				writer.write(bb.getBlob('text/plain'));
+
 			}, errorHandler);
 
 		}, errorHandler);
@@ -53,23 +53,6 @@ function truncateFile(path){
 	return dfd.promise();
 	
 }
-
-function deleteFile(path){
-
-	var dfd = $.Deferred();
-
-	fs.root.getFile(
-		path
-		, { create: true }
-		, function(fileEntry){
-			fileEntry.remove(dfd.resolve, dfd.fail);
-		}
-	);
-			
-	return dfd.promise();	
-	
-}
-
 
 if (window.requestFileSystem) {
 	initFS();
