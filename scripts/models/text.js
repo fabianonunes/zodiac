@@ -108,11 +108,8 @@
 			for(var path = [], m = this; m != null; m = m.getPrevious()){
 				path.push(m.get('fileName'), ops[m.get('op')]);
 			}
-
 			path.pop();
-
 			return path.reverse().join('');
-
 		}
 			
 	});
@@ -144,7 +141,7 @@
 			next ? next.setPrevious(previous) : previous && previous.activate();			
 		},
 
-		blend : function(file, op){
+		blend : function(op, file){
 			var m = new Text({
 				op : op
 				, origin : file
