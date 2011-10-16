@@ -3,6 +3,17 @@ importScripts('libs/underscore-1.1.7.min.js');
 importScripts('libs/dust-core-0.3.0.min.js');
 importScripts('../templates/row-stream.js');
 
+
+// function define(deps, module){
+// 	module();
+// }
+
+// importScripts('../libs/underscore.js');
+// importScripts('../libs/dust.js');
+// importScripts('../templates.js');
+
+
+
 var TextWorker = {
 
 	sort : function(lines, classes){
@@ -39,7 +50,7 @@ var TextWorker = {
 				html : out,
 				length : strut.length
 			});
-			close();
+			// close();
 		});
 
 	},
@@ -77,7 +88,7 @@ var TextWorker = {
 				lines : value,
 				length : value.length
 			});
-			close();
+			// close();
 		});
 
 			
@@ -307,6 +318,7 @@ var TextWorker = {
 };
 
 onmessage = function(message){
+
 	var d = message.data;
 	if(d.op === 'sort' || d.op === 'uniq'){
 		TextWorker[d.op](d.lines, d.classes);
