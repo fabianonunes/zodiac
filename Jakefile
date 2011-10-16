@@ -17,7 +17,7 @@ task('build', function (params) {
 			backbone: 'libs/backbone',
 			dust : 'libs/dust'
 		},
-		out: 'scripts/main-built.js'
+		out: 'scripts/production.js'
 	};
 
 	requirejs.optimize(config, function (buildResponse, a, b, c, d) {
