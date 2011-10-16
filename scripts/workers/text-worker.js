@@ -9,7 +9,8 @@ var TextWorker = {
 
 		var strut = [],
 		last = { clazz : false },
-		base = dust.makeBase(),
+		base = dust.makeBase();
+
 		classes = classes || [];
 
 		lines.forEach(function(v, k){
@@ -48,8 +49,9 @@ var TextWorker = {
 		var strut = {},
 		last = { clazz : false },
 		base = dust.makeBase(),
-		classes = classes || [],
 		value = [];
+		
+		classes = classes || [];
 
 		lines.forEach(function(v, k){
 			if(!v) return;
@@ -222,7 +224,7 @@ var TextWorker = {
 
 			var v = context.current();
 
-			if(o[v] == 1){
+			if(o[v] === 1){
 
 				var ck = {
 					line : v,
@@ -271,7 +273,8 @@ var TextWorker = {
 
 		template(lines2, function(chunk, context, bodies) {
 
-			var v = original = context.current();
+			var v, original;
+			v = original = context.current();
 
 			var found = regexes.some(function(r){
 				return v !== (v = v.replace(r, '<b>$&</b>'));
