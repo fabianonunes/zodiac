@@ -10,7 +10,7 @@ task('build', function (params) {
 	var config = {
 		baseUrl: 'scripts',
 		name: 'main',
-		excludeShallow : ['underscore', 'dust'],
+		// excludeShallow : ['underscore', 'dust', 'templates'],
 		paths: {
 			jquery : 'libs/jquery/jquery-1.7b2',
 			underscore: 'libs/underscore',
