@@ -1,18 +1,15 @@
 
-importScripts('libs/underscore-1.1.7.min.js');
-importScripts('libs/dust-core-0.3.0.min.js');
-importScripts('../templates/row-stream.js');
+importScripts('../libs/underscore.js');
+importScripts('../libs/dust.js');
+importScripts('../templates.js');
 
-
-// function define(deps, module){
-// 	module();
-// }
-
-// importScripts('../libs/underscore.js');
-// importScripts('../libs/dust.js');
-// importScripts('../templates.js');
-
-
+function define(deps, module){
+	var root = this, args = [];
+	deps.forEach(function(v){
+		args.push(this[v]);
+	});
+	module.apply(root, args);
+}
 
 var TextWorker = {
 
