@@ -1,12 +1,14 @@
-!function(){
+define([
+	'jquery', 'underscore', 'backbone', 'libs/base64', 'renderer'
+], function($, _, Backbone, b64, renderer){
 
-	app.PathView = Backbone.View.extend({
+	var PathView = Backbone.View.extend({
 
 		tagName : 'div',
 
 		events : {
-			'click .remove' : 'destroy'
-			, 'dragstart' : 'drag'
+			'click .remove' : 'destroy',
+			'dragstart' : 'drag'
 		},
 
 		template : 'path', 
@@ -26,10 +28,10 @@
 		drag : function(event){
 			event = event.originalEvent;
 			event.dataTransfer.setData(
-				'DownloadURL'
-				, 'text/plain:' + this.model.getPath() +
-				'.txt:data:text/plain;base64,' +
-				btoa(this.model.lines.join('\n'))
+				'DownloadURL',
+				'text/plain:' + this.model.getPath() +
+					'.txt:data:text/plain;base64,' +
+					b64.encode(this.model.lines.join('\n'))
 			);
 		},
 
@@ -44,18 +46,18 @@
 			var dfd = $.Deferred();
 
 			var doc = {
-				op : this.model.get('op')
-				, previous : this.model.getPrevious()
-				, fileName : this.model.get('fileName')
-				, length : this.model.get('length')
-				, id : this.model.id
+				op : this.model.get('op'),
+				previous : this.model.getPrevious(),
+				fileName : this.model.get('fileName'),
+				length : this.model.get('length'),
+				id : this.model.id
 			};
 
 			$(this.el).empty();
 			
-			app.template({
-				documents : [doc]
-				, ops : oprs
+			renderer({
+				documents : [doc],
+				ops : oprs
 			}, this.template, this.el, dfd.resolve.bind(dfd, this.el));
 
 			return dfd.promise();
@@ -64,7 +66,7 @@
 
 	});
 
-	app.PathListView = Backbone.View.extend({
+	var PathListView = Backbone.View.extend({
 
 		el: $('.path'),
 		template : 'path', 
@@ -85,7 +87,7 @@
 		},
 
 		render : function(model){
-			new app.PathView({ model : model })
+			new PathView({ model : model })
 			.render()
 			.then(this.el.append.bind(this.el));
 		},
@@ -98,7 +100,9 @@
 
 	});
 
-}();
+	return PathListView;
+
+});
 
 function oprs(chunk, context, bodies){
 
@@ -114,9 +118,9 @@ function oprs(chunk, context, bodies){
 
 	Object.keys(ops).forEach(function(k){
 		retval.push({
-			type : k
-			, symbol : ops[k]
-			, selected : document.op === k
+			type : k,
+			symbol : ops[k],
+			selected : document.op === k
 		});
 	});
 

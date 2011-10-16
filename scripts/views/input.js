@@ -1,6 +1,7 @@
-!function(){
 
-	app.InputView = Backbone.View.extend({
+define(['jquery', 'underscore', 'backbone'], function($, _, Backbone){
+
+	var InputView = Backbone.View.extend({
 
 		el: $('.input'),
 
@@ -13,7 +14,7 @@
 			_.bindAll(this, 'updateText', 'selectText', 'empty');
 
 			this.collection.bind("change:currentIndex", this.updateText);
-			this.collection.bind("reset", this.empty)
+			this.collection.bind("reset", this.empty);
 
 			var self = this;
 			$('.sort').click(function(evt){
@@ -21,7 +22,7 @@
 			});
 			$('.uniq').click(function(evt){
 				self.collection.uniqDocument();
-			})			
+			});
 
 		},
 
@@ -39,7 +40,7 @@
 
 			var s = document.createElement('span');
 
-			s.innerHTML = html || model.lines.join('\n');;
+			s.innerHTML = html || model.lines.join('\n');
 
 			this.el[0].appendChild(s);
 
@@ -54,4 +55,6 @@
 
 	});
 
-}();
+	return InputView;
+
+});
