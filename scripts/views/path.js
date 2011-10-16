@@ -100,30 +100,32 @@ define([
 
 	});
 
+	function oprs(chunk, context, bodies){
+
+		var ops = {
+			union : '∪' ,
+			intersection : '∩' ,
+			difference : '∖' ,
+			symmetric : '⊖',
+			grep : '*'
+		};
+
+		var document = context.current(), retval = [];
+
+		Object.keys(ops).forEach(function(k){
+			retval.push({
+				type : k,
+				symbol : ops[k],
+				selected : document.op === k
+			});
+		});
+
+		return retval;
+
+	}	
+
 	return PathListView;
 
 });
 
-function oprs(chunk, context, bodies){
 
-	var ops = {
-		union : '∪' ,
-		intersection : '∩' ,
-		difference : '∖' ,
-		symmetric : '⊖',
-		grep : '*'
-	};
-
-	var document = context.current(), retval = [];
-
-	Object.keys(ops).forEach(function(k){
-		retval.push({
-			type : k,
-			symbol : ops[k],
-			selected : document.op === k
-		});
-	});
-
-	return retval;
-
-}
