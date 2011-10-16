@@ -7,17 +7,18 @@ var TextWorker = {
 
 	sort : function(lines, classes){
 
-		var strut = []
-		, last = { clazz : false }
-		, base = dust.makeBase()
-		, classes = classes || [];
+		var strut = [],
+		last = { clazz : false },
+		base = dust.makeBase();
+
+		classes = classes || [];
 
 		lines.forEach(function(v, k){
 			if(!v) return;
 			strut.push({
-				line : v
-				, clazz : classes[k]
-			})
+				line : v,
+				clazz : classes[k]
+			});
 		});
 
 		strut = sortBy(strut, 'line');
@@ -27,16 +28,16 @@ var TextWorker = {
 			var row = context.current();
 
 			var ck = {
-				line : row.line
-				, clazz : row.clazz !== last.clazz && (last.clazz = row.clazz)
+				line : row.line,
+				clazz : row.clazz !== last.clazz && (last.clazz = row.clazz)
 			};
 
 			chunk.render(bodies.block, base.push(ck));
 
 		}, function(out){
 			postMessage({
-				html : out
-				, length : strut.length
+				html : out,
+				length : strut.length
 			});
 			close();
 		});
@@ -45,11 +46,12 @@ var TextWorker = {
 
 	uniq : function(lines, classes){
 
-		var strut = {}
-		, last = { clazz : false }
-		, base = dust.makeBase()
-		, classes = classes || []
-		, value = [];
+		var strut = {},
+		last = { clazz : false },
+		base = dust.makeBase(),
+		value = [];
+		
+		classes = classes || [];
 
 		lines.forEach(function(v, k){
 			if(!v) return;
@@ -61,8 +63,8 @@ var TextWorker = {
 			var row = context.current();
 
 			var ck = {
-				line : row
-				, clazz : strut[row] !== last.clazz && (last.clazz = strut[row])
+				line : row,
+				clazz : strut[row] !== last.clazz && (last.clazz = strut[row])
 			};
 
 			chunk.render(bodies.block, base.push(ck));
@@ -71,9 +73,9 @@ var TextWorker = {
 
 		}, function(out){
 			postMessage({
-				html : out
-				, lines : value
-				, length : value.length
+				html : out,
+				lines : value,
+				length : value.length
 			});
 			close();
 		});
@@ -83,11 +85,11 @@ var TextWorker = {
 
 	difference : function(lines2, lines1){
 
-		var value = []
-		, classes = []
-		, uq = {}
-		, last = {}
-		, base = dust.makeBase();
+		var value = [],
+		classes = [],
+		uq = {},
+		last = {},
+		base = dust.makeBase();
 
 		lines1.forEach(function(v, k){
 			uq[v] = true;
@@ -97,8 +99,8 @@ var TextWorker = {
 			var v = context.current();
 			if(!uq[v]){
 				var ck = {
-					line : v
-					, clazz : !last.clazz && (last.clazz = 'red')
+					line : v,
+					clazz : !last.clazz && (last.clazz = 'red')
 				};
 				chunk.render(bodies.block, base.push(ck));
 				value.push(v);
@@ -106,32 +108,32 @@ var TextWorker = {
 			}
 		}, function(out){
 			postMessage({
-				html : out
-				, lines : value
-				, length : value.length
+				html : out,
+				lines : value,
+				length : value.length
 				// , data : classes
 			});				
-		})
+		});
 
 	},
 
 	union : function(lines2, lines1){
 
-		var value = [] , classes = []
-		, last = { clazz : false }
-		, uq = {}, base = dust.makeBase();
+		var value = [] , classes = [],
+		last = { clazz : false },
+		uq = {}, base = dust.makeBase();
 
 		lines2.forEach(iterator(uq, 'red'));
 		lines1.forEach(iterator(uq, 'blue'));
 
 		template(Object.keys(uq), function(chunk, context, bodies) {
 
-			var v = context.current()
-			, i = uq[v].qtd;
+			var v = context.current(),
+			i = uq[v].qtd;
 
 			var ck = {
-				line : v
-				, clazz : uq[v].clazz !== last.clazz && (last.clazz = uq[v].clazz)
+				line : v,
+				clazz : uq[v].clazz !== last.clazz && (last.clazz = uq[v].clazz)
 			};
 
 			for( ; i > 0 ; i--){
@@ -143,9 +145,9 @@ var TextWorker = {
 
 		}, function(out){
 			postMessage({
-				html : out
-				, lines : value
-				, length : value.length
+				html : out,
+				lines : value,
+				length : value.length
 				// , data : classes
 			});					
 		});
@@ -154,23 +156,23 @@ var TextWorker = {
 			return function(v){
 				if(!stack[v]){
 					stack[v] = {
-						qtd : 0
-						, clazz : ''
-					}
-				};
+						qtd : 0,
+						clazz : ''
+					};
+				}
 				if(stack[v].qtd++ < 2){
 					stack[v].clazz += clazz;
 				}
-			}
+			};
 		}
 
 	},
 
 	intersection : function(lines2, lines1){
 
-		var value = [], classes = []
-		, last = { clazz : false }
-		, o = {} , base = dust.makeBase();
+		var value = [], classes = [],
+		last = { clazz : false },
+		o = {} , base = dust.makeBase();
 
 		lines2.forEach(function(v, k){
 			o[v] = true;
@@ -183,8 +185,8 @@ var TextWorker = {
 			if(o[v]){
 
 				var ck = {
-					line : v
-					, clazz : !last.clazz && (last.clazz = 'redblue')
+					line : v,
+					clazz : !last.clazz && (last.clazz = 'redblue')
 				};
 
 				chunk.render(bodies.block, base.push(ck));
@@ -196,10 +198,9 @@ var TextWorker = {
 
 		}, function(out){
 			postMessage({
-				html : out
-				, lines : value
-				, length : value.length
-				// , data : classes
+				html : out,
+				lines : value,
+				length : value.length
 			});			
 		});
 
@@ -207,9 +208,9 @@ var TextWorker = {
 
 	symmetric : function(lines2, lines1){
 
-		var value = [], classes = []
-		, last = { clazz : false }
-		, o = {} , base = dust.makeBase();
+		var value = [], classes = [],
+		last = { clazz : false },
+		o = {} , base = dust.makeBase();
 
 		lines2.forEach(function(v){
 			o[v] = +[o[v]] + 1;
@@ -223,11 +224,11 @@ var TextWorker = {
 
 			var v = context.current();
 
-			if(o[v] == 1){
+			if(o[v] === 1){
 
 				var ck = {
-					line : v
-					, clazz : !last.clazz && (last.clazz = 'redblue')
+					line : v,
+					clazz : !last.clazz && (last.clazz = 'redblue')
 				};
 
 				chunk.render(bodies.block, base.push(ck));
@@ -239,9 +240,9 @@ var TextWorker = {
 
 		}, function(out){
 			postMessage({
-				html : out
-				, lines : value
-				, length : value.length
+				html : out,
+				lines : value,
+				length : value.length
 				// , data : classes
 			});			
 		});
@@ -251,20 +252,20 @@ var TextWorker = {
 	charge : function(lines2, lines1){
 		
 		postMessage({
-			html : lines1.join('\n')
-			, lines : lines1
-			, length : lines1.length
+			html : lines1.join('\n'),
+			lines : lines1,
+			length : lines1.length
 		});					
 	
 	},
 
 	grep : function(lines2, lines1){
 
-		var value = []
-		, classes = []
-		, last = { clazz : false }
-		, uq = {}
-		, base = dust.makeBase();
+		var value = [],
+		classes = [],
+		last = { clazz : false },
+		uq = {},
+		base = dust.makeBase();
 
 		var regexes = lines1.map(function(v){
 			return new RegExp(v, "i");
@@ -272,7 +273,8 @@ var TextWorker = {
 
 		template(lines2, function(chunk, context, bodies) {
 
-			var v = original = context.current();
+			var v, original;
+			v = original = context.current();
 
 			var found = regexes.some(function(r){
 				return v !== (v = v.replace(r, '<b>$&</b>'));
@@ -293,9 +295,9 @@ var TextWorker = {
 
 		}, function(out){
 			postMessage({
-				html : out
-				, lines : value
-				, length : value.length
+				html : out,
+				lines : value,
+				length : value.length
 				// , data : classes
 			});					
 		});
@@ -313,7 +315,7 @@ onmessage = function(message){
 	} else {
 		readFile(d.file, d.mask, TextWorker[d.op].bind(TextWorker, d.previous));
 	}
-}
+};
 
 
 function template(data, stream, cb){
@@ -337,12 +339,12 @@ function readFile(file, mask, pmcb){
 	reader.onload = function(event){
 		var r = [];
 		event.target.result.split('\n').forEach(function(v){
-			mask && (v = mask.exec(v));
+			if(mask) (v = mask.exec(v));
 			if(v) r.push(v.toString().trim());
 		});
 		pmcb(r);
 	};
-	reader.onerror = postMessage
+	reader.onerror = postMessage;
 	reader.readAsText(file);
 }
 

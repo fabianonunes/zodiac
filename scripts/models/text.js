@@ -1,4 +1,4 @@
-!function(){
+define(['underscore', 'backbone', 'libs/worker'], function(_, Backbone, worker){
 
 	var Text = Backbone.Model.extend({
 
@@ -16,11 +16,11 @@
 
 		perform : function(added){
 
-			$.work('/scripts/workers/text-worker.js', {
-				op : this.get('op')
-				, previous : this.getPrevious() && this.getPrevious().lines
-				, file : this.get('origin')
-				, mask : this.collection.mask
+			worker('/scripts/workers/text-worker.js', {
+				op : this.get('op'),
+				previous : this.getPrevious() && this.getPrevious().lines,
+				file : this.get('origin'),
+				mask : this.collection.mask
 			}, this.afterWork.bind(this, added));
 
 		},
@@ -47,20 +47,20 @@
 
 		sort : function(){
 
-			$.work('/scripts/workers/text-worker.js', {
-				op : 'sort'
-				, lines : this.lines
-				, classes : this.classes
+			worker('/scripts/workers/text-worker.js', {
+				op : 'sort',
+				lines : this.lines,
+				classes : this.classes
 			}, this.afterWork.bind(this, false));
 
 		},
 
 		uniq : function(){
 
-			$.work('/scripts/workers/text-worker.js', {
-				op : 'uniq'
-				, lines : this.lines
-				, classes : this.classes
+			worker('/scripts/workers/text-worker.js', {
+				op : 'uniq',
+				lines : this.lines,
+				classes : this.classes
 			}, this.afterWork.bind(this, false));
 
 		},		
@@ -71,7 +71,7 @@
 
 		afterWork : function(added, message){
 
-			!_.isUndefined(message.data.lines) && (this.lines = message.data.lines);
+			if(!_.isUndefined(message.data.lines)) this.lines = message.data.lines;
 
 			this.html = message.data.html;
 
@@ -127,7 +127,7 @@
 
 		updateDocument : function(m){
 			this.currentIndex = m.id;
-			this.trigger('change:currentIndex', m.id, m, m.html)
+			this.trigger('change:currentIndex', m.id, m, m.html);
 		},
 
 		destroy : function(m){
@@ -138,28 +138,28 @@
 
 		tie : function(next, previous){
 			previous && previous.unbind('change:length');
-			next ? next.setPrevious(previous) : previous && previous.activate();			
+			next ? next.setPrevious(previous) : previous && previous.activate();
 		},
 
 		blend : function(op, file){
 			var m = new Text({
-				op : op
-				, origin : file
-				, fileName : file.name
-				, id : _.uniqueId('text')
+				op : op,
+				origin : file,
+				fileName : file.name,
+				id : _.uniqueId('text')
 			}, {
-				collection : this
-				, previous : this.currentDocument()
+				collection : this,
+				previous : this.currentDocument()
 			});
 			this.add(m);
 		},
 
 		sortDocument : function(){
-			this.currentIndex && this.currentDocument().sort();
+			if(this.currentIndex) this.currentDocument().sort();
 		},
 
 		uniqDocument : function(){
-			this.currentIndex && this.currentDocument().uniq();
+			if(this.currentIndex) this.currentDocument().uniq();
 		},
 
 		currentDocument : function(){
@@ -168,7 +168,6 @@
 
 	});
 
-	app.Text = Text;
-	app.TextPeer = TextPeer;
+	return TextPeer;
 
-}();
+});

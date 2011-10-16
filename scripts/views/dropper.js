@@ -1,21 +1,27 @@
-!function(){
 
-	app.DropperView = Backbone.View.extend({
+define([
+	'jquery',
+	'backbone',
+	'underscore',
+	'libs/fs'
+], function($, Backbone, _, fs){
+
+	var dropper = Backbone.View.extend({
 
 		el: $('#dropper'),
 		
 		events: {
 			
-			'dragover' : 'cancel'
+			'dragover' : 'cancel',
 			// , 'dragover div' : 'cancel'
 
-			, 'dragleave': 'dragLeave'
-			, 'dragleave div' : 'onLeave'
+			'dragleave': 'dragLeave',
+			'dragleave div' : 'onLeave',
 
-			, 'dragenter' : 'dragEnter'
-			, 'dragenter div' : 'onEnter'
+			'dragenter' : 'dragEnter',
+			'dragenter div' : 'onEnter',
 
-			, 'drop' : 'onDrop' 
+			'drop' : 'onDrop' 
 
 		},
 		
@@ -33,29 +39,27 @@
 			$(evt.target).addClass('over');
 		},
 
-
 		dragLeave : function(evt){
 
-			var related = document.elementFromPoint(evt.clientX, evt.clientY);
+			var related = document.elementFromPoint(evt.originalEvent.clientX, evt.originalEvent.clientY);
 
 			if(!related || related !== this.mask[0]){
 				var inside = $.contains(this.mask[0], related);
-				!inside && this.mask.hide();
+				if(!inside) this.mask.hide();
 			}
 
 		},
 
 		onLeave : function(evt){
 
-			var related = document.elementFromPoint(evt.clientX, evt.clientY);
+			var related = document.elementFromPoint(evt.originalEvent.clientX, evt.originalEvent.clientY);
 
 			if(!related || related !== evt.target){
 				var inside = $.contains(evt.target, related);
-				!inside && $(evt.target).removeClass('over');
+				if(!inside) $(evt.target).removeClass('over');
 			}
 			
 		},
-
 
 		onDrop : function(evt){
 
@@ -64,14 +68,14 @@
 			this.cancel(evt);
 			evt.stopImmediatePropagation();
 			
-			var target = $(evt.target).removeClass('over')
-			, op = target.attr('class').split(' ')[0]
-			, dt = evt.originalEvent.dataTransfer
-			, type = dt.types[0];
+			var target = $(evt.target).removeClass('over'),
+			op = target.attr('class').split(' ')[0],
+			dt = evt.originalEvent.dataTransfer,
+			type = dt.types[0];
 
 			if(~dt.types.indexOf('text')){
 				
-				createFile(dt.getData('text'))
+				fs.createFile(dt.getData('text'))
 					.then(self.collection.blend.bind(self, op));
 
 			} else {
@@ -90,4 +94,6 @@
 
 	});
 
-}();
+	return dropper;
+
+});

@@ -1,8 +1,4 @@
-//     Backbone.js 0.5.3
-//     (c) 2010 Jeremy Ashkenas, DocumentCloud Inc.
-//     Backbone may be freely distributed under the MIT license.
-//     For all details and documentation:
-//     http://documentcloud.github.com/backbone
+define(["require", "exports", "module", "underscore", "jquery"], function(require, exports, module) {
 
 (function(){
 
@@ -33,6 +29,7 @@
 
   // For Backbone's purposes, jQuery or Zepto owns the `$` variable.
   var $ = root.jQuery || root.Zepto;
+  if (!$ && (typeof require !== 'undefined')) $ = require('jquery');
 
   // Runs Backbone.js in *noConflict* mode, returning the `Backbone` variable
   // to its previous owner. Returns a reference to this Backbone object.
@@ -1156,3 +1153,5 @@
   };
 
 }).call(this);
+
+});

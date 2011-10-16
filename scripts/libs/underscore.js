@@ -1,3 +1,4 @@
+define(["require", "exports", "module"], function(require, exports, module) {
 //     Underscore.js 1.1.7
 //     (c) 2011 Jeremy Ashkenas, DocumentCloud Inc.
 //     Underscore is freely distributable under the MIT license.
@@ -843,3 +844,4 @@
   };
 
 })();
+});
