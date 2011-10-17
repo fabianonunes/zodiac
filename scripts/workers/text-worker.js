@@ -1,6 +1,6 @@
 
-importScripts('../libs/underscore.js');
-importScripts('../libs/dust.js');
+importScripts('../libs/underscore.min.js');
+importScripts('../libs/dust.min.js');
 importScripts('../templates.js');
 
 function define(deps, module){

@@ -7,6 +7,7 @@ define(["require", "exports", "module"], function (require, exports, module) {
 // Copyright (c) 2010, Aleksander Williams
 // Released under the MIT License.
 //
+
 (function () {
 
 	var root = this;
@@ -57,7 +58,7 @@ define(["require", "exports", "module"], function (require, exports, module) {
 				tmpl(master.head, Context.wrap(context)).end();
 			});
 			return master;
-		}
+		};
 	};
 
 	dust.load = function (name, chunk, context) {
@@ -92,7 +93,7 @@ define(["require", "exports", "module"], function (require, exports, module) {
 
 	dust.nextTick = function (callback) {
 		setTimeout(callback, 0);
-	}
+	};
 
 	dust.isEmpty = function (value) {
 		if (dust.isArray(value) && !value.length) return true;
@@ -126,7 +127,7 @@ define(["require", "exports", "module"], function (require, exports, module) {
 		},
 		u: encodeURI,
 		uc: encodeURIComponent
-	}
+	};
 
 	function Context(stack, global, blocks) {
 		this.stack = stack;
@@ -136,14 +137,14 @@ define(["require", "exports", "module"], function (require, exports, module) {
 
 	dust.makeBase = function (global) {
 		return new Context(new Stack(), global);
-	}
+	};
 
 	Context.wrap = function (context) {
 		if (context instanceof Context) {
 			return context;
 		}
 		return new Context(new Stack(context));
-	}
+	};
 
 	Context.prototype.get = function (key) {
 		var ctx = this.stack,
@@ -198,7 +199,7 @@ define(["require", "exports", "module"], function (require, exports, module) {
 			fn = blocks[len][key];
 			if (fn) return fn;
 		}
-	}
+	};
 
 	Context.prototype.shiftBlocks = function (locals) {
 		var blocks = this.blocks;
@@ -212,7 +213,7 @@ define(["require", "exports", "module"], function (require, exports, module) {
 			return new Context(this.stack, this.global, newBlocks);
 		}
 		return this;
-	}
+	};
 
 	function Stack(head, tail, idx, len) {
 		this.tail = tail;
@@ -245,7 +246,7 @@ define(["require", "exports", "module"], function (require, exports, module) {
 			this.head = chunk;
 		}
 		this.callback(null, this.out);
-	}
+	};
 
 	function Stream() {
 		this.head = new Chunk(this);
@@ -268,7 +269,7 @@ define(["require", "exports", "module"], function (require, exports, module) {
 			this.head = chunk;
 		}
 		this.emit('end');
-	}
+	};
 
 	Stream.prototype.emit = function (type, data) {
 		var events = this.events;
@@ -276,7 +277,7 @@ define(["require", "exports", "module"], function (require, exports, module) {
 		if (events && events[type]) {
 			events[type](data);
 		}
-	}
+	};
 
 	Stream.prototype.on = function (type, callback) {
 		if (!this.events) {
@@ -284,7 +285,7 @@ define(["require", "exports", "module"], function (require, exports, module) {
 		}
 		this.events[type] = callback;
 		return this;
-	}
+	};
 
 	function Chunk(root, next, taps) {
 		this.root = root;
@@ -302,7 +303,7 @@ define(["require", "exports", "module"], function (require, exports, module) {
 		}
 		this.data += data;
 		return this;
-	}
+	};
 
 	Chunk.prototype.end = function (data) {
 		if (data) {
@@ -311,7 +312,7 @@ define(["require", "exports", "module"], function (require, exports, module) {
 		this.flushable = true;
 		this.root.flush();
 		return this;
-	}
+	};
 
 	Chunk.prototype.map = function (callback) {
 		var cursor = new Chunk(this.root, this.next, this.taps),
@@ -321,7 +322,7 @@ define(["require", "exports", "module"], function (require, exports, module) {
 		this.flushable = true;
 		callback(branch);
 		return cursor;
-	}
+	};
 
 	Chunk.prototype.tap = function (tap) {
 		var taps = this.taps;
@@ -332,16 +333,16 @@ define(["require", "exports", "module"], function (require, exports, module) {
 			this.taps = new Tap(tap);
 		}
 		return this;
-	}
+	};
 
 	Chunk.prototype.untap = function () {
 		this.taps = this.taps.tail;
 		return this;
-	}
+	};
 
 	Chunk.prototype.render = function (body, context) {
 		return body(this, context);
-	}
+	};
 
 	Chunk.prototype.reference = function (elem, context, auto, filters) {
 		if (typeof elem === "function") {
@@ -404,7 +405,7 @@ define(["require", "exports", "module"], function (require, exports, module) {
 			return skip(this, context);
 		}
 		return this;
-	}
+	};
 
 	Chunk.prototype.notexists = function (elem, context, bodies) {
 		var body = bodies.block,
@@ -416,7 +417,7 @@ define(["require", "exports", "module"], function (require, exports, module) {
 			return skip(this, context);
 		}
 		return this;
-	}
+	};
 
 	Chunk.prototype.block = function (elem, context, bodies) {
 		var body = bodies.block;
@@ -474,7 +475,7 @@ define(["require", "exports", "module"], function (require, exports, module) {
 		idx: function (chunk, context, bodies) {
 			return bodies.block(chunk, context.push(context.stack.index));
 		}
-	}
+	};
 
 	function Tap(head, tail) {
 		this.head = head;

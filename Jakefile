@@ -10,12 +10,12 @@ task('build', function (params) {
 	var config = {
 		baseUrl: 'scripts',
 		name: 'main',
-		// excludeShallow : ['underscore', 'dust', 'templates'],
+		excludeShallow : ['underscore', 'dust', 'templates'],
 		paths: {
 			jquery : 'libs/jquery/jquery-1.7b2',
-			underscore: 'libs/underscore',
+			underscore: 'libs/underscore.min',
 			backbone: 'libs/backbone',
-			dust : 'libs/dust'
+			dust : 'libs/dust.min'
 		},
 		out: 'scripts/production.js'
 	};
