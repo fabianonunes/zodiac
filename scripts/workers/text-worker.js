@@ -47,7 +47,7 @@ var TextWorker = {
 				html : out,
 				length : strut.length
 			});
-			// close();
+			close();
 		});
 
 	},
@@ -85,7 +85,7 @@ var TextWorker = {
 				lines : value,
 				length : value.length
 			});
-			// close();
+			close();
 		});
 
 			
