@@ -1,5 +1,3 @@
-define(["require", "exports", "module"], function (require, exports, module) {
-	
 //
 // Dust - Asynchronous Templating v0.3.0
 // http://akdubya.github.com/dustjs
@@ -7,68 +5,54 @@ define(["require", "exports", "module"], function (require, exports, module) {
 // Copyright (c) 2010, Aleksander Williams
 // Released under the MIT License.
 //
-
-(function () {
-
-	var root = this;
+// AMD support by Ryan Florence
+define(function (){
 
 	var dust = {};
 
 	dust.cache = {};
 
-	if (typeof exports !== "undefined") {
-		module.exports = dust;
-	}
-
-	if (typeof module !== 'undefined' && module.exports) {
-		module.exports = dust;
-		dust.dust = dust;
-	} else {
-		root['dust'] = dust;
-	}
-
-
-	dust.register = function (name, tmpl) {
+	dust.register = function(name, tmpl) {
 		if (!name) return;
 		dust.cache[name] = tmpl;
 	};
 
-	dust.render = function (name, context, callback) {
+	dust.render = function(name, context, callback) {
 		var chunk = new Stub(callback).head;
 		dust.load(name, chunk, Context.wrap(context)).end();
 	};
 
-	dust.stream = function (name, context) {
+	dust.stream = function(name, context) {
 		var stream = new Stream();
-		dust.nextTick(function () {
+		dust.nextTick(function() {
 			dust.load(name, stream.head, Context.wrap(context)).end();
 		});
 		return stream;
 	};
 
-	dust.renderSource = function (source, context, callback) {
+	dust.renderSource = function(source, context, callback) {
 		return dust.compileFn(source)(context, callback);
 	};
 
-	dust.compileFn = function (source, name) {
+	dust.compileFn = function(source, name) {
 		var tmpl = dust.loadSource(dust.compile(source, name));
-		return function (context, callback) {
+		return function(context, callback) {
 			var master = callback ? new Stub(callback) : new Stream();
-			dust.nextTick(function () {
+			dust.nextTick(function() {
 				tmpl(master.head, Context.wrap(context)).end();
 			});
 			return master;
-		};
+		}
 	};
 
-	dust.load = function (name, chunk, context) {
+	dust.load = function(name, chunk, context) {
 		var tmpl = dust.cache[name];
 		if (tmpl) {
 			return tmpl(chunk, context);
 		} else {
 			if (dust.onLoad) {
-				return chunk.map(function (chunk) {
-					dust.onLoad(name, function (err, src) {
+				return chunk.map(function(chunk) {
+					dust.onLoad(name, function(err, src) {
 						if (err) return chunk.setError(err);
 						if (!dust.cache[name]) dust.loadSource(dust.compile(src, name));
 						dust.cache[name](chunk, context).end();
@@ -79,31 +63,31 @@ define(["require", "exports", "module"], function (require, exports, module) {
 		}
 	};
 
-	dust.loadSource = function (source, path) {
+	dust.loadSource = function(source, path) {
 		return eval(source);
 	};
 
 	if (Array.isArray) {
 		dust.isArray = Array.isArray;
 	} else {
-		dust.isArray = function (arr) {
+		dust.isArray = function(arr) {
 			return Object.prototype.toString.call(arr) == "[object Array]";
 		};
 	}
 
-	dust.nextTick = function (callback) {
+	dust.nextTick = function(callback) {
 		setTimeout(callback, 0);
-	};
+	}
 
-	dust.isEmpty = function (value) {
+	dust.isEmpty = function(value) {
 		if (dust.isArray(value) && !value.length) return true;
 		if (value === 0) return false;
 		return (!value);
 	};
 
-	dust.filter = function (string, auto, filters) {
+	dust.filter = function(string, auto, filters) {
 		if (filters) {
-			for (var i = 0, len = filters.length; i < len; i++) {
+			for (var i=0, len=filters.length; i<len; i++) {
 				var name = filters[i];
 				if (name === "s") {
 					auto = null;
@@ -119,38 +103,33 @@ define(["require", "exports", "module"], function (require, exports, module) {
 	};
 
 	dust.filters = {
-		h: function (value) {
-			return dust.escapeHtml(value);
-		},
-		j: function (value) {
-			return dust.escapeJs(value);
-		},
+		h: function(value) { return dust.escapeHtml(value); },
+		j: function(value) { return dust.escapeJs(value); },
 		u: encodeURI,
 		uc: encodeURIComponent
-	};
+	}
 
 	function Context(stack, global, blocks) {
-		this.stack = stack;
+		this.stack	= stack;
 		this.global = global;
 		this.blocks = blocks;
 	}
 
-	dust.makeBase = function (global) {
+	dust.makeBase = function(global) {
 		return new Context(new Stack(), global);
-	};
+	}
 
-	Context.wrap = function (context) {
+	Context.wrap = function(context) {
 		if (context instanceof Context) {
 			return context;
 		}
 		return new Context(new Stack(context));
-	};
+	}
 
-	Context.prototype.get = function (key) {
-		var ctx = this.stack,
-			value;
+	Context.prototype.get = function(key) {
+		var ctx = this.stack, value;
 
-		while (ctx) {
+		while(ctx) {
 			if (ctx.isObject) {
 				value = ctx.head[key];
 				if (!(value === undefined)) {
@@ -162,46 +141,45 @@ define(["require", "exports", "module"], function (require, exports, module) {
 		return this.global ? this.global[key] : undefined;
 	};
 
-	Context.prototype.getPath = function (cur, down) {
+	Context.prototype.getPath = function(cur, down) {
 		var ctx = this.stack,
-			len = down.length;
+				len = down.length;
 
 		if (cur && len === 0) return ctx.head;
 		if (!ctx.isObject) return undefined;
 		ctx = ctx.head;
 		var i = 0;
-		while (ctx && i < len) {
+		while(ctx && i < len) {
 			ctx = ctx[down[i]];
 			i++;
 		}
 		return ctx;
 	};
 
-	Context.prototype.push = function (head, idx, len) {
+	Context.prototype.push = function(head, idx, len) {
 		return new Context(new Stack(head, this.stack, idx, len), this.global, this.blocks);
 	};
 
-	Context.prototype.rebase = function (head) {
+	Context.prototype.rebase = function(head) {
 		return new Context(new Stack(head), this.global, this.blocks);
 	};
 
-	Context.prototype.current = function () {
+	Context.prototype.current = function() {
 		return this.stack.head;
 	};
 
-	Context.prototype.getBlock = function (key) {
+	Context.prototype.getBlock = function(key) {
 		var blocks = this.blocks;
 
 		if (!blocks) return;
-		var len = blocks.length,
-			fn;
+		var len = blocks.length, fn;
 		while (len--) {
 			fn = blocks[len][key];
 			if (fn) return fn;
 		}
-	};
+	}
 
-	Context.prototype.shiftBlocks = function (locals) {
+	Context.prototype.shiftBlocks = function(locals) {
 		var blocks = this.blocks;
 
 		if (locals) {
@@ -213,7 +191,7 @@ define(["require", "exports", "module"], function (require, exports, module) {
 			return new Context(this.stack, this.global, newBlocks);
 		}
 		return this;
-	};
+	}
 
 	function Stack(head, tail, idx, len) {
 		this.tail = tail;
@@ -229,7 +207,7 @@ define(["require", "exports", "module"], function (require, exports, module) {
 		this.out = '';
 	}
 
-	Stub.prototype.flush = function () {
+	Stub.prototype.flush = function() {
 		var chunk = this.head;
 
 		while (chunk) {
@@ -237,7 +215,7 @@ define(["require", "exports", "module"], function (require, exports, module) {
 				this.out += chunk.data;
 			} else if (chunk.error) {
 				this.callback(chunk.error);
-				this.flush = function () {};
+				this.flush = function() {};
 				return;
 			} else {
 				return;
@@ -246,21 +224,21 @@ define(["require", "exports", "module"], function (require, exports, module) {
 			this.head = chunk;
 		}
 		this.callback(null, this.out);
-	};
+	}
 
 	function Stream() {
 		this.head = new Chunk(this);
 	}
 
-	Stream.prototype.flush = function () {
+	Stream.prototype.flush = function() {
 		var chunk = this.head;
 
-		while (chunk) {
+		while(chunk) {
 			if (chunk.flushable) {
 				this.emit('data', chunk.data);
 			} else if (chunk.error) {
 				this.emit('error', chunk.error);
-				this.flush = function () {};
+				this.flush = function() {};
 				return;
 			} else {
 				return;
@@ -269,23 +247,23 @@ define(["require", "exports", "module"], function (require, exports, module) {
 			this.head = chunk;
 		}
 		this.emit('end');
-	};
+	}
 
-	Stream.prototype.emit = function (type, data) {
+	Stream.prototype.emit = function(type, data) {
 		var events = this.events;
 
 		if (events && events[type]) {
 			events[type](data);
 		}
-	};
+	}
 
-	Stream.prototype.on = function (type, callback) {
+	Stream.prototype.on = function(type, callback) {
 		if (!this.events) {
 			this.events = {};
 		}
 		this.events[type] = callback;
 		return this;
-	};
+	}
 
 	function Chunk(root, next, taps) {
 		this.root = root;
@@ -295,36 +273,36 @@ define(["require", "exports", "module"], function (require, exports, module) {
 		this.taps = taps;
 	}
 
-	Chunk.prototype.write = function (data) {
-		var taps = this.taps;
+	Chunk.prototype.write = function(data) {
+		var taps	= this.taps;
 
 		if (taps) {
 			data = taps.go(data);
 		}
 		this.data += data;
 		return this;
-	};
+	}
 
-	Chunk.prototype.end = function (data) {
+	Chunk.prototype.end = function(data) {
 		if (data) {
 			this.write(data);
 		}
 		this.flushable = true;
 		this.root.flush();
 		return this;
-	};
+	}
 
-	Chunk.prototype.map = function (callback) {
+	Chunk.prototype.map = function(callback) {
 		var cursor = new Chunk(this.root, this.next, this.taps),
-			branch = new Chunk(this.root, cursor, this.taps);
+				branch = new Chunk(this.root, cursor, this.taps);
 
 		this.next = branch;
 		this.flushable = true;
 		callback(branch);
 		return cursor;
-	};
+	}
 
-	Chunk.prototype.tap = function (tap) {
+	Chunk.prototype.tap = function(tap) {
 		var taps = this.taps;
 
 		if (taps) {
@@ -333,23 +311,20 @@ define(["require", "exports", "module"], function (require, exports, module) {
 			this.taps = new Tap(tap);
 		}
 		return this;
-	};
+	}
 
-	Chunk.prototype.untap = function () {
+	Chunk.prototype.untap = function() {
 		this.taps = this.taps.tail;
 		return this;
-	};
+	}
 
-	Chunk.prototype.render = function (body, context) {
+	Chunk.prototype.render = function(body, context) {
 		return body(this, context);
-	};
+	}
 
-	Chunk.prototype.reference = function (elem, context, auto, filters) {
+	Chunk.prototype.reference = function(elem, context, auto, filters) {
 		if (typeof elem === "function") {
-			elem = elem(this, context, null, {
-				auto: auto,
-				filters: filters
-			});
+			elem = elem(this, context, null, {auto: auto, filters: filters});
 			if (elem instanceof Chunk) {
 				return elem;
 			}
@@ -361,7 +336,7 @@ define(["require", "exports", "module"], function (require, exports, module) {
 		}
 	};
 
-	Chunk.prototype.section = function (elem, context, bodies, params) {
+	Chunk.prototype.section = function(elem, context, bodies, params) {
 		if (typeof elem === "function") {
 			elem = elem(this, context, bodies, params);
 			if (elem instanceof Chunk) {
@@ -370,7 +345,7 @@ define(["require", "exports", "module"], function (require, exports, module) {
 		}
 
 		var body = bodies.block,
-			skip = bodies['else'];
+				skip = bodies['else'];
 
 		if (params) {
 			context = context.push(params);
@@ -378,9 +353,8 @@ define(["require", "exports", "module"], function (require, exports, module) {
 
 		if (dust.isArray(elem)) {
 			if (body) {
-				var len = elem.length,
-					chunk = this;
-				for (var i = 0; i < len; i++) {
+				var len = elem.length, chunk = this;
+				for (var i=0; i<len; i++) {
 					chunk = body(chunk, context.push(elem[i], i, len));
 				}
 				return chunk;
@@ -395,9 +369,9 @@ define(["require", "exports", "module"], function (require, exports, module) {
 		return this;
 	};
 
-	Chunk.prototype.exists = function (elem, context, bodies) {
+	Chunk.prototype.exists = function(elem, context, bodies) {
 		var body = bodies.block,
-			skip = bodies['else'];
+				skip = bodies['else'];
 
 		if (!dust.isEmpty(elem)) {
 			if (body) return body(this, context);
@@ -405,11 +379,11 @@ define(["require", "exports", "module"], function (require, exports, module) {
 			return skip(this, context);
 		}
 		return this;
-	};
+	}
 
-	Chunk.prototype.notexists = function (elem, context, bodies) {
+	Chunk.prototype.notexists = function(elem, context, bodies) {
 		var body = bodies.block,
-			skip = bodies['else'];
+				skip = bodies['else'];
 
 		if (dust.isEmpty(elem)) {
 			if (body) return body(this, context);
@@ -417,9 +391,9 @@ define(["require", "exports", "module"], function (require, exports, module) {
 			return skip(this, context);
 		}
 		return this;
-	};
+	}
 
-	Chunk.prototype.block = function (elem, context, bodies) {
+	Chunk.prototype.block = function(elem, context, bodies) {
 		var body = bodies.block;
 
 		if (elem) {
@@ -432,22 +406,22 @@ define(["require", "exports", "module"], function (require, exports, module) {
 		return this;
 	};
 
-	Chunk.prototype.partial = function (elem, context) {
+	Chunk.prototype.partial = function(elem, context) {
 		if (typeof elem === "function") {
-			return this.capture(elem, context, function (name, chunk) {
+			return this.capture(elem, context, function(name, chunk) {
 				dust.load(name, chunk, context).end();
 			});
 		}
 		return dust.load(elem, this, context);
 	};
 
-	Chunk.prototype.helper = function (name, context, bodies, params) {
+	Chunk.prototype.helper = function(name, context, bodies, params) {
 		return dust.helpers[name](this, context, bodies, params);
 	};
 
-	Chunk.prototype.capture = function (body, context, callback) {
-		return this.map(function (chunk) {
-			var stub = new Stub(function (err, out) {
+	Chunk.prototype.capture = function(body, context, callback) {
+		return this.map(function(chunk) {
+			var stub = new Stub(function(err, out) {
 				if (err) {
 					chunk.setError(err);
 				} else {
@@ -458,38 +432,38 @@ define(["require", "exports", "module"], function (require, exports, module) {
 		});
 	};
 
-	Chunk.prototype.setError = function (err) {
+	Chunk.prototype.setError = function(err) {
 		this.error = err;
 		this.root.flush();
 		return this;
 	};
 
 	dust.helpers = {
-		sep: function (chunk, context, bodies) {
+		sep: function(chunk, context, bodies) {
 			if (context.stack.index === context.stack.of - 1) {
 				return chunk;
 			}
 			return bodies.block(chunk, context);
 		},
 
-		idx: function (chunk, context, bodies) {
+		idx: function(chunk, context, bodies) {
 			return bodies.block(chunk, context.push(context.stack.index));
 		}
-	};
+	}
 
 	function Tap(head, tail) {
 		this.head = head;
 		this.tail = tail;
 	}
 
-	Tap.prototype.push = function (tap) {
+	Tap.prototype.push = function(tap) {
 		return new Tap(tap, this);
 	};
 
-	Tap.prototype.go = function (value) {
+	Tap.prototype.go = function(value) {
 		var tap = this;
 
-		while (tap) {
+		while(tap) {
 			value = tap.head(value);
 			tap = tap.tail;
 		}
@@ -497,39 +471,47 @@ define(["require", "exports", "module"], function (require, exports, module) {
 	};
 
 	var HCHARS = new RegExp(/[&<>\"]/),
-		AMP = /&/g,
-		LT = /</g,
-		GT = />/g,
-		QUOT = /\"/g;
+			AMP		= /&/g,
+			LT		 = /</g,
+			GT		 = />/g,
+			QUOT	 = /\"/g;
 
-	dust.escapeHtml = function (s) {
+	dust.escapeHtml = function(s) {
 		if (typeof s === "string") {
 			if (!HCHARS.test(s)) {
 				return s;
 			}
-			return s.replace(AMP, '&amp;').replace(LT, '&lt;').replace(GT, '&gt;').replace(QUOT, '&quot;');
+			return s.replace(AMP,'&amp;').replace(LT,'&lt;').replace(GT,'&gt;').replace(QUOT,'&quot;');
 		}
 		return s;
 	};
 
 	var BS = /\\/g,
-		CR = /\r/g,
-		LS = /\u2028/g,
-		PS = /\u2029/g,
-		NL = /\n/g,
-		LF = /\f/g,
-		SQ = /'/g,
-		DQ = /"/g,
-		TB = /\t/g;
+			CR = /\r/g,
+			LS = /\u2028/g,
+			PS = /\u2029/g,
+			NL = /\n/g,
+			LF = /\f/g,
+			SQ = /'/g,
+			DQ = /"/g,
+			TB = /\t/g;
 
-	dust.escapeJs = function (s) {
+	dust.escapeJs = function(s) {
 		if (typeof s === "string") {
-			return s.replace(BS, '\\\\').replace(DQ, '\\"').replace(SQ, "\\'").replace(CR, '\\r').replace(LS, '\\u2028').replace(PS, '\\u2029').replace(NL, '\\n').replace(LF, '\\f').replace(TB, "\\t");
+			return s
+				.replace(BS, '\\\\')
+				.replace(DQ, '\\"')
+				.replace(SQ, "\\'")
+				.replace(CR, '\\r')
+				.replace(LS, '\\u2028')
+				.replace(PS, '\\u2029')
+				.replace(NL, '\\n')
+				.replace(LF, '\\f')
+				.replace(TB, "\\t");
 		}
 		return s;
 	};
 
-})();
-
+	return dust;
 
 });

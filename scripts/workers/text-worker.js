@@ -1,7 +1,15 @@
 
-importScripts('libs/underscore-1.1.7.min.js');
-importScripts('libs/dust-core-0.3.0.min.js');
-importScripts('../templates/row-stream.js');
+importScripts('../libs/underscore.min.js');
+importScripts('../libs/dust.min.js');
+importScripts('../templates.js');
+
+function define(deps, module){
+	var root = this, args = [];
+	deps.forEach(function(v){
+		args.push(this[v]);
+	});
+	module.apply(root, args);
+}
 
 var TextWorker = {
 
@@ -307,6 +315,7 @@ var TextWorker = {
 };
 
 onmessage = function(message){
+
 	var d = message.data;
 	if(d.op === 'sort' || d.op === 'uniq'){
 		TextWorker[d.op](d.lines, d.classes);
