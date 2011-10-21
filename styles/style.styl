@@ -12,7 +12,7 @@ body
 	font normal 10pt sans-serif, Arial, Helvetica
 
 .main
-	// background #eee url('../img/wood.jpg')
+	background #eee url('../images/washi.png')
 	absolute(top 0, left 0, bottom 0, right nav-width)
 
 .path
@@ -21,21 +21,26 @@ body
 	line-height 30px
 
 .deck
-	width 80%
-	height 400px
+	width 70%
+	height 70%
 	margin 20px auto
 	position relative
-	box-shadow 0 0 5px rgba(0,0,0,0.7)
+	box-shadow 0px 0px 15px rgba(0,0,0,0.25)
+	background #fff
 	background linear-gradient(top, #fff 0%, #e9e9e9 70%)
 
+.dropper
+	height 100%
+
 .drop_zone, .mask
-	absolute(top 0, left 0, right 0, bottom 38px)
+	absolute(top 0, left 0, right 0, bottom 0)
 
 .mask
 	z-index 10
 	// display none
 	padding-top 40px
 	text-align center
+	background rgba(#fff, .6)
 
 	& div
 		text-indent -9000px
@@ -47,8 +52,8 @@ body
 		width 42px
 		margin 0 5px
 
-	& .over
-		border 1px dotted red
+		&.over
+			border 1px dotted red
 
 .input
 	font-size 12px
@@ -73,13 +78,14 @@ body
 
 
 footer
+	z-index 11
 	absolute(bottom 0, left 0, right 0)
 	background linear-gradient(top, #f0f0f0 0%, #cfcfcf 100%)
-	box-shadow 0 -1px 7px rgba(#000, 0.15)
+	box-shadow 0 -1px 5px rgba(#000, 0.15)
 
 	&.options
 		height 38px
-		padding 0 5px
+		padding 0 4px
 
 		a
 			outline 0
@@ -149,22 +155,22 @@ footer
 // 	box-shadow 0 0 15px #000
 // 	absolute(top 0, bottom 0)
 
-// 	.search
-// 		padding 13px 0
-// 		text-align center
-// 		border-bottom 1px solid #bbb
-// 		background linear-gradient(top, #fdfdfd, #f0f0f0 50%, #e3e3e3 50%, #e9e9e9 50%, #eee)
+.search
+	padding 13px 0
+	text-align center
+	border-bottom 1px solid #bbb
+	background linear-gradient(top, #fdfdfd, #f0f0f0 50%, #e3e3e3 50%, #e9e9e9 50%, #eee)
 
-// 		input
-// 			margin 0
-// 			width 88%
-// 			padding 5px 8px
-// 			border-radius(10px)
-// 			border 1px solid #bbb
-// 			box-shadow 1px 1px 3px #ccc inset, 1px 1px 0 #fff
-// 			&:focus
-// 				outline none
-// 				border 1px solid rgba(#0e8bce, 0.5)
+	input
+		margin 0
+		width 88%
+		padding 5px 8px
+		border-radius(10px)
+		border 1px solid #bbb
+		box-shadow 1px 1px 3px #ccc inset, 1px 1px 0 #fff
+		&:focus
+			outline none
+			border 1px solid rgba(#0e8bce, 0.5)
 	
 // 	ul
 // 		list-style-type none
