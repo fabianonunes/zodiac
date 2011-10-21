@@ -1,29 +1,4 @@
-.main {
-    position:absolute;
-    top:0;
-    bottom:0;
-    left:0;
-    right:320px;
-    border:1px solid red;
-}
 
-.path {
-    position: absolute;
-    width: 320px;
-    right:0;
-    top:0;
-    bottom:0;
-    line-height: 30px;
-    border: 1px solid red;
-}
-
-.deck {
-    border: 1px dotted #aaa;
-    width: 80%;
-    height: 400px;
-    margin: 20px auto;
-    position: relative;
-}
 
 
 .red {
@@ -39,9 +14,6 @@
 .red, .blue, .redblue {
 	display: block;
 }
-
-
-
 .tools {
     width: 500px;
     margin: 0 auto;
@@ -103,11 +75,10 @@
     background: #fff url('../images/symmetric.png') no-repeat 5px 6px
 }
 .grep {
-    background: #fff url('../images/grep.png') no-repeat 5px 6px
+    background: #fff url('../images/grep.png') no-repeat 5px 6px;
 }
 
- body
-    {
+ body    {
         margin: 0;
         padding: 20px;
         /*text-align: center;*/

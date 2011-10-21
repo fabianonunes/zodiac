@@ -22,10 +22,55 @@ body
 
 .deck
 	width 80%
+	height 400px
 	margin 20px auto
 	position relative
 	box-shadow 0 0 5px rgba(0,0,0,0.7)
 	background linear-gradient(top, #fff 0%, #e9e9e9 70%)
+
+.drop_zone, .mask
+	absolute(top 0, left 0, right 0, bottom 38px)
+
+.mask
+	z-index 10
+	// display none
+	padding-top 40px
+	text-align center
+
+	& div
+		text-indent -9000px
+		direction ltr
+		position relative
+		display inline-block
+		border 1px dotted green
+		height 42px
+		width 42px
+		margin 0 5px
+
+	& .over
+		border 1px dotted red
+
+.input
+	font-size 12px
+	white-space pre
+	overflow-y auto
+	height 100%
+
+.intersection
+	background #fff url('../images/intersection.png') no-repeat 5px 6px;
+
+.union
+	background #fff url('../images/union.png') no-repeat 5px 6px;
+
+.difference
+	background #fff url('../images/left-difference.png') no-repeat 5px 6px;
+
+.symmetric
+	background #fff url('../images/symmetric.png') no-repeat 5px 6px;
+
+.grep
+	background #fff url('../images/grep.png') no-repeat 5px 6px;
+
 
 footer
 	absolute(bottom 0, left 0, right 0)
