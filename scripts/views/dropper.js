@@ -8,7 +8,7 @@ define([
 
 	var dropper = Backbone.View.extend({
 
-		el: $('#dropper'),
+		el: $('.dropper'),
 		
 		events: {
 			
