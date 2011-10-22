@@ -226,10 +226,33 @@ body {
   bottom: 0;
   width: 320px;
   line-height: 30px;
+  z-index: 1;
+  width: 320px;
+  background: #eee;
+  -webkit-box-shadow: 0 0 10px rgba(0,0,0,0.30);
+  -moz-box-shadow: 0 0 10px rgba(0,0,0,0.30);
+  box-shadow: 0 0 10px rgba(0,0,0,0.30);
+}
+.path div {
+  color: #333;
+  padding: 10px;
+  height: li-gab;
+  position: relative;
+  border-top: 1px solid #fff;
+  font: normal 14px "Cantarell";
+  text-shadow: #fff 1px 1px 1px;
+  border-bottom: 1px solid #ddd;
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0.2, #f9f9f9), color-stop(1, #f0f0f0));
+  background: -webkit-linear-gradient(top, #f9f9f9 20%, #f0f0f0 100%);
+  background: -moz-linear-gradient(top, #f9f9f9 20%, #f0f0f0 100%);
+  background: linear-gradient(top, #f9f9f9 20%, #f0f0f0 100%);
+  -webkit-box-shadow: 0 2px 7px rgba(51,51,51,0.10), 0 -1px 3px #fff inset;
+  -moz-box-shadow: 0 2px 7px rgba(51,51,51,0.10), 0 -1px 3px #fff inset;
+  box-shadow: 0 2px 7px rgba(51,51,51,0.10), 0 -1px 3px #fff inset;
 }
 .deck {
-  width: 70%;
-  height: 70%;
+  width: 90%;
+  height: 90%;
   margin: 20px auto;
   position: relative;
   -webkit-box-shadow: 0px 0px 15px rgba(0,0,0,0.25);
@@ -254,6 +277,7 @@ body {
 }
 .mask {
   z-index: 10;
+  display: none;
   padding-top: 40px;
   text-align: center;
   background: rgba(255,255,255,0.60);
@@ -298,28 +322,32 @@ footer {
   bottom: 0;
   left: 0;
   right: 0;
-  background: -webkit-gradient(linear, left top, left bottom, color-stop(0, #f0f0f0), color-stop(1, #cfcfcf));
-  background: -webkit-linear-gradient(top, #f0f0f0 0%, #cfcfcf 100%);
-  background: -moz-linear-gradient(top, #f0f0f0 0%, #cfcfcf 100%);
-  background: linear-gradient(top, #f0f0f0 0%, #cfcfcf 100%);
-  -webkit-box-shadow: 0 -1px 5px rgba(0,0,0,0.15);
-  -moz-box-shadow: 0 -1px 5px rgba(0,0,0,0.15);
-  box-shadow: 0 -1px 5px rgba(0,0,0,0.15);
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0, #f0f0f0), color-stop(0.9, #d6d6d6));
+  background: -webkit-linear-gradient(top, #f0f0f0 0%, #d6d6d6 90%);
+  background: -moz-linear-gradient(top, #f0f0f0 0%, #d6d6d6 90%);
+  background: linear-gradient(top, #f0f0f0 0%, #d6d6d6 90%);
+  -webkit-box-shadow: 0 1px 5px rgba(0,0,0,0.15);
+  -moz-box-shadow: 0 1px 5px rgba(0,0,0,0.15);
+  box-shadow: 0 1px 5px rgba(0,0,0,0.15);
 }
 footer.options {
-  height: 38px;
-  padding: 0 4px;
+  padding: 8px 8px 6px;
 }
 footer.options a {
   outline: 0;
-  float: left;
   text-decoration: none;
-  font: bold 30px/30px "Open Sans Condensed";
+  font: bold 11px tahoma;
+  display: inline-block;
 }
 footer.options a.icon {
   color: #444;
-  padding: 0 4px;
-  float: right;
+  padding: 34px 4px 0;
+}
+footer.options a.icon.uniq {
+  background: url("../images/data_table.png") no-repeat center top;
+}
+footer.options a.icon.sort {
+  background: url("../images/sort_ascending.png") no-repeat center top;
 }
 .search {
   padding: 13px 0;
@@ -366,8 +394,6 @@ a.iconic,
 a.icon {
   margin: 0;
   color: #aaa;
-  width: 30px;
-  height: 100%;
   padding: 0 10px;
   cursor: pointer;
   text-align: center;
