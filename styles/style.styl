@@ -14,7 +14,6 @@ body
 .main
 	background #eee url('../images/washi.png')
 	absolute(top 0, left 0, bottom 0, right nav-width)
-	border 1px solid green
 
 .path
 	absolute(right 0, top 0, bottom 0)
@@ -38,23 +37,18 @@ body
 		box-shadow 0 2px 7px rgba(#333, 0.1),  0 -1px 3px #fff inset
 
 .deck
-	width 90%
-	height 70%
-	margin 20px auto
-	position relative
-	box-shadow 0px 0px 15px rgba(0,0,0,0.25)
+	absolute(top 15px, left 35px, right 35px, bottom 25px)
+	box-shadow 0px 0px 10px rgba(0,0,0,0.35)
 	background #fff linear-gradient(top, #fff 0%, #e9e9e9 70%)
+	border 1px solid #bbb
 
 .dropper
-	position relative
-	absolute(top 0, left 0, right 0, bottom 0)
+	// absolute(left 40px, right 40px, bottom 40px)
 	border 1px solid red
-
-.drop_zone, .mask
-	absolute(top 0, left 0, right 0, bottom 0)
 
 .mask
 	z-index 10
+	absolute(top 0, left 0, right 0, bottom 0)
 	// absolute(top 40px, left 40px, right 40px, bottom 40px)
 	display none
 	padding-top 40px
@@ -101,9 +95,9 @@ body
 
 footer
 	z-index 11
-	absolute(bottom 0, left 0, right 0)
 	background linear-gradient(top, #f0f0f0 0%, #d6d6d6 90%)
-	box-shadow 0 1px 5px rgba(#000, 0.15)
+	absolute(left 0, right 0, bottom 0)
+	// box-shadow 0 1px 5px rgba(#000, 0.15)
 
 	&.options
 		padding 8px 8px 6px
@@ -171,12 +165,8 @@ footer
 // 			height 100%
 // 			box(center, center, vertical)
 
-
-
-
-
 .search
-	padding 13px 0
+	padding 15px 0
 	text-align center
 	border-bottom 1px solid #bbb
 	background linear-gradient(top, #fdfdfd, #f0f0f0 50%, #e3e3e3 50%, #e9e9e9 50%, #eee)
@@ -188,6 +178,7 @@ footer
 		border-radius(10px)
 		border 1px solid #bbb
 		box-shadow 1px 1px 3px #ccc inset, 1px 1px 0 #fff
+		background #ffff
 		&:focus
 			outline none
 			border 1px solid rgba(#0e8bce, 0.5)

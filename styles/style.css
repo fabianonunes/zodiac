@@ -218,7 +218,6 @@ body {
   left: 0;
   bottom: 0;
   right: 320px;
-  border: 1px solid #008000;
 }
 .path {
   position: absolute;
@@ -252,37 +251,30 @@ body {
   box-shadow: 0 2px 7px rgba(51,51,51,0.10), 0 -1px 3px #fff inset;
 }
 .deck {
-  width: 90%;
-  height: 70%;
-  margin: 20px auto;
-  position: relative;
-  -webkit-box-shadow: 0px 0px 15px rgba(0,0,0,0.25);
-  -moz-box-shadow: 0px 0px 15px rgba(0,0,0,0.25);
-  box-shadow: 0px 0px 15px rgba(0,0,0,0.25);
+  position: absolute;
+  top: 15px;
+  left: 35px;
+  right: 35px;
+  bottom: 25px;
+  -webkit-box-shadow: 0px 0px 10px rgba(0,0,0,0.35);
+  -moz-box-shadow: 0px 0px 10px rgba(0,0,0,0.35);
+  box-shadow: 0px 0px 10px rgba(0,0,0,0.35);
   background: #fff -webkit-gradient(linear, left top, left bottom, color-stop(0, #fff), color-stop(0.7, #e9e9e9));
   background: #fff -webkit-linear-gradient(top, #fff 0%, #e9e9e9 70%);
   background: #fff -moz-linear-gradient(top, #fff 0%, #e9e9e9 70%);
   background: #fff linear-gradient(top, #fff 0%, #e9e9e9 70%);
+  border: 1px solid #bbb;
 }
 .dropper {
-  position: relative;
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
   border: 1px solid #f00;
-}
-.drop_zone,
-.mask {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
 }
 .mask {
   z-index: 10;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   display: none;
   padding-top: 40px;
   text-align: center;
@@ -324,17 +316,14 @@ body {
 }
 footer {
   z-index: 11;
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
   background: -webkit-gradient(linear, left top, left bottom, color-stop(0, #f0f0f0), color-stop(0.9, #d6d6d6));
   background: -webkit-linear-gradient(top, #f0f0f0 0%, #d6d6d6 90%);
   background: -moz-linear-gradient(top, #f0f0f0 0%, #d6d6d6 90%);
   background: linear-gradient(top, #f0f0f0 0%, #d6d6d6 90%);
-  -webkit-box-shadow: 0 1px 5px rgba(0,0,0,0.15);
-  -moz-box-shadow: 0 1px 5px rgba(0,0,0,0.15);
-  box-shadow: 0 1px 5px rgba(0,0,0,0.15);
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 footer.options {
   padding: 8px 8px 6px;
@@ -356,7 +345,7 @@ footer.options a.icon.sort {
   background: url("../images/sort_ascending.png") no-repeat center top;
 }
 .search {
-  padding: 13px 0;
+  padding: 15px 0;
   text-align: center;
   border-bottom: 1px solid #bbb;
   background: -webkit-gradient(linear, left top, left bottom, color-stop(0, #fdfdfd), color-stop(0.5, #f0f0f0), color-stop(0.5, #e3e3e3), color-stop(0.5, #e9e9e9), color-stop(1, #eee));
@@ -375,6 +364,7 @@ footer.options a.icon.sort {
   -webkit-box-shadow: 1px 1px 3px #ccc inset, 1px 1px 0 #fff;
   -moz-box-shadow: 1px 1px 3px #ccc inset, 1px 1px 0 #fff;
   box-shadow: 1px 1px 3px #ccc inset, 1px 1px 0 #fff;
+  background: #fff;
 }
 .search input:focus {
   outline: none;
