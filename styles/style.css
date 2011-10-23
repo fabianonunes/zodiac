@@ -225,7 +225,6 @@ body {
   top: 0;
   bottom: 0;
   width: 320px;
-  line-height: 30px;
   z-index: 1;
   width: 320px;
   background: #eee;
@@ -236,10 +235,9 @@ body {
 .path div {
   color: #333;
   padding: 10px;
-  height: li-gab;
   position: relative;
   border-top: 1px solid #fff;
-  font: normal 14px "Cantarell";
+  font: normal 14px/19px "Cantarell";
   text-shadow: #fff 1px 1px 1px;
   border-bottom: 1px solid #ddd;
   background: -webkit-gradient(linear, left top, left bottom, color-stop(0.2, #f9f9f9), color-stop(1, #f0f0f0));
@@ -249,6 +247,24 @@ body {
   -webkit-box-shadow: 0 2px 7px rgba(51,51,51,0.10), 0 -1px 3px #fff inset;
   -moz-box-shadow: 0 2px 7px rgba(51,51,51,0.10), 0 -1px 3px #fff inset;
   box-shadow: 0 2px 7px rgba(51,51,51,0.10), 0 -1px 3px #fff inset;
+}
+.path .counter {
+  float: right;
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  border-radius: 10px;
+  font: bold 12px/19px arial;
+  color: #fff;
+  -webkit-box-shadow: 0 1px 0px rgba(0,0,0,0.30) inset;
+  -moz-box-shadow: 0 1px 0px rgba(0,0,0,0.30) inset;
+  box-shadow: 0 1px 0px rgba(0,0,0,0.30) inset;
+  text-shadow: #999 1px 1px 1px;
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0.2, #b9b9b9), color-stop(1, #a9a9a9));
+  background: -webkit-linear-gradient(top, #b9b9b9 20%, #a9a9a9 100%);
+  background: -moz-linear-gradient(top, #b9b9b9 20%, #a9a9a9 100%);
+  background: linear-gradient(top, #b9b9b9 20%, #a9a9a9 100%);
+  clear: both;
+  padding: 0 7px;
 }
 .deck {
   position: absolute;
