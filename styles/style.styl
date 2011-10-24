@@ -21,6 +21,7 @@ body
 	z-index 1
 	width nav-width
 	background #eee
+	background #eee url('../images/4.png')
 	box-shadow 0 0 10px rgba(#000, 0.3)
 
 	div.row
@@ -35,22 +36,20 @@ body
 
 	div.options
 		display none
-		border-top 1px solid #fff
-		border-bottom 1px solid #ddd
 		text-align center
 		text-shadow #000 2px 2px 0
 		background url('../images/3.png')
-		margin-top -1px
-		font normal 18pt/36px 'Arial'
 		color #fff
 		overflow hidden
+		line-height 40px
 		height 0
 		transition height 0.2s ease-in
+		box-shadow 0 2px 7px rgba(#333, 0.15)
 
 		img
 			cursor pointer
 			opacity 0.4
-			transition opacity 0.2s ease-in
+			transition opacity 0.15s ease-in
 			margin 0 9px
 			
 			&:hover
@@ -73,7 +72,9 @@ body
 		// width 100px
 		opacity .5
 		padding 0 15px
-		background url('../images/sql_join_left.png') center no-repeat
+
+	.union
+		background-image url('../images/b_union.png') center no-repeat
 
 
 	.iconic
