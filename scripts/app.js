@@ -21,7 +21,7 @@ define([
 		});
 		new path({
 			collection: this.documents
-		});	
+		});
 		
 	};
 	

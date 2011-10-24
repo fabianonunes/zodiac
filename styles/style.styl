@@ -12,7 +12,7 @@ body
 	font normal 10pt sans-serif, Arial, Helvetica
 
 .main
-	background #eee url('../images/washi.png')
+	background #eee url('../images/3.png')
 	absolute(top 0, left 0, bottom 0, right nav-width)
 
 .path
@@ -23,16 +23,38 @@ body
 	background #eee
 	box-shadow 0 0 10px rgba(#000, 0.3)
 
-	div
+	div.row
 		color #333
 		padding 10px
 		position relative
+		font normal 14px/19px 'Quattrocento Sans', sans-serif
 		border-top 1px solid #fff
-		font normal 14px/19px 'Cantarell'
-		text-shadow #fff 1px 1px 1px
 		border-bottom 1px solid #ddd
 		background linear-gradient(top, #f9f9f9 20%, #f0f0f0 100%)
-		box-shadow 0 2px 7px rgba(#333, 0.1),  0 -1px 3px #fff inset
+		box-shadow 0 2px 5px rgba(#333, 0.15),  0 -1px 3px #fff inset
+
+	div.options
+		display none
+		border-top 1px solid #fff
+		border-bottom 1px solid #ddd
+		text-align center
+		text-shadow #000 2px 2px 0
+		background url('../images/3.png')
+		margin-top -1px
+		font normal 18pt/36px 'Arial'
+		color #fff
+		overflow hidden
+		height 0
+		transition height 0.2s ease-in
+
+		img
+			cursor pointer
+			opacity 0.4
+			transition opacity 0.2s ease-in
+			margin 0 9px
+			
+			&:hover
+				opacity 1
 	
 	.counter
 		float right
@@ -42,8 +64,24 @@ body
 		box-shadow 0 1px 0px rgba(#000, 0.3) inset
 		text-shadow #999 1px 1px 1px
 		background linear-gradient(top, #b9b9b9 20%, #a9a9a9 100%)
-		clear both
 		padding 0 7px
+
+	.op
+		float right
+		height 19px
+		// border 1px solid red
+		// width 100px
+		opacity .5
+		padding 0 15px
+		background url('../images/sql_join_left.png') center no-repeat
+
+
+	.iconic
+		padding 0 5px
+		&:hover
+			color #c00
+
+	
 
 .deck
 	absolute(top 15px, left 35px, right 35px, bottom 25px)
@@ -52,8 +90,8 @@ body
 	border 1px solid #bbb
 
 .dropper
-	// absolute(left 40px, right 40px, bottom 40px)
-	border 1px solid red
+	absolute(left 40px, right 40px, bottom 100px, top 100px)
+	// border 10px solid red
 
 .mask
 	z-index 10

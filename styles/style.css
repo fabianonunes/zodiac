@@ -212,7 +212,7 @@ body {
   font: normal 10pt sans-serif, Arial, Helvetica;
 }
 .main {
-  background: #eee url("../images/washi.png");
+  background: #eee url("../images/3.png");
   position: absolute;
   top: 0;
   left: 0;
@@ -232,21 +232,49 @@ body {
   -moz-box-shadow: 0 0 10px rgba(0,0,0,0.30);
   box-shadow: 0 0 10px rgba(0,0,0,0.30);
 }
-.path div {
+.path div.row {
   color: #333;
   padding: 10px;
   position: relative;
+  font: normal 14px/19px "Quattrocento Sans", sans-serif;
   border-top: 1px solid #fff;
-  font: normal 14px/19px "Cantarell";
-  text-shadow: #fff 1px 1px 1px;
   border-bottom: 1px solid #ddd;
   background: -webkit-gradient(linear, left top, left bottom, color-stop(0.2, #f9f9f9), color-stop(1, #f0f0f0));
   background: -webkit-linear-gradient(top, #f9f9f9 20%, #f0f0f0 100%);
   background: -moz-linear-gradient(top, #f9f9f9 20%, #f0f0f0 100%);
   background: linear-gradient(top, #f9f9f9 20%, #f0f0f0 100%);
-  -webkit-box-shadow: 0 2px 7px rgba(51,51,51,0.10), 0 -1px 3px #fff inset;
-  -moz-box-shadow: 0 2px 7px rgba(51,51,51,0.10), 0 -1px 3px #fff inset;
-  box-shadow: 0 2px 7px rgba(51,51,51,0.10), 0 -1px 3px #fff inset;
+  -webkit-box-shadow: 0 2px 5px rgba(51,51,51,0.15), 0 -1px 3px #fff inset;
+  -moz-box-shadow: 0 2px 5px rgba(51,51,51,0.15), 0 -1px 3px #fff inset;
+  box-shadow: 0 2px 5px rgba(51,51,51,0.15), 0 -1px 3px #fff inset;
+}
+.path div.options {
+  display: none;
+  border-top: 1px solid #fff;
+  border-bottom: 1px solid #ddd;
+  text-align: center;
+  text-shadow: #000 2px 2px 0;
+  background: url("../images/3.png");
+  margin-top: -1px;
+  font: normal 18pt/36px "Arial";
+  color: #fff;
+  overflow: hidden;
+  height: 0;
+  -webkit-transition: height 0.2s ease-in;
+  -moz-transition: height 0.2s ease-in;
+  transition: height 0.2s ease-in;
+}
+.path div.options img {
+  cursor: pointer;
+  opacity: 0.4;
+  filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=40);
+  -webkit-transition: opacity 0.2s ease-in;
+  -moz-transition: opacity 0.2s ease-in;
+  transition: opacity 0.2s ease-in;
+  margin: 0 9px;
+}
+.path div.options img:hover {
+  opacity: 1;
+  filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=100);
 }
 .path .counter {
   float: right;
@@ -263,8 +291,21 @@ body {
   background: -webkit-linear-gradient(top, #b9b9b9 20%, #a9a9a9 100%);
   background: -moz-linear-gradient(top, #b9b9b9 20%, #a9a9a9 100%);
   background: linear-gradient(top, #b9b9b9 20%, #a9a9a9 100%);
-  clear: both;
   padding: 0 7px;
+}
+.path .op {
+  float: right;
+  height: 19px;
+  opacity: 0.5;
+  filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=50);
+  padding: 0 15px;
+  background: url("../images/sql_join_left.png") center no-repeat;
+}
+.path .iconic {
+  padding: 0 5px;
+}
+.path .iconic:hover {
+  color: #c00;
 }
 .deck {
   position: absolute;
@@ -282,7 +323,11 @@ body {
   border: 1px solid #bbb;
 }
 .dropper {
-  border: 1px solid #f00;
+  position: absolute;
+  left: 40px;
+  right: 40px;
+  bottom: 100px;
+  top: 100px;
 }
 .mask {
   z-index: 10;
@@ -395,35 +440,20 @@ footer.options a.icon.sort {
   src: url("fonts/iconic_stroke.eot");
   src: local("IconicStroke"), url("fonts/iconic_stroke.svg") format("svg");
 }
-footer a.iconpack {
-  font: normal 20pt/30px "IconPack";
+.iconpack {
+  font: normal 14px/10px "IconPack";
 }
-footer a.iconic {
-  font: normal 20pt/45px "IconicStroke";
+.iconic {
+  font: normal 14px/10px "IconicStroke";
 }
-a.iconpack,
-a.iconic,
-a.icon {
-  margin: 0;
-  color: #aaa;
-  padding: 0 10px;
+.iconpack,
+.iconic,
+.icon {
+  color: #ddd;
   cursor: pointer;
-  text-align: center;
-  text-shadow: 1px 1px 0px #fff;
-  -webkit-transition: color 0.4s ease-out;
-  -moz-transition: color 0.4s ease-out;
-  transition: color 0.4s ease-out;
-}
-a.iconpack:hover,
-a.iconic:hover,
-a.icon:hover,
-a.iconpack:active,
-a.iconic:active,
-a.icon:active,
-a.iconpack.active,
-a.iconic.active,
-a.icon.active {
-  color: #666;
+  -webkit-transition: color 0.3s ease-out;
+  -moz-transition: color 0.3s ease-out;
+  transition: color 0.3s ease-out;
 }
 .iconpack.time:before {
   content: "s";
@@ -432,7 +462,6 @@ a.icon.active {
   content: "a";
 }
 .iconic {
-  color: inherit;
   font-family: "IconicStroke";
 }
 .iconic.home:before {

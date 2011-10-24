@@ -1,16 +1,17 @@
 {#documents}
+		<div class="row">
+			<span class="iconic remove">x</span>
+			{fileName}
+			<span class="counter">{length}</span>
 	{?previous}
 		{?op}
-			<select class='{id}'>	
-				{#ops}
-					<option value='{type}' 
-					{?selected}
-						selected='{selected}'
-					{/selected}
-					>{symbol}</option>
-				{/ops}
-			</select>
+			<span class="op"></span>
+		</div>
+		<div class="options">
+			{#ops}
+				<img src="images/{type}.png" align=absmiddle />
+			{/ops}
 		{/op}
 	{/previous}
-	<a href='#view/{id}'>{fileName}</a> - {length} <span class='remove'>X</span></br>
+		</div>
 {/documents}

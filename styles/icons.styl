@@ -7,25 +7,16 @@
 	src url("fonts/iconic_stroke.eot")
 	src local('IconicStroke'), url("fonts/iconic_stroke.svg") format('svg')
 
-footer a.iconpack
-	font: normal 20pt/30px 'IconPack'
+.iconpack
+	font: normal 14px/10px 'IconPack'
 
-footer a.iconic
-	font: normal 20pt/45px 'IconicStroke'
+.iconic
+	font: normal 14px/10px 'IconicStroke'
 
-a.iconpack, a.iconic, a.icon
-	margin: 0
-	color: #aaa
-	// width: 30px
-	// height: 100%
-	padding: 0 10px
+.iconpack, .iconic, .icon
+	color: #ddd
 	cursor: pointer
-	text-align: center
-	text-shadow: 1px 1px 0px #fff
-	transition: color .4s ease-out
-
-	&:hover, &:active, &.active
-		color: #666
+	transition: color .3s ease-out
 
 .iconpack
 	&.time:before
@@ -34,7 +25,6 @@ a.iconpack, a.iconic, a.icon
 		content: 'a'
 
 .iconic
-	color: inherit
 	font-family: "IconicStroke"
 	&.home:before
 		content: '!'

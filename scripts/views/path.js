@@ -8,6 +8,7 @@ define([
 
 		events : {
 			'click .remove' : 'destroy',
+			'click .op' : 'click',
 			'dragstart' : 'drag'
 		},
 
@@ -15,13 +16,25 @@ define([
 
 		initialize : function(){
 			
-			_.bindAll(this, 'render', 'destroy');
+			_.bindAll(this, 'render', 'destroy', 'click');
 
 			this.model.bind('change', this.render);
 
 			$(this.el).attr('draggable', 'true');
 
 			this.model.view = this;
+
+		},
+
+		click : function(evt){
+
+			var options = $(this.el).find('.options');
+
+			$(this.el).parent().find('.options').css({height:0});
+
+			options.show().css({
+				height : options.height() > 0 ? 0 : options[0].scrollHeight
+			});
 
 		},
 
