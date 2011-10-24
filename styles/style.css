@@ -302,7 +302,7 @@ body {
   padding: 0 15px;
 }
 .path .union {
-  background-image: url("../images/b_union.png") center no-repeat;
+  background: url("../images/b_union.png") center no-repeat;
 }
 .path .iconic {
   padding: 0 5px;
@@ -357,26 +357,26 @@ body {
 .mask div.over {
   border: 1px dotted #f00;
 }
+.mask .intersection {
+  background: #fff url("../images/intersection.png") no-repeat 5px 6px;
+}
+.mask .union {
+  background: #fff url("../images/union.png") no-repeat 5px 6px;
+}
+.mask .difference {
+  background: #fff url("../images/left-difference.png") no-repeat 5px 6px;
+}
+.mask .symmetric {
+  background: #fff url("../images/symmetric.png") no-repeat 5px 6px;
+}
+.mask .grep {
+  background: #fff url("../images/grep.png") no-repeat 5px 6px;
+}
 .input {
   font-size: 12px;
   white-space: pre;
   overflow-y: auto;
   height: 100%;
-}
-.intersection {
-  background: #fff url("../images/intersection.png") no-repeat 5px 6px;
-}
-.union {
-  background: #fff url("../images/union.png") no-repeat 5px 6px;
-}
-.difference {
-  background: #fff url("../images/left-difference.png") no-repeat 5px 6px;
-}
-.symmetric {
-  background: #fff url("../images/symmetric.png") no-repeat 5px 6px;
-}
-.grep {
-  background: #fff url("../images/grep.png") no-repeat 5px 6px;
 }
 footer {
   z-index: 11;
