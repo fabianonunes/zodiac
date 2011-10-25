@@ -5,11 +5,11 @@
 			<span class="counter">{length}</span>
 	{?previous}
 		{?op}
-			<span class="op {op}"></span>
+			<span class="icon op b_{op}"></span>
 		</div>
 		<div class="options">
 			{#ops}
-				<img src="images/{type}.png" align=absmiddle />
+				<div class="icon {type}"></div>
 			{/ops}
 		{/op}
 	{/previous}

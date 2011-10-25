@@ -12,7 +12,7 @@ body
 	font normal 10pt sans-serif, Arial, Helvetica
 
 .main
-	background #eee url('../images/3.png')
+	background #eee url('../images/bg/3.png')
 	absolute(top 0, left 0, bottom 0, right nav-width)
 
 .path
@@ -21,7 +21,7 @@ body
 	z-index 1
 	width nav-width
 	background #eee
-	background #eee url('../images/4.png')
+	background #eee url('../images/bg/4.png')
 	box-shadow 0 0 10px rgba(#000, 0.3)
 
 	div.row
@@ -32,25 +32,34 @@ body
 		border-top 1px solid #fff
 		border-bottom 1px solid #ddd
 		background linear-gradient(top, #f9f9f9 20%, #f0f0f0 100%)
-		box-shadow 0 2px 5px rgba(#333, 0.15),  0 -1px 3px #fff inset
+		box-shadow 0 2px 3px rgba(#333, 0.10),  0 -1px 3px #fff inset
+	
+		.icon
+			float right
+			opacity .5
+			width 16px
+			height 16px
+			margin 2px 10px
+			cursor pointer
+
 
 	div.options
 		display none
 		text-align center
-		text-shadow #000 2px 2px 0
-		background url('../images/3.png')
-		color #fff
+		background url('../images/bg/3.png')
 		overflow hidden
-		line-height 40px
 		height 0
 		transition height 0.2s ease-in
-		box-shadow 0 2px 7px rgba(#333, 0.15)
+		box-shadow -1px -2px 3px rgba(#333, 0.1) inset
 
-		img
+		.icon
+			display inline-block
 			cursor pointer
 			opacity 0.4
 			transition opacity 0.15s ease-in
-			margin 0 9px
+			margin 6px 10px 4px
+			height 30px
+			width 32px
 			
 			&:hover
 				opacity 1
@@ -65,22 +74,10 @@ body
 		background linear-gradient(top, #b9b9b9 20%, #a9a9a9 100%)
 		padding 0 7px
 
-	.op
-		float right
-		height 19px
-		// border 1px solid red
-		// width 100px
-		opacity .5
-		padding 0 15px
-
-	.union
-		background url('../images/b_union.png') center no-repeat
-
 	.iconic
 		padding 0 5px
 		&:hover
-			color #c00
-
+			color #d00
 	
 
 .deck
@@ -97,13 +94,10 @@ body
 	z-index 10
 	absolute(top 0, left 0, right 0, bottom 0)
 	// absolute(top 40px, left 40px, right 40px, bottom 40px)
-	display none
+	// display none
 	padding-top 40px
 	text-align center
 	background rgba(#fff, .6)
-	// border: 1px solid red
-	// border-radius 400px
-
 
 	& div
 		text-indent -9000px
@@ -111,27 +105,12 @@ body
 		position relative
 		display inline-block
 		border 1px dotted green
-		height 42px
-		width 42px
+		height 32px
+		width 32px
 		margin 0 5px
 
 		&.over
 			border 1px dotted red
-
-	.intersection
-		background #fff url('../images/intersection.png') no-repeat 5px 6px;
-
-	.union
-		background #fff url('../images/union.png') no-repeat 5px 6px;
-
-	.difference
-		background #fff url('../images/left-difference.png') no-repeat 5px 6px;
-
-	.symmetric
-		background #fff url('../images/symmetric.png') no-repeat 5px 6px;
-
-	.grep
-		background #fff url('../images/grep.png') no-repeat 5px 6px;
 
 .input
 	font-size 12px

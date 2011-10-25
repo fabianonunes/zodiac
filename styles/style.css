@@ -212,7 +212,7 @@ body {
   font: normal 10pt sans-serif, Arial, Helvetica;
 }
 .main {
-  background: #eee url("../images/3.png");
+  background: #eee url("../images/bg/3.png");
   position: absolute;
   top: 0;
   left: 0;
@@ -228,7 +228,7 @@ body {
   z-index: 1;
   width: 320px;
   background: #eee;
-  background: #eee url("../images/4.png");
+  background: #eee url("../images/bg/4.png");
   -webkit-box-shadow: 0 0 10px rgba(0,0,0,0.30);
   -moz-box-shadow: 0 0 10px rgba(0,0,0,0.30);
   box-shadow: 0 0 10px rgba(0,0,0,0.30);
@@ -244,36 +244,45 @@ body {
   background: -webkit-linear-gradient(top, #f9f9f9 20%, #f0f0f0 100%);
   background: -moz-linear-gradient(top, #f9f9f9 20%, #f0f0f0 100%);
   background: linear-gradient(top, #f9f9f9 20%, #f0f0f0 100%);
-  -webkit-box-shadow: 0 2px 5px rgba(51,51,51,0.15), 0 -1px 3px #fff inset;
-  -moz-box-shadow: 0 2px 5px rgba(51,51,51,0.15), 0 -1px 3px #fff inset;
-  box-shadow: 0 2px 5px rgba(51,51,51,0.15), 0 -1px 3px #fff inset;
+  -webkit-box-shadow: 0 2px 3px rgba(51,51,51,0.10), 0 -1px 3px #fff inset;
+  -moz-box-shadow: 0 2px 3px rgba(51,51,51,0.10), 0 -1px 3px #fff inset;
+  box-shadow: 0 2px 3px rgba(51,51,51,0.10), 0 -1px 3px #fff inset;
+}
+.path div.row .icon {
+  float: right;
+  opacity: 0.5;
+  filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=50);
+  width: 16px;
+  height: 16px;
+  margin: 2px 10px;
+  cursor: pointer;
 }
 .path div.options {
   display: none;
   text-align: center;
-  text-shadow: #000 2px 2px 0;
-  background: url("../images/3.png");
-  color: #fff;
+  background: url("../images/bg/3.png");
   overflow: hidden;
-  line-height: 40px;
   height: 0;
   -webkit-transition: height 0.2s ease-in;
   -moz-transition: height 0.2s ease-in;
   transition: height 0.2s ease-in;
-  -webkit-box-shadow: 0 2px 7px rgba(51,51,51,0.15);
-  -moz-box-shadow: 0 2px 7px rgba(51,51,51,0.15);
-  box-shadow: 0 2px 7px rgba(51,51,51,0.15);
+  -webkit-box-shadow: -1px -2px 3px rgba(51,51,51,0.10) inset;
+  -moz-box-shadow: -1px -2px 3px rgba(51,51,51,0.10) inset;
+  box-shadow: -1px -2px 3px rgba(51,51,51,0.10) inset;
 }
-.path div.options img {
+.path div.options .icon {
+  display: inline-block;
   cursor: pointer;
   opacity: 0.4;
   filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=40);
   -webkit-transition: opacity 0.15s ease-in;
   -moz-transition: opacity 0.15s ease-in;
   transition: opacity 0.15s ease-in;
-  margin: 0 9px;
+  margin: 6px 10px 4px;
+  height: 30px;
+  width: 32px;
 }
-.path div.options img:hover {
+.path div.options .icon:hover {
   opacity: 1;
   filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=100);
 }
@@ -294,21 +303,11 @@ body {
   background: linear-gradient(top, #b9b9b9 20%, #a9a9a9 100%);
   padding: 0 7px;
 }
-.path .op {
-  float: right;
-  height: 19px;
-  opacity: 0.5;
-  filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=50);
-  padding: 0 15px;
-}
-.path .union {
-  background: url("../images/b_union.png") center no-repeat;
-}
 .path .iconic {
   padding: 0 5px;
 }
 .path .iconic:hover {
-  color: #c00;
+  color: #d00;
 }
 .deck {
   position: absolute;
@@ -339,7 +338,6 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
-  display: none;
   padding-top: 40px;
   text-align: center;
   background: rgba(255,255,255,0.60);
@@ -350,27 +348,12 @@ body {
   position: relative;
   display: inline-block;
   border: 1px dotted #008000;
-  height: 42px;
-  width: 42px;
+  height: 32px;
+  width: 32px;
   margin: 0 5px;
 }
 .mask div.over {
   border: 1px dotted #f00;
-}
-.mask .intersection {
-  background: #fff url("../images/intersection.png") no-repeat 5px 6px;
-}
-.mask .union {
-  background: #fff url("../images/union.png") no-repeat 5px 6px;
-}
-.mask .difference {
-  background: #fff url("../images/left-difference.png") no-repeat 5px 6px;
-}
-.mask .symmetric {
-  background: #fff url("../images/symmetric.png") no-repeat 5px 6px;
-}
-.mask .grep {
-  background: #fff url("../images/grep.png") no-repeat 5px 6px;
 }
 .input {
   font-size: 12px;
@@ -434,6 +417,39 @@ footer.options a.icon.sort {
   outline: none;
   border: 1px solid rgba(14,139,206,0.50);
 }
+.icon {
+  background: url("../images/sprites.png") no-repeat;
+}
+.b_grep {
+  background-position: 0 0;
+}
+.b_union {
+  background-position: 0 -184px;
+}
+.b_intersection {
+  background-position: 0 -92px;
+}
+.b_difference {
+  background-position: 0 -46px;
+}
+.b_symmetric {
+  background-position: 0 -138px;
+}
+.intersection {
+  background-position: 0 -598px;
+}
+.union {
+  background-position: 0 -1134px;
+}
+.difference {
+  background-position: 0 -288px;
+}
+.symmetric {
+  background-position: 0 -1072px;
+}
+.grep {
+  background-position: 0 -474px;
+}
 @font-face {
   font-family: "IconPack";
   src: local("IconPack"), url("fonts/iconpack.woff") format("woff"), url("fonts/iconpack.otf") format("opentype"), url("fonts/iconpack.svg#IconPack") format("svg");
@@ -451,7 +467,7 @@ footer.options a.icon.sort {
 }
 .iconpack,
 .iconic,
-.icon {
+.tool {
   color: #ddd;
   cursor: pointer;
   -webkit-transition: color 0.3s ease-out;

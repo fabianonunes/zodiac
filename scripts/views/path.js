@@ -28,10 +28,10 @@ define([
 
 		click : function(evt){
 
-			var options = $(this.el).find('.options');
 
 			$(this.el).parent().find('.options').css({height:0});
 
+			var options = $(this.el).find('.options');
 			options.show().css({
 				height : options.height() > 0 ? 0 : options[0].scrollHeight
 			});

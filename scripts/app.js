@@ -20,7 +20,7 @@ define([
 		new input({
 			collection: this.documents
 		});
-		new path({
+		var pathView = new path({
 			collection: this.documents
 		});
 
