@@ -3,34 +3,50 @@
 <head>
 	<meta http-equiv="content-type" content="text/html;charset=utf-8" >
 	<title>zodiac</title>
-	<link rel="stylesheet" type="text/css" href="styles/styles.css"></link>
+	<link rel="stylesheet" type="text/css" href="styles/style.css"></link>
+ 	<link href='http://fonts.googleapis.com/css?family=Andika|Ubuntu|Antic|Quattrocento+Sans' rel='stylesheet' type='text/css'>
 </head>
 
 <body>
 
-	<div class="path"></div>
+	<div class="path">
+	</div>
 
-	<div id="main">
+	<div class="main">
 
-		<div id="dropper" class="drop_zone">
-
-			<div class="mask">
-				<div class="union">∪</div>
-				<div class="intersection">∩</div>
-				<div class="difference">∖</div>
-				<div class="symmetric">⊖</div>
-				<div class="grep">⊖</div>
+		<div class="deck">
+		
+			<div class="search">
+				<input type="text" placeholder="busca..."/>
 			</div>
 
-			<div class="input"></div>
+			<div class="dropper">
+
+				<div class="mask">
+					<div class="union icon">∪</div>
+					<div class="intersection icon">∩</div>
+					<div class="difference icon">∖</div>
+					<div class="symmetric icon">⊖</div>
+					<div class="grep icon">⊖</div>
+				</div>
+
+				<div class="input"></div>
+
+			</div>
+
+			<footer class="options">
+				<div>
+					<div class="icon uniq"></div>
+					Remover Duplicados
+				</div>
+				<div>
+					<div class="icon sort"></div>
+					Ordernar
+				</div>
+			</footer>
 
 		</div>
 
-	</div>
-
-	<div class="tools">
-		<button class="button next sort">sort</button>
-		<button class="button next uniq">uniq</button>		
 	</div>
 
 	<script data-main="scripts/production" src="scripts/libs/require.js"></script>

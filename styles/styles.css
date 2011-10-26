@@ -1,11 +1,31 @@
-.path {
-    position: relative;
-    float:right;
-    width: 200px;
-    border: 1px dotted #aaa;
-    padding: 10px;
-    line-height: 30px;
+.main {
+    position:absolute;
+    top:0;
+    bottom:0;
+    left:0;
+    right:320px;
+    border:1px solid red;
 }
+
+.path {
+    position: absolute;
+    width: 320px;
+    right:0;
+    top:0;
+    bottom:0;
+    line-height: 30px;
+    border: 1px solid red;
+}
+
+.deck {
+    border: 1px dotted #aaa;
+    width: 80%;
+    height: 400px;
+    margin: 20px auto;
+    position: relative;
+}
+
+
 .red {
 	background: #FFDDFF;
 }
@@ -21,14 +41,6 @@
 }
 
 
-#main {
-	border: 1px dotted #aaa;
-	width: 500px;
-	height: 400px;
-	margin: 0 auto;
-	position: relative;
-	
-}
 
 .tools {
     width: 500px;
@@ -43,17 +55,9 @@
 	right: 0;
 }
 
-.drop_zone {
-	
-}
-
-.drop_zone.over {
-	border-color: blue;
-}
-
 .mask {
 	z-index: 10;
-	/*display: none;*/
+	display: none;
 	text-align: center;
 	padding-top: 40px;
 	background: rgba(255, 255, 255, .6);
@@ -61,17 +65,12 @@
 
 .mask div {
     text-indent: -9000px;
+    direction: ltr;
 	position: relative;
 	display: inline-block;
-	font-family: 'DejaVu Serif';
 	border: 1px dotted green;
 	height: 42px;
 	width: 42px;
-	line-height: 40px;
-	text-align: center;
-	padding:0;
-	margin:10px;
-	font-size: 22px;
 	background: #f0f0f0;
 }
 .mask div.over {
@@ -89,21 +88,21 @@
     color: #f00;
 }
 
-.mask div.intersection {
+.intersection {
     background: #fff url('../images/intersection.png') no-repeat 5px 6px
 }
 
-.mask div.union {
+.union {
     background: #fff url('../images/union.png') no-repeat 5px 6px
 }
 
-.mask div.difference {
+.difference {
     background: #fff url('../images/left-difference.png') no-repeat 5px 6px
 }
-.mask div.symmetric {
+.symmetric {
     background: #fff url('../images/symmetric.png') no-repeat 5px 6px
 }
-.mask div.grep {
+.grep {
     background: #fff url('../images/grep.png') no-repeat 5px 6px
 }
 

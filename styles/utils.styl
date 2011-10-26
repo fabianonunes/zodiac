@@ -1,0 +1,32 @@
+-poz(type, props)
+	{position} unquote(type)
+	orientation = 'top', 'right', 'bottom', 'left'
+	for prop, i in props
+		{orientation[i]} prop
+
+absolute()
+	{position} absolute
+	if(length(arguments) > 0)
+		if length(arguments[0]) == 1
+			{arguments[0]} arguments[1]
+		else
+			for prop in arguments
+				{prop[0]} prop[1]
+
+box(pack, align, orient)
+	display box
+	display -moz-box
+	display -webkit-box
+	if(pack)
+		box-pack pack
+		-moz-box-pack pack
+		-webkit-box-pack pack
+	if(align)
+		box-align align
+		-moz-box-align align
+		-webkit-box-align align
+	if(center)
+		box-orient orient
+		-moz-box-orient orient
+		-webkit-box-orient orient
+

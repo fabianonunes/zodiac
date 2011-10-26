@@ -8,6 +8,7 @@ define([
 
 		events : {
 			'click .remove' : 'destroy',
+			'click .icon' : 'click',
 			'dragstart' : 'drag'
 		},
 
@@ -15,13 +16,24 @@ define([
 
 		initialize : function(){
 			
-			_.bindAll(this, 'render', 'destroy');
+			_.bindAll(this, 'render', 'destroy', 'click');
 
 			this.model.bind('change', this.render);
 
 			$(this.el).attr('draggable', 'true');
 
 			this.model.view = this;
+
+		},
+
+		click : function(evt){
+
+			$(this.el).parent().find('.options').css({height:0});
+
+			var options = $(this.el).find('.options');
+			options.show().css({
+				height : options.height() > 0 ? 0 : options[0].scrollHeight
+			});
 
 		},
 
@@ -43,24 +55,54 @@ define([
 
 		render : function(){
 
-			var dfd = $.Deferred();
+			// TODO: quando a operaçao é alterada, o evento change
+			// é chamado duas vezes: uma para o attr [op] e outra
+			// para o atributo [length];
 
-			var doc = {
-				op : this.model.get('op'),
-				previous : this.model.getPrevious(),
-				fileName : this.model.get('fileName'),
-				length : this.model.get('length'),
-				id : this.model.id
-			};
+			var changed = this.model.changedAttributes(),
+			el = $(this.el);
 
-			$(this.el).empty();
-			
-			renderer({
-				documents : [doc],
-				ops : oprs
-			}, this.template, this.el, dfd.resolve.bind(dfd, this.el));
+			if(changed === false){
 
-			return dfd.promise();
+				var dfd = $.Deferred();
+
+				var doc = {
+					op : this.model.get('op'),
+					previous : this.model.getPrevious(),
+					fileName : this.model.get('fileName'),
+					length : this.model.get('length'),
+					id : this.model.id
+				};
+
+				el.empty();
+				
+				renderer({
+					documents : [doc],
+					ops : oprs
+				}, this.template, this.el, dfd.resolve.bind(dfd, this.el));
+
+				return dfd.promise();
+
+			} else {
+
+				var keys = Object.keys(changed);
+
+				if(~keys.indexOf('op')){
+					var op = this.model.get('op');
+					el.find('.row .icon').attr('class', 'icon ' + op);
+					el.find('.true').removeClass('true');
+					el.find('.options .' + op).addClass('true');
+				}
+
+				if(~keys.indexOf('length')){
+					el.find('.counter').text(changed.length);
+				}
+				
+
+
+
+
+			}
 
 		}
 
@@ -72,7 +114,7 @@ define([
 		template : 'path', 
 
 		events : {
-			'change select' : 'change'
+			'click .options .icon' : 'change'
 		},
 
 		initialize: function(){
@@ -81,9 +123,10 @@ define([
 		},
 
 		change : function(e){
-			var select = $(e.target);
-			var id = select.attr('class');
-			this.collection.get(id).set({ op : select.val() });
+			var select = $(e.target),
+			op = select.attr('class').split(' ')[0],
+			id = select.text();
+			this.collection.get(id).set({ op : op });
 		},
 
 		render : function(model){
