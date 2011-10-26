@@ -55,24 +55,54 @@ define([
 
 		render : function(){
 
-			var dfd = $.Deferred();
+			// TODO: quando a operaçao é alterada, o evento change
+			// é chamado duas vezes: uma para o attr [op] e outra
+			// para o atributo [length];
 
-			var doc = {
-				op : this.model.get('op'),
-				previous : this.model.getPrevious(),
-				fileName : this.model.get('fileName'),
-				length : this.model.get('length'),
-				id : this.model.id
-			};
+			var changed = this.model.changedAttributes(),
+			el = $(this.el);
 
-			$(this.el).empty();
-			
-			renderer({
-				documents : [doc],
-				ops : oprs
-			}, this.template, this.el, dfd.resolve.bind(dfd, this.el));
+			if(changed === false){
 
-			return dfd.promise();
+				var dfd = $.Deferred();
+
+				var doc = {
+					op : this.model.get('op'),
+					previous : this.model.getPrevious(),
+					fileName : this.model.get('fileName'),
+					length : this.model.get('length'),
+					id : this.model.id
+				};
+
+				el.empty();
+				
+				renderer({
+					documents : [doc],
+					ops : oprs
+				}, this.template, this.el, dfd.resolve.bind(dfd, this.el));
+
+				return dfd.promise();
+
+			} else {
+
+				var keys = Object.keys(changed);
+
+				if(~keys.indexOf('op')){
+					var op = this.model.get('op');
+					el.find('.row .icon').attr('class', 'icon ' + op);
+					el.find('.true').removeClass('true');
+					el.find('.options .' + op).addClass('true');
+				}
+
+				if(~keys.indexOf('length')){
+					el.find('.counter').text(changed.length);
+				}
+				
+
+
+
+
+			}
 
 		}
 
