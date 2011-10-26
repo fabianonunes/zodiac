@@ -288,8 +288,8 @@ body {
   text-indent: -9999px;
   direction: ltr;
   display: inline-block;
-  opacity: 0.4;
-  filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=40);
+  opacity: 0.3;
+  filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=30);
   -webkit-transition: opacity 0.15s ease-in;
   -moz-transition: opacity 0.15s ease-in;
   transition: opacity 0.15s ease-in;
@@ -298,6 +298,10 @@ body {
   width: 32px;
 }
 .path .options .icon:hover {
+  opacity: 1;
+  filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=100);
+}
+.path .options .true {
   opacity: 1;
   filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=100);
 }
