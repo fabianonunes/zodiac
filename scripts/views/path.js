@@ -8,7 +8,7 @@ define([
 
 		events : {
 			'click .remove' : 'destroy',
-			'click .op' : 'click',
+			'click .icon' : 'click',
 			'dragstart' : 'drag'
 		},
 
@@ -27,7 +27,6 @@ define([
 		},
 
 		click : function(evt){
-
 
 			$(this.el).parent().find('.options').css({height:0});
 
@@ -85,7 +84,7 @@ define([
 		template : 'path', 
 
 		events : {
-			'change select' : 'change'
+			'click .options .icon' : 'change'
 		},
 
 		initialize: function(){
@@ -94,9 +93,10 @@ define([
 		},
 
 		change : function(e){
-			var select = $(e.target);
-			var id = select.attr('class');
-			this.collection.get(id).set({ op : select.val() });
+			var select = $(e.target),
+			op = select.attr('class').split(' ')[0],
+			id = select.text();
+			this.collection.get(id).set({ op : op });
 		},
 
 		render : function(model){

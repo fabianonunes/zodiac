@@ -24,7 +24,7 @@ body
 	background #eee url('../images/bg/4.png')
 	box-shadow 0 0 10px rgba(#000, 0.3)
 
-	div.row
+	.row
 		color #333
 		padding 10px
 		position relative
@@ -40,10 +40,19 @@ body
 			width 16px
 			height 16px
 			margin 2px 10px
-			cursor pointer
 
+		.grep
+			background-position 0 0
+		.union
+			background-position 0 -184px
+		.intersection
+			background-position 0 -92px
+		.difference
+			background-position 0 -46px
+		.symmetric
+			background-position 0 -138px
 
-	div.options
+	.options
 		display none
 		text-align center
 		background url('../images/bg/3.png')
@@ -53,14 +62,14 @@ body
 		box-shadow -1px -2px 3px rgba(#333, 0.1) inset
 
 		.icon
+			text-indent -9999px
+			direction ltr
 			display inline-block
-			cursor pointer
 			opacity 0.4
 			transition opacity 0.15s ease-in
 			margin 6px 10px 4px
 			height 30px
 			width 32px
-			
 			&:hover
 				opacity 1
 	
@@ -93,9 +102,6 @@ body
 .mask
 	z-index 10
 	absolute(top 0, left 0, right 0, bottom 0)
-	// absolute(top 40px, left 40px, right 40px, bottom 40px)
-	// display none
-	padding-top 40px
 	text-align center
 	background rgba(#fff, .6)
 
@@ -108,9 +114,8 @@ body
 		height 32px
 		width 32px
 		margin 0 5px
-
-		&.over
-			border 1px dotted red
+	.over
+		border 1px dotted red
 
 .input
 	font-size 12px
@@ -118,30 +123,32 @@ body
 	overflow-y auto
 	height 100%
 
-footer
+footer.options
 	z-index 11
 	background linear-gradient(top, #f0f0f0 0%, #d6d6d6 90%)
 	absolute(left 0, right 0, bottom 0)
 	// box-shadow 0 1px 5px rgba(#000, 0.15)
+	padding 8px 8px 6px
 
-	&.options
-		padding 8px 8px 6px
+	> div
+		outline 0
+		text-decoration none
+		font bold 11px tahoma
+		display inline-block
+		text-align center
+		margin 0 8px
+	
+		.icon
+			color #444
+			width 32px
+			height 32px
+			margin 0 auto
 
-		a
-			outline 0
-			text-decoration none
-			font bold 11px tahoma
-			display inline-block
+		.uniq
+			background-position 0 -230px
 
-			&.icon
-				color #444
-				padding 34px 4px 0
-
-				&.uniq
-					background  url('../images/data_table.png') no-repeat center top
-
-				&.sort
-					background  url('../images/sort_ascending.png') no-repeat center top
+		.sort
+			background-position 0 -905px
 
 // 	h2
 // 		margin 0

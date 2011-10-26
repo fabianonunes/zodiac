@@ -233,7 +233,7 @@ body {
   -moz-box-shadow: 0 0 10px rgba(0,0,0,0.30);
   box-shadow: 0 0 10px rgba(0,0,0,0.30);
 }
-.path div.row {
+.path .row {
   color: #333;
   padding: 10px;
   position: relative;
@@ -248,16 +248,30 @@ body {
   -moz-box-shadow: 0 2px 3px rgba(51,51,51,0.10), 0 -1px 3px #fff inset;
   box-shadow: 0 2px 3px rgba(51,51,51,0.10), 0 -1px 3px #fff inset;
 }
-.path div.row .icon {
+.path .row .icon {
   float: right;
   opacity: 0.5;
   filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=50);
   width: 16px;
   height: 16px;
   margin: 2px 10px;
-  cursor: pointer;
 }
-.path div.options {
+.path .row .grep {
+  background-position: 0 0;
+}
+.path .row .union {
+  background-position: 0 -184px;
+}
+.path .row .intersection {
+  background-position: 0 -92px;
+}
+.path .row .difference {
+  background-position: 0 -46px;
+}
+.path .row .symmetric {
+  background-position: 0 -138px;
+}
+.path .options {
   display: none;
   text-align: center;
   background: url("../images/bg/3.png");
@@ -270,9 +284,10 @@ body {
   -moz-box-shadow: -1px -2px 3px rgba(51,51,51,0.10) inset;
   box-shadow: -1px -2px 3px rgba(51,51,51,0.10) inset;
 }
-.path div.options .icon {
+.path .options .icon {
+  text-indent: -9999px;
+  direction: ltr;
   display: inline-block;
-  cursor: pointer;
   opacity: 0.4;
   filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=40);
   -webkit-transition: opacity 0.15s ease-in;
@@ -282,7 +297,7 @@ body {
   height: 30px;
   width: 32px;
 }
-.path div.options .icon:hover {
+.path .options .icon:hover {
   opacity: 1;
   filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=100);
 }
@@ -338,7 +353,6 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
-  padding-top: 40px;
   text-align: center;
   background: rgba(255,255,255,0.60);
 }
@@ -352,7 +366,7 @@ body {
   width: 32px;
   margin: 0 5px;
 }
-.mask div.over {
+.mask .over {
   border: 1px dotted #f00;
 }
 .input {
@@ -361,7 +375,7 @@ body {
   overflow-y: auto;
   height: 100%;
 }
-footer {
+footer.options {
   z-index: 11;
   background: -webkit-gradient(linear, left top, left bottom, color-stop(0, #f0f0f0), color-stop(0.9, #d6d6d6));
   background: -webkit-linear-gradient(top, #f0f0f0 0%, #d6d6d6 90%);
@@ -371,25 +385,27 @@ footer {
   left: 0;
   right: 0;
   bottom: 0;
-}
-footer.options {
   padding: 8px 8px 6px;
 }
-footer.options a {
+footer.options > div {
   outline: 0;
   text-decoration: none;
   font: bold 11px tahoma;
   display: inline-block;
+  text-align: center;
+  margin: 0 8px;
 }
-footer.options a.icon {
+footer.options > div .icon {
   color: #444;
-  padding: 34px 4px 0;
+  width: 32px;
+  height: 32px;
+  margin: 0 auto;
 }
-footer.options a.icon.uniq {
-  background: url("../images/data_table.png") no-repeat center top;
+footer.options > div .uniq {
+  background-position: 0 -230px;
 }
-footer.options a.icon.sort {
-  background: url("../images/sort_ascending.png") no-repeat center top;
+footer.options > div .sort {
+  background-position: 0 -905px;
 }
 .search {
   padding: 15px 0;
@@ -419,21 +435,7 @@ footer.options a.icon.sort {
 }
 .icon {
   background: url("../images/sprites.png") no-repeat;
-}
-.b_grep {
-  background-position: 0 0;
-}
-.b_union {
-  background-position: 0 -184px;
-}
-.b_intersection {
-  background-position: 0 -92px;
-}
-.b_difference {
-  background-position: 0 -46px;
-}
-.b_symmetric {
-  background-position: 0 -138px;
+  cursor: pointer;
 }
 .intersection {
   background-position: 0 -598px;

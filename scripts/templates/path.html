@@ -5,11 +5,11 @@
 			<span class="counter">{length}</span>
 	{?previous}
 		{?op}
-			<span class="icon op b_{op}"></span>
+			<span class="icon {op}"></span>
 		</div>
 		<div class="options">
 			{#ops}
-				<div class="icon {type}"></div>
+				<div class="{type} icon">{id}</div>
 			{/ops}
 		{/op}
 	{/previous}
