@@ -16,11 +16,14 @@ define([
 
 		initialize : function(){
 			
-			_.bindAll(this, 'render', 'destroy', 'click');
+			_.bindAll(this, 'render', 'destroy', 'click', 'renderOp', 'renderLength');
 
-			this.model.bind('change', this.render);
+			this.model.bind('change:op', this.renderOp);
+			this.model.bind('change:length', this.renderLength);
 
-			$(this.el).attr('draggable', 'true');
+			this.element = $(this.el);
+
+			this.element.attr('draggable', 'true');
 
 			this.model.view = this;
 
@@ -28,9 +31,9 @@ define([
 
 		click : function(evt){
 
-			$(this.el).parent().find('.options').css({height:0});
+			this.element.parent().find('.options').css({height:0});
 
-			var options = $(this.el).find('.options');
+			var options = this.$('.options');
 			options.show().css({
 				height : options.height() > 0 ? 0 : options[0].scrollHeight
 			});
@@ -55,55 +58,25 @@ define([
 
 		render : function(){
 
-			// TODO: quando a operaçao é alterada, o evento change
-			// é chamado duas vezes: uma para o attr [op] e outra
-			// para o atributo [length];
+			var dfd = $.Deferred();
 
-			var changed = this.model.changedAttributes(),
-			el = $(this.el);
+			renderer({
+				documents : [this.model.attributes],
+				ops : oprs
+			}, this.template, this.el, dfd.resolve.bind(dfd, this.el));
 
-			if(changed === false){
+			return dfd.promise();
 
-				var dfd = $.Deferred();
+		},
 
-				var doc = {
-					op : this.model.get('op'),
-					previous : this.model.getPrevious(),
-					fileName : this.model.get('fileName'),
-					length : this.model.get('length'),
-					id : this.model.id
-				};
+		renderOp : function(model, op){
+			this.$('.row .icon').attr('class', 'icon ' + op);
+			this.$('.true').removeClass('true');
+			this.$('.options .' + op).addClass('true');
+		},
 
-				el.empty();
-				
-				renderer({
-					documents : [doc],
-					ops : oprs
-				}, this.template, this.el, dfd.resolve.bind(dfd, this.el));
-
-				return dfd.promise();
-
-			} else {
-
-				var keys = Object.keys(changed);
-
-				if(~keys.indexOf('op')){
-					var op = this.model.get('op');
-					el.find('.row .icon').attr('class', 'icon ' + op);
-					el.find('.true').removeClass('true');
-					el.find('.options .' + op).addClass('true');
-				}
-
-				if(~keys.indexOf('length')){
-					el.find('.counter').text(changed.length);
-				}
-				
-
-
-
-
-			}
-
+		renderLength : function(model, length){
+			this.$('.counter').text(length);
 		}
 
 	});
