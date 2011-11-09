@@ -344,17 +344,14 @@ function template(data, stream, cb){
 }
 
 function readFile(file, mask, pmcb){
-	var reader = new FileReader();
-	reader.onload = function(event){
-		var r = [];
-		event.target.result.split('\n').forEach(function(v){
-			if(mask) (v = mask.exec(v));
-			if(v) r.push(v.toString().trim());
-		});
-		pmcb(r);
-	};
-	reader.onerror = postMessage;
-	reader.readAsText(file);
+	var reader = new FileReaderSync();
+	var result = reader.readAsText(file);
+	var r = [];
+	result.split('\n').forEach(function(v){
+		if(mask) (v = mask.exec(v));
+		if(v) r.push(v.toString().trim());
+	});
+	pmcb(r);
 }
 
 function sortBy(obj, field, context){
