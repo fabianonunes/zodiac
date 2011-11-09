@@ -73,7 +73,7 @@ define([
 			dt = evt.originalEvent.dataTransfer,
 			type = dt.types[0];
 
-			if(~dt.types.indexOf('text')){
+			if(~[].indexOf.call(dt.types, 'text')){
 				
 				fs.createFile(dt.getData('text'))
 					.then(self.collection.blend.bind(self, op));
