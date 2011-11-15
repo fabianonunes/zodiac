@@ -3,14 +3,6 @@ importScripts('../libs/underscore.min.js');
 importScripts('../libs/dust.min.js');
 importScripts('../templates.js');
 
-function define(deps, module){
-	var root = this, args = [];
-	deps.forEach(function(v){
-		args.push(this[v]);
-	});
-	module.apply(root, args);
-}
-
 var TextWorker = {
 
 	sort : function(lines, classes){
@@ -317,6 +309,7 @@ var TextWorker = {
 onmessage = function(message){
 
 	var d = message.data;
+
 	if(d.op === 'sort' || d.op === 'uniq'){
 		TextWorker[d.op](d.lines, d.classes);
 	} else if(d.op === 'grep') {
@@ -324,6 +317,7 @@ onmessage = function(message){
 	} else {
 		readFile(d.file, d.mask, TextWorker[d.op].bind(TextWorker, d.previous));
 	}
+
 };
 
 
@@ -343,7 +337,7 @@ function template(data, stream, cb){
 
 }
 
-function readFile(file, mask, pmcb){
+function readFile(file, mask, callback){
 	var reader = new FileReaderSync();
 	var result = reader.readAsText(file);
 	var r = [];
@@ -351,14 +345,20 @@ function readFile(file, mask, pmcb){
 		if(mask) (v = mask.exec(v));
 		if(v) r.push(v.toString().trim());
 	});
-	pmcb(r);
+	callback(r);
 }
 
 function sortBy(obj, field, context){
-	
 	return obj.sort(function(left, right) {
 		var a = left[field], b = right[field];
 		return a < b ? -1 : a > b ? 1 : 0;
 	});
+}
 
+function define(deps, module){
+	var root = this, args = [];
+	deps.forEach(function(v){
+		args.push(this[v]);
+	});
+	module.apply(root, args);
 }
