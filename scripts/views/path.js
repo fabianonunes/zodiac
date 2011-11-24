@@ -1,8 +1,32 @@
 define([
 	'jquery', 'underscore', 'backbone', 'libs/base64', 'renderer'
-], function($, _, Backbone, b64, renderer){
+], function ($, _, Backbone, b64, renderer) {
 
-	var PathView = Backbone.View.extend({
+	function oprs(chunk, context, bodies) {
+
+		var ops = {
+			union : '\u222a',
+			intersection : '\u2229',
+			difference : '\u2216',
+			symmetric : '\u2296',
+			grep : '*'
+		}, document = context.current(), retval = [];
+
+		Object.keys(ops).forEach(function (k) {
+			retval.push({
+				type : k,
+				symbol : ops[k],
+				selected : document.op === k
+			});
+		});
+
+		return retval;
+
+	}
+
+	var PathView, PathListView;
+
+	PathView = Backbone.View.extend({
 
 		tagName : 'div',
 
@@ -12,10 +36,10 @@ define([
 			'dragstart' : 'drag'
 		},
 
-		template : 'path', 
+		template : 'path',
 
-		initialize : function(){
-			
+		initialize : function () {
+
 			_.bindAll(this, 'render', 'destroy', 'click', 'renderOp', 'renderLength');
 
 			this.model.bind('change:op', this.renderOp);
@@ -29,9 +53,9 @@ define([
 
 		},
 
-		click : function(evt){
+		click : function (evt) {
 
-			this.element.parent().find('.options').css({height:0});
+			this.element.parent().find('.options').css({height : 0});
 
 			var options = this.$('.options');
 			options.show().css({
@@ -40,7 +64,7 @@ define([
 
 		},
 
-		drag : function(event){
+		drag : function (event) {
 			event = event.originalEvent;
 			event.dataTransfer.setData(
 				'DownloadURL',
@@ -50,13 +74,13 @@ define([
 			);
 		},
 
-		destroy : function(){
+		destroy : function () {
 			this.unbind();
 			this.remove();
 			this.model.destroy();
 		},
 
-		render : function(){
+		render : function () {
 
 			var dfd = $.Deferred();
 
@@ -69,76 +93,52 @@ define([
 
 		},
 
-		renderOp : function(model, op){
+		renderOp : function (model, op) {
 			this.$('.row .icon').attr('class', 'icon ' + op);
 			this.$('.true').removeClass('true');
 			this.$('.options .' + op).addClass('true');
 		},
 
-		renderLength : function(model, length){
+		renderLength : function (model, length) {
 			this.$('.counter').text(length);
 		}
 
 	});
 
-	var PathListView = Backbone.View.extend({
+	PathListView = Backbone.View.extend({
 
 		el: $('.path'),
-		template : 'path', 
+		template : 'path',
 
 		events : {
 			'click .options .icon' : 'change'
 		},
 
-		initialize: function(){
+		initialize: function () {
 			_.bindAll(this, 'render', 'change');
 			this.collection.bind('change:added', this.render);
 		},
 
-		change : function(e){
+		change : function (e) {
 			var select = $(e.target),
-			op = select.attr('class').split(' ')[0],
-			id = select.text();
+				op = select.attr('class').split(' ')[0],
+				id = select.text();
 			this.collection.get(id).set({ op : op });
 		},
 
-		render : function(model){
+		render : function (model) {
 			new PathView({ model : model })
-			.render()
-			.then(this.el.append.bind(this.el));
+				.render()
+				.then(this.el.append.bind(this.el));
 		},
 
-		empty : function(){
-			while(this.el[0].firstChild){
+		empty : function () {
+			while (this.el[0].firstChild) {
 				this.el[0].removeChild(this.el[0].firstChild);
 			}
 		}
 
 	});
-
-	function oprs(chunk, context, bodies){
-
-		var ops = {
-			union : '∪' ,
-			intersection : '∩' ,
-			difference : '∖' ,
-			symmetric : '⊖',
-			grep : '*'
-		};
-
-		var document = context.current(), retval = [];
-
-		Object.keys(ops).forEach(function(k){
-			retval.push({
-				type : k,
-				symbol : ops[k],
-				selected : document.op === k
-			});
-		});
-
-		return retval;
-
-	}	
 
 	return PathListView;
 

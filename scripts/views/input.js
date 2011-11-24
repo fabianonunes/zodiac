@@ -29,7 +29,7 @@ define(['jquery', 'underscore', 'backbone'], function($, _, Backbone){
 		selectText : function(){
 			var range = document.createRange();
 			range.selectNode(this.el[0]);
-			window.getSelection().addRange(range);						
+			window.getSelection().addRange(range);
 		},
 
 		updateText : function(id, model, html){
@@ -50,7 +50,7 @@ define(['jquery', 'underscore', 'backbone'], function($, _, Backbone){
 
 			while(this.el[0].firstChild){
 				this.el[0].removeChild(this.el[0].firstChild);
-			}		
+			}
 		}
 
 	});

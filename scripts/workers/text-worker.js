@@ -50,7 +50,7 @@ var TextWorker = {
 		last = { clazz : false },
 		base = dust.makeBase(),
 		value = [];
-		
+
 		classes = classes || [];
 
 		lines.forEach(function(v, k){
@@ -80,7 +80,7 @@ var TextWorker = {
 			// close();
 		});
 
-			
+
 	},
 
 	difference : function(lines2, lines1){
@@ -112,7 +112,7 @@ var TextWorker = {
 				lines : value,
 				length : value.length
 				// , data : classes
-			});				
+			});
 		});
 
 	},
@@ -149,7 +149,7 @@ var TextWorker = {
 				lines : value,
 				length : value.length
 				// , data : classes
-			});					
+			});
 		});
 
 		function iterator(stack, clazz){
@@ -201,7 +201,7 @@ var TextWorker = {
 				html : out,
 				lines : value,
 				length : value.length
-			});			
+			});
 		});
 
 	},
@@ -218,7 +218,7 @@ var TextWorker = {
 
 		lines1.forEach(function(v){
 			o[v] = +[o[v]] + 1;
-		});		
+		});
 
 		template(Object.keys(o), function(chunk, context, bodies) {
 
@@ -244,19 +244,19 @@ var TextWorker = {
 				lines : value,
 				length : value.length
 				// , data : classes
-			});			
+			});
 		});
 
 	},
 
 	charge : function(lines2, lines1){
-		
+
 		postMessage({
 			html : lines1.join('\n'),
 			lines : lines1,
 			length : lines1.length
-		});					
-	
+		});
+
 	},
 
 	grep : function(lines2, lines1){
@@ -285,7 +285,7 @@ var TextWorker = {
 				var ck = {
 					line : v
 					// , clazz : !last.clazz && (last.clazz = 'red')
-				};			
+				};
 
 				chunk.render(bodies.block, base.push(ck));
 				value.push(original);
@@ -299,7 +299,7 @@ var TextWorker = {
 				lines : value,
 				length : value.length
 				// , data : classes
-			});					
+			});
 		});
 
 	}

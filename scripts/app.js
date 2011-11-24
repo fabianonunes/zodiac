@@ -6,65 +6,26 @@ define([
 	'views/dropper',
 	'views/input',
 	'views/path'
-], function(_, dust, TextPeer, dropper, input, path){
+], function (_, dust, TextPeer, Dropper, Input, Path) {
 
 	var app = {};
-	
-	app.initialize = function(){
+
+	app.initialize = function () {
 
 		this.documents = new TextPeer();
 
-		new dropper({
+		new Dropper({
 			collection: this.documents
 		});
-		new input({
+		new Input({
 			collection: this.documents
 		});
-		var pathView = new path({
+		new Path({
 			collection: this.documents
 		});
 
-		// var m = new this.documents.model({
-		// 	length: 10,
-		// 	fileName : 'fabiano',
-		// 	op : 'union',
-		// 	id : _.uniqueId('text')
-		// }, {
-		// 	collection : this.documents
-		// });
-
-		// this.documents.add(m);
-		
-		// var n = new this.documents.model({
-		// 	length: 10,
-		// 	fileName : 'fabiano',
-		// 	op : 'union',
-		// 	id : _.uniqueId('text')
-		// }, {
-		// 	collection : this.documents
-		// });
-
-		// n.set({previous: m});
-		// this.documents.add(n);
-		// var o = new this.documents.model({
-		// 	length: 10,
-		// 	fileName : 'fabiano',
-		// 	op : 'union',
-		// 	id : _.uniqueId('text')
-		// }, {
-		// 	collection : this.documents
-		// });
-
-		// o.set({previous: n});
-		// this.documents.add(o);
-
-		// pathView.render(m);
-		// pathView.render(n);
-		// pathView.render(o);
-
-		
 	};
-	
+
 	return app;
 
 });

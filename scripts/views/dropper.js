@@ -9,9 +9,9 @@ define([
 	var dropper = Backbone.View.extend({
 
 		el: $('.dropper'),
-		
+
 		events: {
-			
+
 			'dragover' : 'cancel',
 			// , 'dragover div' : 'cancel'
 
@@ -21,10 +21,10 @@ define([
 			'dragenter' : 'dragEnter',
 			'dragenter div' : 'onEnter',
 
-			'drop' : 'onDrop' 
+			'drop' : 'onDrop'
 
 		},
-		
+
 		initialize: function(){
 			_.bindAll(this, 'dragEnter', 'dragLeave');
 			this.mask = $('.mask', this.el);
@@ -58,7 +58,7 @@ define([
 				var inside = $.contains(evt.target, related);
 				if(!inside) $(evt.target).removeClass('over');
 			}
-			
+
 		},
 
 		onDrop : function(evt){
@@ -67,14 +67,14 @@ define([
 
 			this.cancel(evt);
 			evt.stopImmediatePropagation();
-			
+
 			var target = $(evt.target).removeClass('over'),
 			op = target.attr('class').split(' ')[0],
 			dt = evt.originalEvent.dataTransfer,
 			type = dt.types[0];
 
 			if(~[].indexOf.call(dt.types, 'text')){
-				
+
 				fs.createFile(dt.getData('text'))
 					.then(self.collection.blend.bind(self, op));
 

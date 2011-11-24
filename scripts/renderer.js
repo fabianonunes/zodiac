@@ -4,11 +4,11 @@ define(['dust'], function(dust){
 		if(cb) cb = cb.bind(null, el);
 
 		var s = document.createElement('span');
-		
+
 		dust.render(template, data, function(err, out) {
 
 			s.innerHTML = out;
-			
+
 			el.appendChild(s);
 
 			if(cb) cb();
