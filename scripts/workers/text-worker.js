@@ -5,15 +5,15 @@ importScripts('../templates.js');
 
 var TextWorker = {
 
-	sort : function(lines, classes){
+	sort : function (lines, classes) {
 
 		var strut = [],
-		last = { clazz : false },
-		base = dust.makeBase();
+			last = { clazz : false },
+			base = dust.makeBase();
 
 		classes = classes || [];
 
-		lines.forEach(function(v, k){
+		lines.forEach(function (v, k) {
 			if(!v) return;
 			strut.push({
 				line : v,
@@ -23,7 +23,7 @@ var TextWorker = {
 
 		strut = sortBy(strut, 'line');
 
-		template(strut, function(chunk, context, bodies) {
+		template(strut, function (chunk, context, bodies) {
 
 			var row = context.current();
 
@@ -34,7 +34,7 @@ var TextWorker = {
 
 			chunk.render(bodies.block, base.push(ck));
 
-		}, function(out){
+		}, function (out) {
 			postMessage({
 				html : out,
 				length : strut.length
@@ -44,7 +44,7 @@ var TextWorker = {
 
 	},
 
-	uniq : function(lines, classes){
+	uniq : function (lines, classes) {
 
 		var strut = {},
 		last = { clazz : false },
@@ -53,12 +53,12 @@ var TextWorker = {
 
 		classes = classes || [];
 
-		lines.forEach(function(v, k){
+		lines.forEach(function (v, k) {
 			if(!v) return;
 			strut[v] = classes[k];
 		});
 
-		template(Object.keys(strut), function(chunk, context, bodies) {
+		template(Object.keys(strut), function (chunk, context, bodies) {
 
 			var row = context.current();
 
@@ -71,7 +71,7 @@ var TextWorker = {
 
 			value.push(row);
 
-		}, function(out){
+		}, function (out) {
 			postMessage({
 				html : out,
 				lines : value,
@@ -83,7 +83,7 @@ var TextWorker = {
 
 	},
 
-	difference : function(lines2, lines1){
+	difference : function (lines2, lines1) {
 
 		var value = [],
 		classes = [],
@@ -91,13 +91,13 @@ var TextWorker = {
 		last = {},
 		base = dust.makeBase();
 
-		lines1.forEach(function(v, k){
+		lines1.forEach(function (v, k) {
 			uq[v] = true;
 		});
 
-		template(lines2, function(chunk, context, bodies){
+		template(lines2, function (chunk, context, bodies) {
 			var v = context.current();
-			if(!uq[v]){
+			if(!uq[v]) {
 				var ck = {
 					line : v,
 					clazz : !last.clazz && (last.clazz = 'red')
@@ -106,7 +106,7 @@ var TextWorker = {
 				value.push(v);
 				classes.push(last.clazz);
 			}
-		}, function(out){
+		}, function (out) {
 			postMessage({
 				html : out,
 				lines : value,
@@ -117,7 +117,7 @@ var TextWorker = {
 
 	},
 
-	union : function(lines2, lines1){
+	union : function (lines2, lines1) {
 
 		var value = [] , classes = [],
 		last = { clazz : false },
@@ -126,7 +126,7 @@ var TextWorker = {
 		lines2.forEach(iterator(uq, 'red'));
 		lines1.forEach(iterator(uq, 'blue'));
 
-		template(Object.keys(uq), function(chunk, context, bodies) {
+		template(Object.keys(uq), function (chunk, context, bodies) {
 
 			var v = context.current(),
 			i = uq[v].qtd;
@@ -136,14 +136,14 @@ var TextWorker = {
 				clazz : uq[v].clazz !== last.clazz && (last.clazz = uq[v].clazz)
 			};
 
-			for( ; i > 0 ; i--){
+			for( ; i > 0 ; i = i-1 ) {
 				chunk.render(bodies.block, base.push(ck));
 				value.push(v);
 				classes.push(uq[v]);
 			}
 
 
-		}, function(out){
+		}, function (out) {
 			postMessage({
 				html : out,
 				lines : value,
@@ -152,15 +152,15 @@ var TextWorker = {
 			});
 		});
 
-		function iterator(stack, clazz){
-			return function(v){
-				if(!stack[v]){
+		function iterator(stack, clazz) {
+			return function (v) {
+				if(!stack[v]) {
 					stack[v] = {
 						qtd : 0,
 						clazz : ''
 					};
 				}
-				if(stack[v].qtd++ < 2){
+				if(stack[v].qtd++ < 2) {
 					stack[v].clazz += clazz;
 				}
 			};
@@ -168,21 +168,21 @@ var TextWorker = {
 
 	},
 
-	intersection : function(lines2, lines1){
+	intersection : function (lines2, lines1) {
 
 		var value = [], classes = [],
 		last = { clazz : false },
 		o = {} , base = dust.makeBase();
 
-		lines2.forEach(function(v, k){
+		lines2.forEach(function (v, k) {
 			o[v] = true;
 		});
 
-		template(lines1, function(chunk, context, bodies) {
+		template(lines1, function (chunk, context, bodies) {
 
 			var v = context.current();
 
-			if(o[v]){
+			if(o[v]) {
 
 				var ck = {
 					line : v,
@@ -196,7 +196,7 @@ var TextWorker = {
 
 			}
 
-		}, function(out){
+		}, function (out) {
 			postMessage({
 				html : out,
 				lines : value,
@@ -206,25 +206,25 @@ var TextWorker = {
 
 	},
 
-	symmetric : function(lines2, lines1){
+	symmetric : function (lines2, lines1) {
 
 		var value = [], classes = [],
 		last = { clazz : false },
 		o = {} , base = dust.makeBase();
 
-		lines2.forEach(function(v){
+		lines2.forEach(function (v) {
 			o[v] = +[o[v]] + 1;
 		});
 
-		lines1.forEach(function(v){
+		lines1.forEach(function (v) {
 			o[v] = +[o[v]] + 1;
 		});
 
-		template(Object.keys(o), function(chunk, context, bodies) {
+		template(Object.keys(o), function (chunk, context, bodies) {
 
 			var v = context.current();
 
-			if(o[v] === 1){
+			if(o[v] === 1) {
 
 				var ck = {
 					line : v,
@@ -238,7 +238,7 @@ var TextWorker = {
 
 			}
 
-		}, function(out){
+		}, function (out) {
 			postMessage({
 				html : out,
 				lines : value,
@@ -249,7 +249,7 @@ var TextWorker = {
 
 	},
 
-	charge : function(lines2, lines1){
+	charge : function (lines2, lines1) {
 
 		postMessage({
 			html : lines1.join('\n'),
@@ -259,7 +259,7 @@ var TextWorker = {
 
 	},
 
-	grep : function(lines2, lines1){
+	grep : function (lines2, lines1) {
 
 		var value = [],
 		classes = [],
@@ -267,20 +267,20 @@ var TextWorker = {
 		uq = {},
 		base = dust.makeBase();
 
-		var regexes = lines1.map(function(v){
+		var regexes = lines1.map(function (v) {
 			return new RegExp(v, "i");
 		});
 
-		template(lines2, function(chunk, context, bodies) {
+		template(lines2, function (chunk, context, bodies) {
 
 			var v, original;
 			v = original = context.current();
 
-			var found = regexes.some(function(r){
+			var found = regexes.some(function (r) {
 				return v !== (v = v.replace(r, '<b>$&</b>'));
 			});
 
-			if(found){
+			if(found) {
 
 				var ck = {
 					line : v
@@ -293,7 +293,7 @@ var TextWorker = {
 
 			}
 
-		}, function(out){
+		}, function (out) {
 			postMessage({
 				html : out,
 				lines : value,
@@ -306,11 +306,11 @@ var TextWorker = {
 
 };
 
-onmessage = function(message){
+onmessage = function (message) {
 
 	var d = message.data;
 
-	if(d.op === 'sort' || d.op === 'uniq'){
+	if(d.op === 'sort' || d.op === 'uniq') {
 		TextWorker[d.op](d.lines, d.classes);
 	} else if(d.op === 'grep') {
 		readFile(d.file, null, TextWorker[d.op].bind(TextWorker, d.previous));
@@ -321,43 +321,43 @@ onmessage = function(message){
 };
 
 
-function template(data, stream, cb){
+function template(data, stream, cb) {
 
 	var streamed = '';
 
 	dust.stream("row-stream", {
 		data : data,
 		stream : stream
-	}).on("data", function(data){
+	}).on("data", function (data) {
 		streamed += data;
 	})
-	.on("end", function(){
+	.on("end", function () {
 		cb(streamed);
 	});
 
 }
 
-function readFile(file, mask, callback){
+function readFile(file, mask, callback) {
 	var reader = new FileReaderSync();
 	var result = reader.readAsText(file);
 	var r = [];
-	result.split('\n').forEach(function(v){
+	result.split('\n').forEach(function (v) {
 		if(mask) (v = mask.exec(v));
 		if(v) r.push(v.toString().trim());
 	});
 	callback(r);
 }
 
-function sortBy(obj, field, context){
-	return obj.sort(function(left, right) {
+function sortBy(obj, field, context) {
+	return obj.sort(function (left, right) {
 		var a = left[field], b = right[field];
 		return a < b ? -1 : a > b ? 1 : 0;
 	});
 }
 
-function define(deps, module){
+function define(deps, module) {
 	var root = this, args = [];
-	deps.forEach(function(v){
+	deps.forEach(function (v) {
 		args.push(this[v]);
 	});
 	module.apply(root, args);
