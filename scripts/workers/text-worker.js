@@ -119,7 +119,7 @@ var TextWorker = {
 
 	union : function (lines2, lines1) {
 
-		var value = [] , classes = [],
+		var value = [], classes = [],
 		last = { clazz : false },
 		uq = {}, base = dust.makeBase();
 
@@ -160,7 +160,8 @@ var TextWorker = {
 						clazz : ''
 					};
 				}
-				if(stack[v].qtd++ < 2) {
+				stack[v].qtd += 1;
+				if(stack[v].qtd < 2) {
 					stack[v].clazz += clazz;
 				}
 			};
