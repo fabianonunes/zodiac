@@ -16,7 +16,7 @@ define(['underscore', 'backbone', 'libs/worker'], function (_, Backbone, worker)
 
 		perform : function (added) {
 
-			worker('/scripts/workers/text-worker.js', {
+			worker('/scripts/workers/text-worker.min.js', {
 				op : this.get('op'),
 				previous : this.getPrevious() && this.getPrevious().lines,
 				file : this.get('origin'),
@@ -47,7 +47,7 @@ define(['underscore', 'backbone', 'libs/worker'], function (_, Backbone, worker)
 
 		sort : function () {
 
-			worker('/scripts/workers/text-worker.js', {
+			worker('/scripts/workers/text-worker.min.js', {
 				op : 'sort',
 				lines : this.lines
 			}, this.afterWork.bind(this, false));
@@ -56,7 +56,7 @@ define(['underscore', 'backbone', 'libs/worker'], function (_, Backbone, worker)
 
 		uniq : function () {
 
-			worker('/scripts/workers/text-worker.js', {
+			worker('/scripts/workers/text-worker.min.js', {
 				op : 'uniq',
 				lines : this.lines
 			}, this.afterWork.bind(this, false));

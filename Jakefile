@@ -5,6 +5,8 @@ require('colors');
 desc('build javascript/css');
 task('build', function (params) {
 
+	console.log('Compiling '.green + 'app scripts'.red.bold);
+
 	var requirejs = require('requirejs');
 
 	var config = {
@@ -22,6 +24,16 @@ task('build', function (params) {
 
 	requirejs.optimize(config, function () {});
 
+	jake.Task['compile-workers'].invoke();
+	jake.Task['compile-templates'].invoke();
+
+});
+
+desc('uglify the workers scripts');
+task('compile-workers', function () {
+
+	console.log('Compiling '.green + 'workers scripts'.red.bold);
+
 	var jsp = require("uglify-js").parser;
 	var pro = require("uglify-js").uglify;
 
@@ -31,7 +43,6 @@ task('build', function (params) {
 	ast = pro.ast_squeeze(ast);
 	var final_code = pro.gen_code(ast);
 	fs.writeFileSync('scripts/workers/text-worker.min.js', final_code, encoding='utf8');
-
 
 });
 
