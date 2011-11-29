@@ -1,4 +1,4 @@
-(function(){
+(function () {
 
 	var Controller = Backbone.Router.extend({
 
@@ -6,14 +6,14 @@
 			"view/:id": "view"
 		},
 
-		initialize: function(){
+		initialize: function () {
 
 			this.documents = new app.TextPeer();
 
 			new app.DropperView({
 				collection: this.documents
 			});
-			
+
 			new app.InputView({
 				collection : this.documents,
 				router : this
@@ -21,17 +21,21 @@
 
 			new app.PathListView({
 				collection : this.documents
-			});		
+			});
 
-			this.documents.bind('change:currentIndex', function(index){
+			this.documents.bind('change:currentIndex', function (index) {
 				this.navigate('view/' + index);
 			}.bind(this));
 
 		},
 
-		view: function( id ){
+		view: function (id) {
 			var model = this.documents.get(id);
-			!model ? this.navigate('') : model.activate();
+			if (model) {
+				model.activate();
+			} else {
+				this.navigate('');
+			}
 		}
 
 	});
@@ -40,4 +44,4 @@
 
 	Backbone.history.start();
 
-})();
+}());

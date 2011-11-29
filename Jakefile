@@ -20,9 +20,18 @@ task('build', function (params) {
 		out: 'scripts/production.js'
 	};
 
-	requirejs.optimize(config, function (buildResponse, a, b, c, d) {
-		var contents = fs.readFileSync(config.out, 'utf8');
-	});
+	requirejs.optimize(config, function () {});
+
+	var jsp = require("uglify-js").parser;
+	var pro = require("uglify-js").uglify;
+
+	var contents = fs.readFileSync('scripts/workers/text-worker.js', 'utf8');
+	var ast = jsp.parse(contents);
+	ast = pro.ast_mangle(ast);
+	ast = pro.ast_squeeze(ast);
+	var final_code = pro.gen_code(ast);
+	fs.writeFileSync('scripts/workers/text-worker.min.js', final_code, encoding='utf8');
+
 
 });
 
