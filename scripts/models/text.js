@@ -1,8 +1,6 @@
 define(['underscore', 'backbone', 'libs/worker'], function (_, Backbone, worker) {
 
-	var Text, TextPeer;
-
-	Text = Backbone.Model.extend({
+	var Text = Backbone.Model.extend({
 
 		initialize : function (attrs, options) {
 
@@ -18,7 +16,7 @@ define(['underscore', 'backbone', 'libs/worker'], function (_, Backbone, worker)
 
 		perform : function (added) {
 
-			worker('/scripts/workers/text-worker.min.js', {
+			worker('/scripts/workers/text-worker.js', {
 				op : this.get('op'),
 				previous : this.getPrevious() && this.getPrevious().lines,
 				file : this.get('origin'),
@@ -49,20 +47,18 @@ define(['underscore', 'backbone', 'libs/worker'], function (_, Backbone, worker)
 
 		sort : function () {
 
-			worker('/scripts/workers/text-worker.min.js', {
+			worker('/scripts/workers/text-worker.js', {
 				op : 'sort',
-				lines : this.lines,
-				classes : this.classes
+				lines : this.lines
 			}, this.afterWork.bind(this, false));
 
 		},
 
 		uniq : function () {
 
-			worker('/scripts/workers/text-worker.min.js', {
+			worker('/scripts/workers/text-worker.js', {
 				op : 'uniq',
-				lines : this.lines,
-				classes : this.classes
+				lines : this.lines
 			}, this.afterWork.bind(this, false));
 
 		},
@@ -120,11 +116,11 @@ define(['underscore', 'backbone', 'libs/worker'], function (_, Backbone, worker)
 
 	});
 
-	TextPeer = Backbone.Collection.extend({
+	var TextPeer = Backbone.Collection.extend({
 
 		model : Text,
 		currentIndex : null,
-		mask : /[1-9]\d{0,6}-\d{2}\.\d{4}\.\d\.\d{2}\.\d{4}/,
+		mask : /[1-9]\d{0,6}-\d{2}\.\d{4}\.\d\.\d{2}\.\d{4}/g,
 
 		initialize : function () {
 			_.bindAll(this, 'updateDocument', 'blend');

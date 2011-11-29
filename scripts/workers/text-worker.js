@@ -8,7 +8,6 @@ var TextWorker = {
 	sort : function (lines) {
 
 		var strut = [],
-			last = { clazz : false },
 			base = dust.makeBase();
 
 		lines.forEach(function (v, k) {
@@ -40,24 +39,21 @@ var TextWorker = {
 	uniq : function (lines, classes) {
 
 		var strut = {},
-			last = { clazz : false },
 			base = dust.makeBase(),
-			value = [];
+			value;
 
 		lines.forEach(function (v, k) {
 			if(!v) return;
 			strut[v] = 0;
 		});
 
-		template(Object.keys(strut), function (chunk, context, bodies) {
+		value = Object.keys(strut);
 
-			var row = context.current();
+		template(value, function (chunk, context, bodies) {
 
 			chunk.render(bodies.block, base.push({
-				line : row
+				line : context.current()
 			}));
-
-			value.push(row);
 
 		}, function (out) {
 			postMessage({
@@ -66,14 +62,12 @@ var TextWorker = {
 			});
 		});
 
-
 	},
 
 	difference : function (lines2, lines1) {
 
 		var value = [],
 			uq = {},
-			last = {},
 			base = dust.makeBase();
 
 		lines1.forEach(function (v, k) {
@@ -100,20 +94,14 @@ var TextWorker = {
 
 	union : function (lines2, lines1) {
 
-		var value = [],
-		uq = {}, base = dust.makeBase();
+		var value = lines1.concat(lines2),
+			base = dust.makeBase();
 
-		lines2.forEach(iterator(uq));
-		lines1.forEach(iterator(uq));
-
-		template(lines1.concat(lines2), function (chunk, context, bodies) {
-
-			var v = context.current();
+		template(value, function (chunk, context, bodies) {
 
 			chunk.render(bodies.block, base.push({
-				line : v
+				line : context.current()
 			}));
-			value.push(v);
 
 		}, function (out) {
 			postMessage({
@@ -127,9 +115,9 @@ var TextWorker = {
 
 	intersection : function (lines2, lines1) {
 
-		var value = [], classes = [],
-		last = { clazz : false },
-		o = {} , base = dust.makeBase();
+		var value = [],
+			o = {},
+			base = dust.makeBase();
 
 		lines2.forEach(function (v, k) {
 			o[v] = true;
@@ -139,17 +127,16 @@ var TextWorker = {
 
 			var v = context.current();
 
-			if(o[v]) {
+			if(o[v] === true) {
 
-				var ck = {
-					line : v,
-					clazz : !last.clazz && (last.clazz = 'redblue')
-				};
+				// avoid duplicate lines
+				o[v] = false;
 
-				chunk.render(bodies.block, base.push(ck));
+				chunk.render(bodies.block, base.push({
+					line : v
+				}));
 
 				value.push(v);
-				classes.push(last.clazz);
 
 			}
 
@@ -165,9 +152,9 @@ var TextWorker = {
 
 	symmetric : function (lines2, lines1) {
 
-		var value = [], classes = [],
-		last = { clazz : false },
-		o = {} , base = dust.makeBase();
+		var value = [],
+			o = {},
+			base = dust.makeBase();
 
 		lines2.forEach(function (v) {
 			o[v] = +[o[v]] + 1;
@@ -183,15 +170,11 @@ var TextWorker = {
 
 			if(o[v] === 1) {
 
-				var ck = {
-					line : v,
-					clazz : !last.clazz && (last.clazz = 'redblue')
-				};
-
-				chunk.render(bodies.block, base.push(ck));
+				chunk.render(bodies.block, base.push({
+					line : v
+				}));
 
 				value.push(v);
-				classes.push(last.clazz);
 
 			}
 
@@ -200,7 +183,6 @@ var TextWorker = {
 				html : out,
 				lines : value,
 				length : value.length
-				// , data : classes
 			});
 		});
 
@@ -219,10 +201,8 @@ var TextWorker = {
 	grep : function (lines2, lines1) {
 
 		var value = [],
-		classes = [],
-		last = { clazz : false },
-		uq = {},
-		base = dust.makeBase();
+			uq = {},
+			base = dust.makeBase();
 
 		var regexes = lines1.map(function (v) {
 			return new RegExp(v, "i");
@@ -239,14 +219,11 @@ var TextWorker = {
 
 			if(found) {
 
-				var ck = {
+				chunk.render(bodies.block, base.push({
 					line : v
-					// , clazz : !last.clazz && (last.clazz = 'red')
-				};
+				}));
 
-				chunk.render(bodies.block, base.push(ck));
 				value.push(original);
-				classes.push(uq[v]);
 
 			}
 
@@ -255,7 +232,6 @@ var TextWorker = {
 				html : out,
 				lines : value,
 				length : value.length
-				// , data : classes
 			});
 		});
 
@@ -299,8 +275,14 @@ function readFile(file, mask, callback) {
 	var result = reader.readAsText(file);
 	var r = [];
 	result.split('\n').forEach(function (v) {
-		if(mask) (v = mask.exec(v));
-		if(v) r.push(v.toString().trim());
+		v = v.trim();
+		if (v) {
+			if (mask) {
+				Array.prototype.push.apply(r, v.match(mask));
+			} else {
+				r.push(v);
+			}
+		}
 	});
 	callback(r);
 }
