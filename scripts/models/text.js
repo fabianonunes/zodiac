@@ -134,6 +134,9 @@ define(['underscore', 'backbone', 'libs/worker'], function (_, Backbone, worker)
 
 		destroy : function (m) {
 			var next = m.getNext(), previous = m.getPrevious();
+			if (previous) {
+				previous.unbind('change:length', m.perform);
+			}
 			this.remove(m);
 			if (this.length) {
 				this.tie(next, previous);
@@ -143,15 +146,10 @@ define(['underscore', 'backbone', 'libs/worker'], function (_, Backbone, worker)
 		},
 
 		tie : function (next, previous) {
-			if (previous) {
-				previous.unbind('change:length');
-			}
 			if (next) {
 				next.setPrevious(previous);
-			} else {
-				if (previous) {
-					previous.activate();
-				}
+			} else if (previous) {
+				previous.activate();
 			}
 		},
 
