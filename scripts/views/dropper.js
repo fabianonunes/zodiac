@@ -55,6 +55,7 @@ define([
 		onDrop : function(evt) {
 
 			this.cancel(evt);
+			this.mask.hide();
 			// evt.stopImmediatePropagation();
 
 			var target = $(evt.target).removeClass('over'),
@@ -62,7 +63,7 @@ define([
 				dt = evt.originalEvent.dataTransfer,
 				promise;
 
-			if (~[].indexOf.call(dt.types, 'text')) {
+			if (_.contains(dt.types, 'text')) {
 				promise = fileSystem.createFile(dt.getData('text'));
 			} else if (dt.files.length > 1) {
 				promise = fileSystem.createFile(_.pluck(dt.files, 'name').join('\n'));
@@ -70,9 +71,7 @@ define([
 				promise = $.Deferred().resolve(dt.files[0]);
 			}
 
-			promise.then(this.collection.blend.bind(this, op));
-
-			this.mask.hide();
+			promise.done(this.collection.blend.bind(this, op));
 
 		},
 
