@@ -2,28 +2,6 @@ define([
 	'jquery', 'underscore', 'backbone', 'libs/base64', 'renderer'
 ], function ($, _, Backbone, b64, renderer) {
 
-	function oprs(chunk, context, bodies) {
-
-		var ops = {
-			union :			'\u222a',
-			intersection :	'\u2229',
-			difference :	'\u2216',
-			symmetric :		'\u2296',
-			grep :			'*'
-		}, document = context.current(), retval = [];
-
-		Object.keys(ops).forEach(function (k) {
-			retval.push({
-				type : k,
-				symbol : ops[k],
-				selected : document.op === k
-			});
-		});
-
-		return retval;
-
-	}
-
 	var PathView, PathListView;
 
 	PathView = Backbone.View.extend({
@@ -32,8 +10,8 @@ define([
 
 		events : {
 			'click .remove' : 'destroy',
-			'click .icon' : 'click',
-			'dragstart' : 'drag'
+			'click .icon'   : 'click',
+			'dragstart'     : 'drag'
 		},
 
 		template : 'path',
@@ -45,9 +23,7 @@ define([
 			this.model.bind('change:op', this.renderOp);
 			this.model.bind('change:length', this.renderLength);
 
-			this.element = $(this.el);
-
-			this.element.attr('draggable', 'true');
+			this.element = $(this.el).attr('draggable', 'true');
 
 			this.model.view = this;
 
@@ -139,6 +115,23 @@ define([
 		}
 
 	});
+
+	function oprs(chunk, context, bodies) {
+
+		var ops = 'union intersection difference symmetric grep'.split(' ');
+		var symbols = '\u222a \u2229 \u2216 \u2296 *'.split(' ');
+
+		var document = context.current(), retval = [];
+
+		return ops.map(function (v, k) {
+			return {
+				type     : v,
+				symbol   : symbols[k],
+				selected : document.op === v
+			};
+		});
+
+	}
 
 	return PathListView;
 

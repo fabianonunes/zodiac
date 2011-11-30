@@ -241,14 +241,15 @@ var TextWorker = {
 
 onmessage = function (message) {
 
-	var d = message.data;
+	var d = message.data,
+		op = TextWorker[d.op];
 
 	if(d.op === 'sort' || d.op === 'uniq') {
-		TextWorker[d.op](d.lines, d.classes);
+		op(d.lines, d.classes);
 	} else if(d.op === 'grep') {
-		readFile(d.file, null, TextWorker[d.op].bind(TextWorker, d.previous));
+		readFile(d.file, null, op.bind(TextWorker, d.previous));
 	} else {
-		readFile(d.file, d.mask, TextWorker[d.op].bind(TextWorker, d.previous));
+		readFile(d.file, d.mask, op.bind(TextWorker, d.previous));
 	}
 
 };
