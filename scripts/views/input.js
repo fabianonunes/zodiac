@@ -49,7 +49,6 @@ define([
 		},
 
 		empty : function(){
-
 			while(this.el[0].firstChild){
 				this.el[0].removeChild(this.el[0].firstChild);
 			}

@@ -12,7 +12,7 @@ define([
 	fs.initialize = function(){
 
 		var self = this;
-		
+
 		if (window.requestFileSystem) {
 			window.requestFileSystem(window.TEMPORARY, 5*1024*1024, function(filesystem) {
 				self.filesystem = filesystem;
@@ -33,7 +33,7 @@ define([
 
 				fileEntry.createWriter(function(writer) {
 
-					writer.onwriteend = fileEntry.file.bind(fileEntry, dfd.resolve);	
+					writer.onwriteend = fileEntry.file.bind(fileEntry, dfd.resolve);
 
 					writer.onerror = dfd.reject;
 
@@ -44,11 +44,11 @@ define([
 				}, errorHandler);
 
 			}, errorHandler);
-			
+
 		});
 
 		return dfd.promise();
-		
+
 	};
 
 	fs.truncateFile = function(path){
@@ -69,7 +69,7 @@ define([
 		}, errorHandler);
 
 		return dfd.promise();
-		
+
 	};
 
 	function errorHandler(e) {
@@ -108,4 +108,3 @@ define([
 
 
 
-	
