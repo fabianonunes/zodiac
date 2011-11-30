@@ -1,9 +1,6 @@
 
 define([
-	'jquery',
-	'backbone',
-	'underscore',
-	'libs/fs'
+	'jquery', 'backbone', 'underscore', 'libs/fs'
 ], function($, Backbone, _, fs){
 
 	var dropper = Backbone.View.extend({

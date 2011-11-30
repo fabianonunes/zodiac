@@ -1,5 +1,7 @@
 
-define(['jquery', 'underscore', 'backbone'], function($, _, Backbone){
+define([
+	'jquery', 'underscore', 'backbone'
+], function($, _, Backbone){
 
 	var InputView = Backbone.View.extend({
 
