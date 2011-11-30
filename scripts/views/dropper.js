@@ -1,28 +1,22 @@
 
 define([
 	'jquery', 'backbone', 'underscore', 'libs/fs'
-], function($, Backbone, _, fs){
+], function($, Backbone, _, fileSystem) {
 
 	var dropper = Backbone.View.extend({
 
 		el: $('.dropper'),
 
 		events: {
-
 			'dragover' : 'cancel',
-			// , 'dragover div' : 'cancel'
-
 			'dragleave': 'dragLeave',
 			'dragleave div' : 'onLeave',
-
 			'dragenter' : 'dragEnter',
 			'dragenter div' : 'onEnter',
-
 			'drop' : 'onDrop'
-
 		},
 
-		initialize: function(){
+		initialize: function() {
 			_.bindAll(this, 'dragEnter', 'dragLeave');
 			this.mask = $('.mask', this.el);
 		},
@@ -32,60 +26,63 @@ define([
 			return this.cancel(evt);
 		},
 
-		onEnter : function(evt){
+		onEnter : function(evt) {
 			$(evt.target).addClass('over');
 		},
 
-		dragLeave : function(evt){
+		dragLeave : function(evt) {
 
 			var related = document.elementFromPoint(evt.originalEvent.clientX, evt.originalEvent.clientY);
 
-			if(!related || related !== this.mask[0]){
+			if(!related || related !== this.mask[0]) {
 				var inside = $.contains(this.mask[0], related);
 				if(!inside) this.mask.hide();
 			}
 
 		},
 
-		onLeave : function(evt){
+		onLeave : function(evt) {
 
 			var related = document.elementFromPoint(evt.originalEvent.clientX, evt.originalEvent.clientY);
 
-			if(!related || related !== evt.target){
+			if(!related || related !== evt.target) {
 				var inside = $.contains(evt.target, related);
 				if(!inside) $(evt.target).removeClass('over');
 			}
 
 		},
 
-		onDrop : function(evt){
-
-			var self = this;
+		onDrop : function(evt) {
 
 			this.cancel(evt);
-			evt.stopImmediatePropagation();
+			this.mask.hide();
+			// evt.stopImmediatePropagation();
 
 			var target = $(evt.target).removeClass('over'),
-			op = target.attr('class').split(' ')[0],
-			dt = evt.originalEvent.dataTransfer,
-			type = dt.types[0];
+				op = target.attr('class').split(' ')[0],
+				dt = evt.originalEvent.dataTransfer,
+				promise;
 
-			if(~[].indexOf.call(dt.types, 'text')){
+			// accessing the files.length property directly is as expensive as plucking
+			// file names. thus, its making use of pluck op to get both information
+			var names = _.pluck(dt.files, 'name');
+			var filesLength = names.length;
 
-				fs.createFile(dt.getData('text'))
-					.then(self.collection.blend.bind(self, op));
-
+			if (filesLength > 1) {
+				promise = fileSystem.createFile(names.join('\n'));
+			} else if (dt.types[0] === 'text') {
+				promise = fileSystem.createFile(dt.getData('text'));
 			} else {
-				this.collection.blend(op, dt.files[0]);
+				promise = $.Deferred().resolve(dt.files[0]);
 			}
 
-			this.mask.hide();
+			promise.done(this.collection.blend.bind(this, op));
 
 		},
 
-		cancel : function(evt){
-			if (evt.preventDefault) evt.preventDefault();
-			// evt.originalEvent.dataTransfer.dropEffect = 'copy';
+		cancel : function(evt) {
+			evt.preventDefault();
+			evt.originalEvent.dataTransfer.dropEffect = 'copy';
 			return false;
 		}
 

@@ -21,7 +21,7 @@ define(['underscore', 'backbone', 'libs/worker'], function (_, Backbone, worker)
 				previous : this.getPrevious() && this.getPrevious().lines,
 				file : this.get('origin'),
 				mask : this.collection.mask
-			}, this.afterWork.bind(this, added));
+			}, this.afterWorker.bind(this, added));
 
 		},
 
@@ -50,7 +50,7 @@ define(['underscore', 'backbone', 'libs/worker'], function (_, Backbone, worker)
 			worker('/scripts/workers/text-worker.min.js', {
 				op : 'sort',
 				lines : this.lines
-			}, this.afterWork.bind(this, false));
+			}, this.afterWorker.bind(this, false));
 
 		},
 
@@ -59,7 +59,7 @@ define(['underscore', 'backbone', 'libs/worker'], function (_, Backbone, worker)
 			worker('/scripts/workers/text-worker.min.js', {
 				op : 'uniq',
 				lines : this.lines
-			}, this.afterWork.bind(this, false));
+			}, this.afterWorker.bind(this, false));
 
 		},
 
@@ -67,8 +67,9 @@ define(['underscore', 'backbone', 'libs/worker'], function (_, Backbone, worker)
 			this.collection.updateDocument(this);
 		},
 
-		afterWork : function (added, message) {
+		afterWorker : function (added, message) {
 
+			// for now, sort and uniq dont return lines
 			if (!_.isUndefined(message.data.lines)) {
 				this.lines = message.data.lines;
 			}
