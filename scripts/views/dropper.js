@@ -63,10 +63,15 @@ define([
 				dt = evt.originalEvent.dataTransfer,
 				promise;
 
-			if (_.contains(dt.types, 'text')) {
+			// accessing the files.length property directly is as expensive as plucking
+			// file names. thus, its making use of pluck op to get both information
+			var names = _.pluck(dt.files, 'name');
+			var filesLength = names.length;
+
+			if (filesLength > 1) {
+				promise = fileSystem.createFile(names.join('\n'));
+			} else if (dt.types[0] === 'text') {
 				promise = fileSystem.createFile(dt.getData('text'));
-			} else if (dt.files.length > 1) {
-				promise = fileSystem.createFile(_.pluck(dt.files, 'name').join('\n'));
 			} else {
 				promise = $.Deferred().resolve(dt.files[0]);
 			}
@@ -76,9 +81,7 @@ define([
 		},
 
 		cancel : function(evt) {
-			if (evt.preventDefault) {
-				evt.preventDefault();
-			}
+			evt.preventDefault();
 			evt.originalEvent.dataTransfer.dropEffect = 'copy';
 			return false;
 		}
