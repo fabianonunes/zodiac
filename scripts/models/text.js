@@ -101,11 +101,11 @@ define(['underscore', 'backbone', 'libs/worker'], function (_, Backbone, worker)
 		getPath : function () {
 
 			var ops = {
-				union : '\u222a',
-				intersection : '\u2229',
-				difference : '\u2216',
-				symmetric : '\u2296',
-				grep : '*'
+				union :			'\u222a',
+				intersection :	'\u2229',
+				difference :	'\u2216',
+				symmetric :		'\u2296',
+				grep :          '*'
 			}, path, m;
 
 			for (path = [], m = this; m !== null; m = m.getPrevious()) {

@@ -5,11 +5,11 @@ define([
 	function oprs(chunk, context, bodies) {
 
 		var ops = {
-			union : '\u222a',
-			intersection : '\u2229',
-			difference : '\u2216',
-			symmetric : '\u2296',
-			grep : '*'
+			union :			'\u222a',
+			intersection :	'\u2229',
+			difference :	'\u2216',
+			symmetric :		'\u2296',
+			grep :			'*'
 		}, document = context.current(), retval = [];
 
 		Object.keys(ops).forEach(function (k) {

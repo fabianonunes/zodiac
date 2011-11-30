@@ -8,12 +8,12 @@ define([
 		el: $('.dropper'),
 
 		events: {
-			'dragover' : 'cancel',
-			'dragleave': 'dragLeave',
-			'dragleave div' : 'onLeave',
-			'dragenter' : 'dragEnter',
-			'dragenter div' : 'onEnter',
-			'drop' : 'onDrop'
+			'dragover'		: 'cancel',
+			'dragleave'		: 'dragLeave',
+			'dragleave div'	: 'onLeave',
+			'dragenter'		: 'dragEnter',
+			'dragenter div'	: 'onEnter',
+			'drop'			: 'onDrop'
 		},
 
 		initialize: function() {
