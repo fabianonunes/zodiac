@@ -7,7 +7,7 @@
  * http://benalman.com/about/license/
  */
 
- define(function(){
+ define(['underscore'], function(_){
 	// Queue defaults.
 	var defaults = {
 		delay: 100,
@@ -26,7 +26,7 @@
 		var self = {},
 
 			// Initialize queue with passed options.
-			options = $.extend( true, {}, defaults, opts ),
+			options = _.extend( {}, defaults, opts ),
 
 			// The actual queue.
 			queue = options.queue,
@@ -98,7 +98,7 @@
 					}
 
 					// Repeatedly loop if the delay is a number >= 0, otherwise wait for a
-					// $.jqmqNext() call.
+					// _.jqmqNext() call.
 					if ( typeof delay === 'number' && delay >= 0 ) {
 						recent = [];
 						timeout_id = setTimeout( loopy, delay );
@@ -154,7 +154,7 @@
 		};
 
 		self.update = function( opts ) {
-			$.extend( options, opts );
+			_.extend( options, opts );
 		};
 
 		self.size = size = function() {
@@ -162,7 +162,7 @@
 		};
 
 		self.indexOf = function( item ) {
-			return $.inArray( item, queue );
+			return _.indexOf( item, queue );
 		};
 
 		// Stop a running queue, optionally flagging it as paused.
