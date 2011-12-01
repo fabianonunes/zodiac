@@ -27,6 +27,8 @@ define([
 
 		perform : function (added) {
 
+			console.log(this.get('fileName'));
+
 			var self = this;
 
 			queue.add(function(){
@@ -38,6 +40,12 @@ define([
 				}, added);
 			});
 
+			var next = this.getNext();
+
+			if(next){
+				next.perform(false);
+			}
+
 		},
 
 		destroy : function () {
@@ -48,7 +56,7 @@ define([
 		setPrevious : function (previous, options) {
 			if (previous) {
 				this.set({ previous : previous.id }, options);
-				previous.bind('change:length', this.perform, this);
+				// previous.bind('change:length', this.perform, this);
 			} else {
 				this.set({ op : 'charge' });
 			}
