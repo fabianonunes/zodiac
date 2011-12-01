@@ -181,4 +181,6 @@
 		return self;
 	};
 
+	return jqmq;
+
 });
