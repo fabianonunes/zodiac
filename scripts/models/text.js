@@ -1,6 +1,6 @@
-define(['underscore', 'backbone', 'libs/worker'], function (_, Backbone, worker) {
-
-	var workerPath = '/scripts/workers/text-worker.js';
+define([
+	'underscore', 'backbone', 'libs/worker'
+], function (_, Backbone, worker) {
 
 	var Text = Backbone.Model.extend({
 
@@ -18,12 +18,12 @@ define(['underscore', 'backbone', 'libs/worker'], function (_, Backbone, worker)
 
 		perform : function (added) {
 
-			worker(workerPath, {
+			this.work({
 				op : this.get('op'),
 				previous : this.getPrevious() && this.getPrevious().lines,
 				file : this.get('origin'),
 				mask : this.collection.mask
-			}, this.afterWorker.bind(this, added));
+			}, added);
 
 		},
 
@@ -33,14 +33,12 @@ define(['underscore', 'backbone', 'libs/worker'], function (_, Backbone, worker)
 		},
 
 		setPrevious : function (previous, options) {
-
 			if (previous) {
 				this.set({ previous : previous.id }, options);
 				previous.bind('change:length', this.perform, this);
 			} else {
 				this.set({ op : 'charge' });
 			}
-
 		},
 
 		isActivated : function () {
@@ -48,21 +46,11 @@ define(['underscore', 'backbone', 'libs/worker'], function (_, Backbone, worker)
 		},
 
 		sort : function () {
-
-			worker(workerPath, {
-				op : 'sort',
-				lines : this.lines
-			}, this.afterWorker.bind(this, false));
-
+			this.work({ op : 'sort', lines : this.lines });
 		},
 
 		uniq : function () {
-
-			worker(workerPath, {
-				op : 'uniq',
-				lines : this.lines
-			}, this.afterWorker.bind(this, false));
-
+			this.work({ op : 'uniq', lines : this.lines	});
 		},
 
 		activate : function () {
@@ -70,9 +58,8 @@ define(['underscore', 'backbone', 'libs/worker'], function (_, Backbone, worker)
 		},
 
 		afterWorker : function (added, message) {
-
 			// for now, sort and uniq dont return lines
-			if (!_.isUndefined(message.data.lines)) {
+			if ( !_.isUndefined(message.data.lines) ) {
 				this.lines = message.data.lines;
 			}
 
@@ -80,14 +67,13 @@ define(['underscore', 'backbone', 'libs/worker'], function (_, Backbone, worker)
 
 			this.set({ length : message.data.length });
 
-			if (this.isActivated() || added === true) {
+			if ( this.isActivated() || added === true ) {
 				this.activate();
 			}
 
 			if (added === true) {
 				this.trigger('change:added', this);
 			}
-
 		},
 
 		getPrevious : function () {
@@ -101,7 +87,6 @@ define(['underscore', 'backbone', 'libs/worker'], function (_, Backbone, worker)
 		},
 
 		getPath : function () {
-
 			var ops = {
 				union        : '\u222a',
 				intersection : '\u2229',
@@ -114,10 +99,14 @@ define(['underscore', 'backbone', 'libs/worker'], function (_, Backbone, worker)
 				path.push(m.get('fileName'), ops[m.get('op')]);
 				m = m.getPrevious();
 			}
-
 			path.pop();
-			return path.reverse().join('');
 
+			return path.reverse().join('');
+		},
+
+		work : function (options, added) {
+			var path = '/scripts/workers/text-worker.js';
+			worker( path, options, this.afterWorker.bind(this, added || false) );
 		}
 
 	});
