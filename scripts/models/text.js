@@ -1,5 +1,7 @@
 define(['underscore', 'backbone', 'libs/worker'], function (_, Backbone, worker) {
 
+	var workerPath = '/scripts/workers/text-worker.js';
+
 	var Text = Backbone.Model.extend({
 
 		initialize : function (attrs, options) {
@@ -16,7 +18,7 @@ define(['underscore', 'backbone', 'libs/worker'], function (_, Backbone, worker)
 
 		perform : function (added) {
 
-			worker('/scripts/workers/text-worker.min.js', {
+			worker(workerPath, {
 				op : this.get('op'),
 				previous : this.getPrevious() && this.getPrevious().lines,
 				file : this.get('origin'),
@@ -47,7 +49,7 @@ define(['underscore', 'backbone', 'libs/worker'], function (_, Backbone, worker)
 
 		sort : function () {
 
-			worker('/scripts/workers/text-worker.min.js', {
+			worker(workerPath, {
 				op : 'sort',
 				lines : this.lines
 			}, this.afterWorker.bind(this, false));
@@ -56,7 +58,7 @@ define(['underscore', 'backbone', 'libs/worker'], function (_, Backbone, worker)
 
 		uniq : function () {
 
-			worker('/scripts/workers/text-worker.min.js', {
+			worker(workerPath, {
 				op : 'uniq',
 				lines : this.lines
 			}, this.afterWorker.bind(this, false));
@@ -101,18 +103,21 @@ define(['underscore', 'backbone', 'libs/worker'], function (_, Backbone, worker)
 		getPath : function () {
 
 			var ops = {
-				union :			'\u222a',
-				intersection :	'\u2229',
-				difference :	'\u2216',
-				symmetric :		'\u2296',
-				grep :          '*'
-			}, path, m;
+				union        : '\u222a',
+				intersection : '\u2229',
+				difference   : '\u2216',
+				symmetric    : '\u2296',
+				grep         : '*'
+			}, path = [], m = this;
 
-			for (path = [], m = this; m !== null; m = m.getPrevious()) {
+			while ( m ) {
 				path.push(m.get('fileName'), ops[m.get('op')]);
+				m = m.getPrevious();
 			}
+
 			path.pop();
 			return path.reverse().join('');
+
 		}
 
 	});

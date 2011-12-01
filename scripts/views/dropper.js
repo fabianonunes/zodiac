@@ -68,9 +68,9 @@ define([
 			var names = _.pluck(dt.files, 'name');
 			var filesLength = names.length;
 
-			if (filesLength > 1) {
+			if ( filesLength > 1 ) {
 				promise = fileSystem.createFile(names.join('\n'));
-			} else if (dt.types[0] === 'text') {
+			} else if ( _(dt.types).contains('text') ) {
 				promise = fileSystem.createFile(dt.getData('text'));
 			} else {
 				promise = $.Deferred().resolve(dt.files[0]);
