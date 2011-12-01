@@ -1,6 +1,15 @@
 define([
-	'underscore', 'backbone', 'libs/worker'
-], function (_, Backbone, worker) {
+	'underscore', 'backbone', 'libs/worker', 'libs/jqmq'
+], function (_, Backbone, worker, jqmq) {
+
+	var queue = jqmq({
+		delay : -1,
+		batch : 1,
+		callback : function (cb) {
+			cb();
+			queue.next(false);
+		}
+	});
 
 	var Text = Backbone.Model.extend({
 
@@ -18,12 +27,16 @@ define([
 
 		perform : function (added) {
 
-			this.work({
-				op : this.get('op'),
-				previous : this.getPrevious() && this.getPrevious().lines,
-				file : this.get('origin'),
-				mask : this.collection.mask
-			}, added);
+			var self = this;
+
+			queue.add(function(){
+				self.work({
+					op : self.get('op'),
+					previous : self.getPrevious() && self.getPrevious().lines,
+					file : self.get('origin'),
+					mask : self.collection.mask
+				}, added);
+			});
 
 		},
 
