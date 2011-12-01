@@ -105,7 +105,7 @@ define([
 		},
 
 		work : function (options, added) {
-			var path = '/scripts/workers/text-worker.js';
+			var path = '/scripts/workers/text-worker.min.js';
 			worker( path, options, this.afterWorker.bind(this, added || false) );
 		}
 

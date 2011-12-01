@@ -2,6 +2,12 @@
 var fs = require('fs');
 require('colors');
 
+desc('build and push');
+task('deploy', function (params) {
+	jake.Task.build.invoke();
+	jake.Task.push.invoke();
+});
+
 desc('build javascript/css');
 task('build', function (params) {
 
