@@ -11,18 +11,18 @@ define(['libs/jqmq'], function (jqmq) {
 				item.callback(event);
 				queue.next(false);
 			};
-			worker.postMessage(item.options);
+			worker.postMessage(item.optback());
 		}
 	});
 
-	return function (file, options, cb) {
+	return function (file, optback, cb) {
 
 		if (window.Worker) {
 
 			worker = worker || new Worker(file);
 
 			queue.add({
-				options : options,
+				optback : optback,
 				callback : cb
 			});
 

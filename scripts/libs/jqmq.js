@@ -7,7 +7,7 @@
  * http://benalman.com/about/license/
  */
 
- define(['underscore'], function(_){
+ define(['jquery'], function($){
 	// Queue defaults.
 	var defaults = {
 		delay: 100,
@@ -26,7 +26,7 @@
 		var self = {},
 
 			// Initialize queue with passed options.
-			options = _.extend( {}, defaults, opts ),
+			options = $.extend( true, {}, defaults, opts ),
 
 			// The actual queue.
 			queue = options.queue,
@@ -154,7 +154,7 @@
 		};
 
 		self.update = function( opts ) {
-			_.extend( options, opts );
+			$.extend( options, opts );
 		};
 
 		self.size = size = function() {
@@ -162,7 +162,7 @@
 		};
 
 		self.indexOf = function( item ) {
-			return _.indexOf( item, queue );
+			return $.inArray( item, queue );
 		};
 
 		// Stop a running queue, optionally flagging it as paused.

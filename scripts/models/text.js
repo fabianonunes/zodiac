@@ -1,15 +1,14 @@
 define([
-	'underscore', 'backbone', 'libs/worker', 'libs/jqmq'
-], function (_, Backbone, worker, jqmq) {
+	'underscore', 'backbone', 'libs/worker'
+], function (_, Backbone, worker) {
 
-	var queue = jqmq({
-		delay : -1,
-		batch : 1,
-		callback : function (cb) {
-			cb();
-			queue.next(false);
-		}
-	});
+	// var queue = jqmq({
+	// 	delay : -1,
+	// 	batch : 1,
+	// 	callback : function (cb) {
+	// 		cb().done(queue.next);
+	// 	}
+	// });
 
 	var Text = Backbone.Model.extend({
 
@@ -27,18 +26,16 @@ define([
 
 		perform : function (added) {
 
-			console.log(this.get('fileName'));
-
 			var self = this;
 
-			queue.add(function(){
-				self.work({
+			self.work(function () {
+				return {
 					op : self.get('op'),
 					previous : self.getPrevious() && self.getPrevious().lines,
 					file : self.get('origin'),
 					mask : self.collection.mask
-				}, added);
-			});
+				};
+			}, added);
 
 			var next = this.getNext();
 
@@ -79,6 +76,7 @@ define([
 		},
 
 		afterWorker : function (added, message) {
+
 			// for now, sort and uniq dont return lines
 			if ( !_.isUndefined(message.data.lines) ) {
 				this.lines = message.data.lines;
@@ -95,6 +93,7 @@ define([
 			if (added === true) {
 				this.trigger('change:added', this);
 			}
+
 		},
 
 		getPrevious : function () {
@@ -125,9 +124,9 @@ define([
 			return path.reverse().join('');
 		},
 
-		work : function (options, added) {
+		work : function (optback, added) {
 			var path = '/scripts/workers/text-worker.min.js';
-			worker( path, options, this.afterWorker.bind(this, added || false) );
+			worker( path, optback, this.afterWorker.bind(this, added || false) );
 		}
 
 	});
