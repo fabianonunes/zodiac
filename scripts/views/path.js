@@ -1,6 +1,6 @@
 define([
-	'jquery', 'underscore', 'backbone', 'libs/base64', 'renderer'
-], function ($, _, Backbone, b64, renderer) {
+	'jquery', 'underscore', 'backbone', 'renderer'
+], function ($, _, Backbone, renderer) {
 
 	var PathView, PathListView;
 
@@ -46,7 +46,7 @@ define([
 				'DownloadURL',
 				'text/plain:' + this.model.getPath() +
 					'.txt:data:text/plain;base64,' +
-					b64.encode(this.model.lines.join('\n'))
+					window.btoa(this.model.lines.join('\n'))
 			);
 		},
 
