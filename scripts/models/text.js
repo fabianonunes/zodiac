@@ -2,14 +2,6 @@ define([
 	'underscore', 'backbone', 'libs/worker'
 ], function (_, Backbone, worker) {
 
-	// var queue = jqmq({
-	// 	delay : -1,
-	// 	batch : 1,
-	// 	callback : function (cb) {
-	// 		cb().done(queue.next);
-	// 	}
-	// });
-
 	var Text = Backbone.Model.extend({
 
 		initialize : function (attrs, options) {
@@ -133,9 +125,9 @@ define([
 
 	var TextPeer = Backbone.Collection.extend({
 
-		model : Text,
+		model        : Text,
 		currentIndex : null,
-		mask : /[1-9]\d{0,6}-\d{2}\.\d{4}\.\d\.\d{2}\.\d{4}/g,
+		mask         : /[1-9]\d{0,6}-\d{2}\.\d{4}\.\d\.\d{2}\.\d{4}/g,
 
 		initialize : function () {
 			_.bindAll(this, 'updateDocument', 'blend');

@@ -1,32 +1,30 @@
 
 define(['libs/jqmq'], function (jqmq) {
 
-	var worker;
+	var workers = {};
 
 	var queue = jqmq({
-		delay : -1,
-		batch : 1,
+		delay    : -1,
+		batch    : 1,
 		callback : function (item) {
-			worker.onmessage = function (event) {
+			item.worker.onmessage = function (event) {
+				item.worker.onmessage = null;
 				item.callback(event);
 				queue.next(false);
 			};
-			worker.postMessage(item.optback());
+			item.worker.postMessage(item.optback());
 		}
 	});
 
 	return function (file, optback, cb) {
 
-		if (window.Worker) {
+		var worker = workers[file] || (workers[file] = new Worker(file));
 
-			worker = worker || new Worker(file);
-
-			queue.add({
-				optback : optback,
-				callback : cb
-			});
-
-		}
+		queue.add({
+			worker   : worker,
+			optback  : optback,
+			callback : cb
+		});
 
 	};
 
