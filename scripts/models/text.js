@@ -18,20 +18,20 @@ define([
 
 		perform : function (added) {
 
-			var self = this;
+			var self = this,
+				next = this.getNext(),
+				op   = self.get('op');
 
 			self.work(function () {
 				return {
-					op : self.get('op'),
+					op       : op,
 					previous : self.getPrevious() && self.getPrevious().lines,
-					file : self.get('origin'),
-					mask : self.collection.mask
+					file     : self.get('origin'),
+					mask     : self.collection.mask
 				};
-			}, added);
+			}).done( this.afterWorker.bind(this, added) );
 
-			var next = this.getNext();
-
-			if(next){
+			if( next ){
 				next.perform(false);
 			}
 
@@ -118,7 +118,7 @@ define([
 
 		work : function (optback, added) {
 			var path = '/scripts/workers/text-worker.min.js';
-			worker( path, optback, this.afterWorker.bind(this, added || false) );
+			return worker( path, optback );
 		}
 
 	});
