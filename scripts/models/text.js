@@ -1,4 +1,6 @@
-define(['underscore', 'backbone', 'libs/worker'], function (_, Backbone, worker) {
+define([
+	'underscore', 'backbone', 'libs/worker'
+], function (_, Backbone, worker) {
 
 	var Text = Backbone.Model.extend({
 
@@ -16,12 +18,22 @@ define(['underscore', 'backbone', 'libs/worker'], function (_, Backbone, worker)
 
 		perform : function (added) {
 
-			worker('/scripts/workers/text-worker.min.js', {
-				op : this.get('op'),
-				previous : this.getPrevious() && this.getPrevious().lines,
-				file : this.get('origin'),
-				mask : this.collection.mask
-			}, this.afterWorker.bind(this, added));
+			var self = this;
+
+			self.work(function () {
+				return {
+					op : self.get('op'),
+					previous : self.getPrevious() && self.getPrevious().lines,
+					file : self.get('origin'),
+					mask : self.collection.mask
+				};
+			}, added);
+
+			var next = this.getNext();
+
+			if(next){
+				next.perform(false);
+			}
 
 		},
 
@@ -31,14 +43,12 @@ define(['underscore', 'backbone', 'libs/worker'], function (_, Backbone, worker)
 		},
 
 		setPrevious : function (previous, options) {
-
 			if (previous) {
 				this.set({ previous : previous.id }, options);
-				previous.bind('change:length', this.perform, this);
+				// previous.bind('change:length', this.perform, this);
 			} else {
 				this.set({ op : 'charge' });
 			}
-
 		},
 
 		isActivated : function () {
@@ -46,21 +56,11 @@ define(['underscore', 'backbone', 'libs/worker'], function (_, Backbone, worker)
 		},
 
 		sort : function () {
-
-			worker('/scripts/workers/text-worker.min.js', {
-				op : 'sort',
-				lines : this.lines
-			}, this.afterWorker.bind(this, false));
-
+			this.work({ op : 'sort', lines : this.lines });
 		},
 
 		uniq : function () {
-
-			worker('/scripts/workers/text-worker.min.js', {
-				op : 'uniq',
-				lines : this.lines
-			}, this.afterWorker.bind(this, false));
-
+			this.work({ op : 'uniq', lines : this.lines	});
 		},
 
 		activate : function () {
@@ -70,7 +70,7 @@ define(['underscore', 'backbone', 'libs/worker'], function (_, Backbone, worker)
 		afterWorker : function (added, message) {
 
 			// for now, sort and uniq dont return lines
-			if (!_.isUndefined(message.data.lines)) {
+			if ( !_.isUndefined(message.data.lines) ) {
 				this.lines = message.data.lines;
 			}
 
@@ -78,7 +78,7 @@ define(['underscore', 'backbone', 'libs/worker'], function (_, Backbone, worker)
 
 			this.set({ length : message.data.length });
 
-			if (this.isActivated() || added === true) {
+			if ( this.isActivated() || added === true ) {
 				this.activate();
 			}
 
@@ -99,29 +99,35 @@ define(['underscore', 'backbone', 'libs/worker'], function (_, Backbone, worker)
 		},
 
 		getPath : function () {
-
 			var ops = {
-				union :			'\u222a',
-				intersection :	'\u2229',
-				difference :	'\u2216',
-				symmetric :		'\u2296',
-				grep :          '*'
-			}, path, m;
+				union        : '\u222a',
+				intersection : '\u2229',
+				difference   : '\u2216',
+				symmetric    : '\u2296',
+				grep         : '*'
+			}, path = [], m = this;
 
-			for (path = [], m = this; m !== null; m = m.getPrevious()) {
+			while ( m ) {
 				path.push(m.get('fileName'), ops[m.get('op')]);
+				m = m.getPrevious();
 			}
 			path.pop();
+
 			return path.reverse().join('');
+		},
+
+		work : function (optback, added) {
+			var path = '/scripts/workers/text-worker.min.js';
+			worker( path, optback, this.afterWorker.bind(this, added || false) );
 		}
 
 	});
 
 	var TextPeer = Backbone.Collection.extend({
 
-		model : Text,
+		model        : Text,
 		currentIndex : null,
-		mask : /[1-9]\d{0,6}-\d{2}\.\d{4}\.\d\.\d{2}\.\d{4}/g,
+		mask         : /[1-9]\d{0,6}-\d{2}\.\d{4}\.\d\.\d{2}\.\d{4}/g,
 
 		initialize : function () {
 			_.bindAll(this, 'updateDocument', 'blend');

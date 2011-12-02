@@ -36,15 +36,16 @@ define([
 
 		updateText : function(id, model, html){
 
-			this.el.empty();
+			var self = this;
 
-			this.trigger('updated', 'view/' + id);
+			self.trigger('updated', 'view/' + id);
 
-			var s = document.createElement('span');
-
-			s.innerHTML = html || model.lines.join('\n');
-
-			this.el[0].appendChild(s);
+			_.defer(function(){
+				self.el.empty();
+				var s = document.createElement('span');
+				s.innerHTML = html || model.lines.join('\n');
+				self.el[0].appendChild(s);
+			});
 
 		},
 

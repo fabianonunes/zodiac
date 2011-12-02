@@ -1,5 +1,5 @@
 define(["require", "exports", "module"], function (require, exports, module) {
-	
+
 //
 // Dust - Asynchronous Templating v0.3.0
 // http://akdubya.github.com/dustjs

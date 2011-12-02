@@ -76,7 +76,7 @@ define([
 		},
 
 		renderLength : function (model, length) {
-			this.$('.counter').text(length);
+			this.$('.counter').text(length).fadeOut().fadeIn();
 		}
 
 	});
