@@ -1,5 +1,5 @@
 
-define(['libs/jqmq'], function (jqmq) {
+define(['libs/jqmq', 'jquery'], function (jqmq, $) {
 
 	var workers = {};
 
@@ -16,15 +16,19 @@ define(['libs/jqmq'], function (jqmq) {
 		}
 	});
 
-	return function (file, optback, cb) {
+	return function (file, optback) {
+
+		var defer = $.Deferred();
 
 		var worker = workers[file] || (workers[file] = new Worker(file));
 
 		queue.add({
 			worker   : worker,
 			optback  : optback,
-			callback : cb
+			callback : defer.resolve
 		});
+
+		return defer.promise();
 
 	};
 

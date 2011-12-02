@@ -35,7 +35,8 @@ define([
 
 			var options = this.$('.options');
 			options.show().css({
-				height : options.height() > 0 ? 0 : options[0].scrollHeight
+				// height : options.height() > 0 ? 0 : options[0].scrollHeight
+				height : options[0].scrollHeight
 			});
 
 		},
@@ -76,7 +77,7 @@ define([
 		},
 
 		renderLength : function (model, length) {
-			this.$('.counter').text(length).fadeOut().fadeIn();
+			this.$('.counter').text(length).stop(true, true).fadeOut().fadeIn();
 		}
 
 	});

@@ -18,23 +18,28 @@ define([
 
 		perform : function (added) {
 
-			var self = this;
+			var self = this,
+				next = this.getNext(),
+				op   = self.get('op');
 
-			self.work(function () {
-				return {
-					op : self.get('op'),
-					previous : self.getPrevious() && self.getPrevious().lines,
-					file : self.get('origin'),
-					mask : self.collection.mask
-				};
-			}, added);
+			self.work(this.expand.bind(this, op))
+				.done( this.afterWorker.bind(this, added) );
 
-			var next = this.getNext();
-
-			if(next){
+			if( next ){
 				next.perform(false);
 			}
 
+		},
+
+		// when adding the properties to a queue, the values
+		// must be the current values when invoking, not when added
+		expand : function (op) {
+			return {
+				op       : op,
+				previous : this.getPrevious() && this.getPrevious().lines,
+				file     : this.get('origin'),
+				mask     : this.collection.mask
+			};
 		},
 
 		destroy : function () {
@@ -45,7 +50,6 @@ define([
 		setPrevious : function (previous, options) {
 			if (previous) {
 				this.set({ previous : previous.id }, options);
-				// previous.bind('change:length', this.perform, this);
 			} else {
 				this.set({ op : 'charge' });
 			}
@@ -55,12 +59,14 @@ define([
 			return this.collection.currentIndex === this.id;
 		},
 
-		sort : function () {
-			this.work({ op : 'sort', lines : this.lines });
-		},
-
-		uniq : function () {
-			this.work({ op : 'uniq', lines : this.lines	});
+		acessor : function (op) {
+			var self = this;
+			self.work(function () {
+				return {
+					op : op,
+					lines : self.lines
+				};
+			}).done( this.afterWorker.bind(this, false) );
 		},
 
 		activate : function () {
@@ -118,7 +124,7 @@ define([
 
 		work : function (optback, added) {
 			var path = '/scripts/workers/text-worker.min.js';
-			worker( path, optback, this.afterWorker.bind(this, added || false) );
+			return worker( path, optback );
 		}
 
 	});
@@ -173,15 +179,9 @@ define([
 			this.add(m);
 		},
 
-		sortDocument : function () {
+		acessor : function (op) {
 			if (this.currentIndex) {
-				this.currentDocument().sort();
-			}
-		},
-
-		uniqDocument : function () {
-			if (this.currentIndex) {
-				this.currentDocument().uniq();
+				this.currentDocument().acessor(op);
 			}
 		},
 
