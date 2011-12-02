@@ -16,7 +16,7 @@ define(['libs/jqmq', 'jquery'], function (jqmq, $) {
 		}
 	});
 
-	return function (file, optback, cb) {
+	return function (file, optback) {
 
 		var defer = $.Deferred();
 

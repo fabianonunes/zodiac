@@ -20,10 +20,10 @@ define([
 
 			var self = this;
 			$('.sort').click(function(evt){
-				self.collection.sortDocument();
+				self.collection.acessor('sort');
 			});
 			$('.uniq').click(function(evt){
-				self.collection.uniqDocument();
+				self.collection.acessor('uniq');
 			});
 
 		},
