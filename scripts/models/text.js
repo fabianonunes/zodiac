@@ -89,6 +89,8 @@ define([
 			}
 
 			if (added === true) {
+				// TODO: acho que esse evento é disparado duas vezes, portanto
+				// adicionei o silent:true ao método blend da collection
 				this.trigger('change:added', this);
 			}
 
@@ -123,7 +125,7 @@ define([
 		},
 
 		work : function (optback, added) {
-			var path = '/scripts/workers/text-worker.min.js';
+			var path = '/scripts/workers/text-worker.js';
 			return worker( path, optback );
 		}
 
@@ -166,7 +168,10 @@ define([
 			}
 		},
 
-		blend : function (op, file) {
+		blend : function (op, file, previous) {
+
+			var next = previous && this.get(previous).getNext();
+
 			var m = new Text({
 				op : op,
 				origin : file,
@@ -174,9 +179,15 @@ define([
 				id : _.uniqueId('text')
 			}, {
 				collection : this,
-				previous : this.currentDocument()
+				previous : this.get(previous) || this.currentDocument()
 			});
-			this.add(m);
+
+			if(next){
+				this.tie(next, m);
+			}
+
+			this.add(m, { silent : true, previous : previous });
+
 		},
 
 		acessor : function (op) {

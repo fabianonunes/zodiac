@@ -32,7 +32,10 @@ define([
 
 		dragLeave : function(evt) {
 
-			var related = document.elementFromPoint(evt.originalEvent.clientX, evt.originalEvent.clientY);
+			var related = document.elementFromPoint(
+				evt.originalEvent.clientX,
+				evt.originalEvent.clientY
+			);
 
 			if(!related || related !== this.mask[0]) {
 				var inside = $.contains(this.mask[0], related);
@@ -43,7 +46,10 @@ define([
 
 		onLeave : function(evt) {
 
-			var related = document.elementFromPoint(evt.originalEvent.clientX, evt.originalEvent.clientY);
+			var related = document.elementFromPoint(
+				evt.originalEvent.clientX,
+				evt.originalEvent.clientY
+			);
 
 			if(!related || related !== evt.target) {
 				var inside = $.contains(evt.target, related);

@@ -1,6 +1,6 @@
 define([
-	'jquery', 'underscore', 'backbone', 'renderer'
-], function ($, _, Backbone, renderer) {
+	'jquery', 'underscore', 'backbone', 'renderer', 'libs/fs'
+], function ($, _, Backbone, renderer, fileSystem) {
 
 	var PathView, PathListView;
 
@@ -9,9 +9,16 @@ define([
 		tagName : 'div',
 
 		events : {
-			'click .remove' : 'destroy',
-			'click .icon'   : 'click',
-			'dragstart'     : 'drag'
+			'dragover'             : 'cancel',
+			'dragleave'            : 'dragLeave',
+			'dragenter'            : 'dragEnter',
+			'drop'                 : 'onDrop',
+			'drop .options .icon'  : 'onOpDrop',
+			'click .remove'        : 'destroy',
+			'click .icon'          : 'click',
+			'click .options .icon' : 'change',
+			'mouseleave'           : 'slideUp',
+			'dragstart'            : 'onDrag'
 		},
 
 		template : 'path',
@@ -29,19 +36,24 @@ define([
 
 		},
 
-		click : function (evt) {
-
+		click : function () {
 			this.element.parent().find('.options').css({height : 0});
-
-			var options = this.$('.options');
-			options.show().css({
-				height : options.height() > 0 ? 0 : options[0].scrollHeight
-				// height : options[0].scrollHeight
-			});
-
+			this.slide('down');
 		},
 
-		drag : function (event) {
+		slide : function (dir) {
+			var options = this.$('.options');
+			var dirs = { down : options[0].scrollHeight, up : 0 };
+			options.show().stop(true, true).css({
+				height : dirs[dir]
+			});
+		},
+
+		slideUp : function () {
+			this.slide('up');
+		},
+
+		onDrag : function (event) {
 			event = event.originalEvent;
 			event.dataTransfer.setData(
 				'DownloadURL',
@@ -77,7 +89,77 @@ define([
 		},
 
 		renderLength : function (model, length) {
-			this.$('.counter').text(length).stop(true, true).fadeOut('fast').fadeIn('fast');
+			this.$('.counter')
+			.text(length)
+			.stop(true, true)
+			.fadeOut('fast')
+			.fadeIn('fast');
+		},
+
+		cancel : function(evt) {
+			evt.preventDefault();
+			evt.originalEvent.dataTransfer.dropEffect = 'copy';
+			return false;
+		},
+
+		onDrop : function(evt) {
+			this.element.parent().find('.options').css({height : 0});
+			this.cancel(evt);
+		},
+
+		onOpDrop : function (evt) {
+
+			this.cancel(evt);
+			// evt.stopImmediatePropagation();
+
+			var target = $(evt.target).removeClass('over'),
+				op = target.attr('class').split(' ')[0],
+				dt = evt.originalEvent.dataTransfer,
+				promise;
+
+			// accessing the files.length property directly is as expensive as plucking
+			// file names. thus, its making use of pluck op to get both information
+			var names = _.pluck(dt.files, 'name');
+			var filesLength = names.length;
+
+			if ( filesLength > 1 ) {
+				promise = fileSystem.createFile(names.join('\n'));
+			} else if ( _(dt.types).contains('text') ) {
+				promise = fileSystem.createFile(dt.getData('text'));
+			} else {
+				promise = $.Deferred().resolve(dt.files[0]);
+			}
+
+			promise.done(function(file){
+				this.model.collection.blend(op, file, this.model.id);
+			}.bind(this));
+
+		},
+
+		dragEnter : function(evt) {
+			this.slide('down');
+			return this.cancel(evt);
+		},
+
+		dragLeave : function(evt) {
+
+			var related = document.elementFromPoint(
+				evt.originalEvent.clientX,
+				evt.originalEvent.clientY
+			);
+
+			if(!related || related !== this.el) {
+				var inside = $.contains(this.el, related);
+				if(!inside) this.slide('up');
+			}
+
+		},
+
+		change : function (e) {
+			var select = $(e.target),
+				op = select.attr('class').split(' ')[0];
+			this.model.set({ op : op });
+			this.slideUp();
 		}
 
 	});
@@ -87,26 +169,24 @@ define([
 		el: $('.path'),
 		template : 'path',
 
-		events : {
-			'click .options .icon' : 'change'
-		},
-
 		initialize: function () {
-			_.bindAll(this, 'render', 'change');
+			_.bindAll(this, 'render');
 			this.collection.bind('change:added', this.render);
 		},
 
-		change : function (e) {
-			var select = $(e.target),
-				op = select.attr('class').split(' ')[0],
-				id = select.text();
-			this.collection.get(id).set({ op : op });
-		},
-
 		render : function (model) {
+
+			var previous = this.collection.get(model.get('previous'));
+
 			new PathView({ model : model })
-				.render()
-				.then(this.el.append.bind(this.el));
+			.render()
+			.then(function(el){
+				if(previous){
+					$(el).insertAfter(previous.view.el);
+				} else {
+					this.el.append(el);
+				}
+			}.bind(this));
 		},
 
 		empty : function () {
