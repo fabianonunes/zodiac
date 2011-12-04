@@ -39,9 +39,8 @@ define([
 		},
 
 		hideOptions : function (evt) {
-			clearTimeout(this.showTimer);
 			var options = this._('.options');
-			options.stop(true).animate({ height : 0 }, 'fast');
+			options.stop(true).animate({ height : 0 });
 		},
 
 		showOptions : function () {
