@@ -10,8 +10,8 @@ define([
 
 		events : {
 			'dragover'             : 'cancel',
-			'dragleave'            : 'dragLeave',
-			'dragenter'            : 'dragEnter',
+			'dragleave'   : 'dragLeave',
+			'dragenter'   : 'dragEnter',
 			'drop'                 : 'onDrop',
 			'drop .options .icon'  : 'onOpDrop',
 			'click .remove'        : 'destroy',
@@ -38,15 +38,15 @@ define([
 
 		},
 
-		hideOptions : function () {
-			// this._('.options').css({ height : 0 });
-			this._('.options').stop().animate({ height : 0 });
+		hideOptions : function (evt) {
+			clearTimeout(this.showTimer);
+			var options = this._('.options');
+			options.stop(true).animate({ height : 0 }, 'fast');
 		},
 
 		showOptions : function () {
 			var options = this._('.options');
-			// options.css({ height : options.prop('scrollHeight') });
-			options.stop().animate({ height : options.prop('scrollHeight') });
+			options.stop().delay(200).animate({ height : options.prop('scrollHeight') });
 		},
 
 		dragEnter : function(evt) {
@@ -66,6 +66,7 @@ define([
 			}
 
 			return this.cancel(evt);
+
 		},
 
 		onDrag : function (event) {
@@ -119,7 +120,7 @@ define([
 		},
 
 		onDrop : function(evt) {
-			this.hideOptions();
+			this.hideOptions(evt);
 			this.cancel(evt);
 		},
 
@@ -154,15 +155,15 @@ define([
 
 		dragLeave : function(evt) {
 
-			var related = document.elementFromPoint(
-				evt.originalEvent.clientX,
-				evt.originalEvent.clientY
-			);
+			var x = evt.originalEvent.clientX;
+			var y = evt.originalEvent.clientY;
+
+			var related = document.elementFromPoint(x, y);
 
 			if(!related || related !== this.el) {
 				var inside = $.contains(this.el, related);
 				if(!inside){
-					this.hideOptions();
+					this.hideOptions(evt);
 				}
 			}
 
@@ -172,7 +173,7 @@ define([
 			var select = $(e.target),
 				op = select.attr('class').split(' ')[0];
 			this.model.set({ op : op });
-			this.hideOptions();
+			this.hideOptions(evt);
 		}
 
 	});
