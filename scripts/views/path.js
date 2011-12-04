@@ -39,16 +39,32 @@ define([
 		},
 
 		hideOptions : function () {
-			// this._('.options').stop().animate({ height : 0 });
+			// this._('.options').css({ height : 0 });
+			this._('.options').stop().animate({ height : 0 });
 		},
 
 		showOptions : function () {
 			var options = this._('.options');
+			// options.css({ height : options.prop('scrollHeight') });
 			options.stop().animate({ height : options.prop('scrollHeight') });
 		},
 
 		dragEnter : function(evt) {
-			this.showOptions();
+
+			var related = document.elementFromPoint(
+				evt.originalEvent.clientX,
+				evt.originalEvent.clientY
+			);
+
+			var options = this._('.options')[0];
+
+			if(!related || related !== options) {
+				var inside = $.contains(options, related);
+				if(!inside){
+					this.showOptions();
+				}
+			}
+
 			return this.cancel(evt);
 		},
 

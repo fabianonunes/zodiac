@@ -8689,7 +8689,7 @@ jQuery.fx.prototype = {
 			} else {
 				timerId = setInterval( fx.tick, fx.interval );
 			}
-			//timerId = setInterval( fx.tick, fx.interval );
+			// timerId = setInterval( fx.tick, fx.interval );
 		}
 	},
 
