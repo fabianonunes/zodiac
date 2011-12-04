@@ -152,7 +152,7 @@ define([
 			if(!related || related !== this.el) {
 				var inside = $.contains(this.el, related);
 				if(!inside){
-					this.hideOptions(4000);
+					this.hideOptions(400);
 				}
 			}
 
