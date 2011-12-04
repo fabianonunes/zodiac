@@ -1,6 +1,6 @@
 define([
-	'jquery', 'underscore', 'backbone', 'renderer'
-], function ($, _, Backbone, renderer) {
+	'jquery', 'underscore', 'backbone', 'renderer', 'libs/fs'
+], function ($, _, Backbone, renderer, fileSystem) {
 
 	var PathView, PathListView;
 
@@ -9,16 +9,23 @@ define([
 		tagName : 'div',
 
 		events : {
-			'click .remove' : 'destroy',
-			'click .icon'   : 'click',
-			'dragstart'     : 'drag'
+			'dragover'             : 'cancel',
+			'dragleave'            : 'dragLeave',
+			'dragenter'            : 'dragEnter',
+			'drop'                 : 'onDrop',
+			'drop .options .icon'  : 'onOpDrop',
+			'click .remove'        : 'destroy',
+			'click .icon'          : 'showOptions',
+			'click .options .icon' : 'change',
+			'mouseleave'           : 'hideOptions',
+			'dragstart'            : 'onDrag'
 		},
 
 		template : 'path',
 
 		initialize : function () {
 
-			_.bindAll(this, 'render', 'destroy', 'click', 'renderOp', 'renderLength');
+			_.bindAll(this);
 
 			this.model.bind('change:op', this.renderOp);
 			this.model.bind('change:length', this.renderLength);
@@ -27,21 +34,26 @@ define([
 
 			this.model.view = this;
 
-		},
-
-		click : function (evt) {
-
-			this.element.parent().find('.options').css({height : 0});
-
-			var options = this.$('.options');
-			options.show().css({
-				height : options.height() > 0 ? 0 : options[0].scrollHeight
-				// height : options[0].scrollHeight
-			});
+			this._ = _.memoize(this.$);
 
 		},
 
-		drag : function (event) {
+		hideOptions : function () {
+			var options = this._('.options');
+			options.stop(true).animate({ height : 0 });
+		},
+
+		showOptions : function (delay) {
+			var options = this._('.options');
+			options.stop().delay(delay || 0).animate({ height : options.prop('scrollHeight') });
+		},
+
+		dragEnter : function(evt) {
+			this.showOptions(200);
+			return this.cancel(evt);
+		},
+
+		onDrag : function (event) {
 			event = event.originalEvent;
 			event.dataTransfer.setData(
 				'DownloadURL',
@@ -52,8 +64,9 @@ define([
 		},
 
 		destroy : function () {
+			this._ = null; // TODO: it's necesseray clear the memoized $ ?
 			this.unbind();
-			this.remove();
+			this.element.off().slideUp('fast', this.remove);
 			this.model.destroy();
 		},
 
@@ -71,13 +84,80 @@ define([
 		},
 
 		renderOp : function (model, op) {
-			this.$('.row .icon').attr('class', 'icon ' + op);
 			this.$('.true').removeClass('true');
-			this.$('.options .' + op).addClass('true');
+			this._('.row .icon').attr('class', 'icon ' + op);
+			this._('.options .' + op).addClass('true');
 		},
 
 		renderLength : function (model, length) {
-			this.$('.counter').text(length).stop(true, true).fadeOut('fast').fadeIn('fast');
+			this._('.counter')
+				.text(length)
+				.stop(true, true)
+				.fadeOut('fast')
+				.fadeIn('fast');
+		},
+
+		cancel : function(evt) {
+			evt.preventDefault();
+			evt.originalEvent.dataTransfer.dropEffect = 'copy';
+			return false;
+		},
+
+		onDrop : function(evt) {
+			this.hideOptions(evt);
+			this.cancel(evt);
+		},
+
+		onOpDrop : function (evt) {
+
+			this.cancel(evt);
+			// evt.stopImmediatePropagation();
+
+			var target = $(evt.target).removeClass('over'),
+				op = target.attr('class').split(' ')[0],
+				dt = evt.originalEvent.dataTransfer,
+				promise;
+
+			// accessing the files.length property directly is as expensive as plucking
+			// file names. thus, its making use of pluck op to get both information
+			var names = _.pluck(dt.files, 'name');
+			var filesLength = names.length;
+
+			if ( filesLength > 1 ) {
+				promise = fileSystem.createFile(names.join('\n'));
+			} else if ( _(dt.types).contains('text') ) {
+				promise = fileSystem.createFile(dt.getData('text'));
+			} else {
+				promise = $.Deferred().resolve(dt.files[0]);
+			}
+
+			promise.done(function(file){
+				this.model.collection.blend(op, file, this.model.id);
+			}.bind(this));
+
+		},
+
+		dragLeave : function(evt) {
+
+			var x = evt.originalEvent.clientX;
+			var y = evt.originalEvent.clientY;
+
+			var related = document.elementFromPoint(x, y);
+
+			if(!related || related !== this.el) {
+				var inside = $.contains(this.el, related);
+				if(!inside){
+					this.hideOptions(4000);
+				}
+			}
+
+		},
+
+		change : function (evt) {
+			var select = $(evt.target),
+				op = select.attr('class').split(' ')[0];
+			this.model.set({ op : op });
+			this.hideOptions();
 		}
 
 	});
@@ -87,32 +167,26 @@ define([
 		el: $('.path'),
 		template : 'path',
 
-		events : {
-			'click .options .icon' : 'change'
-		},
-
 		initialize: function () {
-			_.bindAll(this, 'render', 'change');
+			_.bindAll(this, 'render');
 			this.collection.bind('change:added', this.render);
 		},
 
-		change : function (e) {
-			var select = $(e.target),
-				op = select.attr('class').split(' ')[0],
-				id = select.text();
-			this.collection.get(id).set({ op : op });
-		},
-
 		render : function (model) {
-			new PathView({ model : model })
-				.render()
-				.then(this.el.append.bind(this.el));
-		},
 
-		empty : function () {
-			while (this.el[0].firstChild) {
-				this.el[0].removeChild(this.el[0].firstChild);
-			}
+			var next = model.getNext();
+
+			new PathView({ model : model })
+			.render()
+			.then(function (el) {
+				var $el = $(el).hide();
+				if(next){
+					$el.insertBefore(next.view.el).slideDown('fast');
+				} else {
+					$el.appendTo(this.el).show();
+				}
+			}.bind(this));
+
 		}
 
 	});
