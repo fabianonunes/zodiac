@@ -1,5 +1,5 @@
 
-define(['libs/jqmq', 'jquery'], function (jqmq, $) {
+define(['libs/jqmq', 'jquery', 'underscore'], function (jqmq, $, _) {
 
 	var workers = {};
 
@@ -9,8 +9,12 @@ define(['libs/jqmq', 'jquery'], function (jqmq, $) {
 		callback : function (item) {
 			item.worker.onmessage = function (event) {
 				item.worker.onmessage = null;
-				item.callback(event);
-				queue.next(false);
+				item.promise.resolve(event);
+				queue.next();
+			};
+			item.worker.onerror = function () {
+				item.promise.reject();
+				queue.next();
 			};
 			item.worker.postMessage(item.optback());
 		}
@@ -25,7 +29,7 @@ define(['libs/jqmq', 'jquery'], function (jqmq, $) {
 		queue.add({
 			worker   : worker,
 			optback  : optback,
-			callback : defer.resolve
+			promise  : defer
 		});
 
 		return defer.promise();

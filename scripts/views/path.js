@@ -17,7 +17,8 @@ define([
 			'click .remove'        : 'destroy',
 			'click .icon'          : 'showOptions',
 			'click .options .icon' : 'change',
-			'mouseleave'           : 'hideOptions',
+			'mouseleave'           : 'onMouseLeave',
+			// 'mouseenter .options'  : 'showOptions',
 			'dragstart'            : 'onDrag'
 		},
 
@@ -38,14 +39,18 @@ define([
 
 		},
 
-		hideOptions : function () {
+		hideOptions : function (delay) {
 			var options = this._('.options');
-			options.stop(true).animate({ height : 0 });
+			options.stop(true).delay(delay || 0).animate({ height : 0 });
 		},
 
 		showOptions : function (delay) {
 			var options = this._('.options');
-			options.stop().delay(delay || 0).animate({ height : options.prop('scrollHeight') });
+			options.stop(true).delay(delay || 0).animate({ height : options.prop('scrollHeight') });
+		},
+
+		onMouseLeave : function (evt) {
+			this.hideOptions(0);
 		},
 
 		dragEnter : function(evt) {
@@ -104,7 +109,7 @@ define([
 		},
 
 		onDrop : function(evt) {
-			this.hideOptions(evt);
+			this.hideOptions();
 			this.cancel(evt);
 		},
 
