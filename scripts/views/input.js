@@ -42,9 +42,9 @@ define([
 
 			_.defer(function(){
 				self.el.empty();
-				html = html || mode.lines.join('\n');
+				html = html || model.lines.join('\n');
 				self.el[0].insertAdjacentHTML(
-					'afterbegin',
+					'beforeend',
 					'<span>' + html + '</span>'
 				);
 				// var s = document.createElement('span');

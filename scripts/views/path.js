@@ -176,17 +176,20 @@ define([
 
 		render : function (model) {
 
-			var previous = this.collection.get(model.get('previous'));
+			var next = model.getNext();
 
 			new PathView({ model : model })
 			.render()
-			.then(function(el){
-				if(previous){
-					$(el).insertAfter(previous.view.el);
+			.then(function (el) {
+				if(next){
+					$(el).hide()
+						.insertBefore(next.view.el)
+						.slideDown();
 				} else {
 					this.el.append(el);
 				}
 			}.bind(this));
+
 		},
 
 		empty : function () {

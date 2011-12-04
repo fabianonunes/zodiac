@@ -12,30 +12,41 @@ define([
 			this.bind('change:op', this.perform, this);
 			this.bind('change:previous', this.perform, this);
 
-			this.perform(true);
+			_.bindAll(this);
+
+			this.perform().done(function(){
+
+				this.trigger('change:added', this);
+
+				// TODO: arrumar essa lógica. ao se adicionar um documento, ele
+				// só deve ser ativado se for o último.
+				if(!this.getNext()){
+					this.activate();
+				}
+
+			}.bind(this));
 
 		},
 
-		perform : function (added) {
+		perform : function () {
 
-			var self = this,
-				next = this.getNext(),
-				op   = self.get('op');
+			var promise = this.work( this.expand )
+				.done( this.afterWorker );
 
-			self.work(this.expand.bind(this, op))
-				.done( this.afterWorker.bind(this, added) );
-
-			if( next ){
-				next.perform(false);
+			var next = this.getNext();
+			if ( next ) {
+				next.perform();
 			}
+
+			return promise;
 
 		},
 
 		// when adding the properties to a queue, the values
 		// must be the current values when invoking, not when added
-		expand : function (op) {
+		expand : function () {
 			return {
-				op       : op,
+				op       : this.get('op'),
 				previous : this.getPrevious() && this.getPrevious().lines,
 				file     : this.get('origin'),
 				mask     : this.collection.mask
@@ -66,14 +77,14 @@ define([
 					op : op,
 					lines : self.lines
 				};
-			}).done( this.afterWorker.bind(this, false) );
+			}).done( this.afterWorker );
 		},
 
 		activate : function () {
 			this.collection.updateDocument(this);
 		},
 
-		afterWorker : function (added, message) {
+		afterWorker : function (message) {
 
 			// for now, sort and uniq dont return lines
 			if ( !_.isUndefined(message.data.lines) ) {
@@ -84,14 +95,8 @@ define([
 
 			this.set({ length : message.data.length });
 
-			if ( this.isActivated() || added === true ) {
+			if ( this.isActivated() ) {
 				this.activate();
-			}
-
-			if (added === true) {
-				// TODO: acho que esse evento é disparado duas vezes, portanto
-				// adicionei o silent:true ao método blend da collection
-				this.trigger('change:added', this);
 			}
 
 		},
@@ -101,9 +106,11 @@ define([
 		},
 
 		getNext : function () {
+			// TODO: improve this method
+			var id = this.id;
 			return this.collection.detect(function (model) {
-				return model.get('previous') === this.id;
-			}.bind(this));
+				return model.get('previous') === id;
+			});
 		},
 
 		getPath : function () {
@@ -124,7 +131,7 @@ define([
 			return path.reverse().join('');
 		},
 
-		work : function (optback, added) {
+		work : function (optback) {
 			var path = '/scripts/workers/text-worker.js';
 			return worker( path, optback );
 		}
@@ -173,13 +180,13 @@ define([
 			var next = previous && this.get(previous).getNext();
 
 			var m = new Text({
-				op : op,
-				origin : file,
-				fileName : file.name,
-				id : _.uniqueId('text')
+				op         : op,
+				origin     : file,
+				fileName   : file.name,
+				id         : _.uniqueId('text')
 			}, {
 				collection : this,
-				previous : this.get(previous) || this.currentDocument()
+				previous   : this.get(previous) || this.currentDocument()
 			});
 
 			if(next){
