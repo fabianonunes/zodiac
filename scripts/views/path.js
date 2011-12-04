@@ -15,9 +15,9 @@ define([
 			'drop'                 : 'onDrop',
 			'drop .options .icon'  : 'onOpDrop',
 			'click .remove'        : 'destroy',
-			'click .icon'          : 'click',
+			'click .icon'          : 'showOptions',
 			'click .options .icon' : 'change',
-			'mouseleave'           : 'slideUp',
+			'mouseleave'           : 'hideOptions',
 			'dragstart'            : 'onDrag'
 		},
 
@@ -25,7 +25,7 @@ define([
 
 		initialize : function () {
 
-			_.bindAll(this, 'render', 'destroy', 'click', 'renderOp', 'renderLength');
+			_.bindAll(this);
 
 			this.model.bind('change:op', this.renderOp);
 			this.model.bind('change:length', this.renderLength);
@@ -34,23 +34,22 @@ define([
 
 			this.model.view = this;
 
+			this._ = _.memoize(this.$);
+
 		},
 
-		click : function () {
-			this.element.parent().find('.options').css({height : 0});
-			this.slide('down');
+		hideOptions : function () {
+			// this._('.options').stop().animate({ height : 0 });
 		},
 
-		slide : function (dir) {
-			var options = this.$('.options');
-			var dirs = { down : options[0].scrollHeight, up : 0 };
-			options.show().stop(true, true).css({
-				height : dirs[dir]
-			});
+		showOptions : function () {
+			var options = this._('.options');
+			options.stop().animate({ height : options.prop('scrollHeight') });
 		},
 
-		slideUp : function () {
-			this.slide('up');
+		dragEnter : function(evt) {
+			this.showOptions();
+			return this.cancel(evt);
 		},
 
 		onDrag : function (event) {
@@ -64,8 +63,9 @@ define([
 		},
 
 		destroy : function () {
+			this._ = null; // TODO: it's necesseray clear the memoized $ ?
 			this.unbind();
-			this.remove();
+			this.element.off().slideUp('fast', this.remove);
 			this.model.destroy();
 		},
 
@@ -83,17 +83,17 @@ define([
 		},
 
 		renderOp : function (model, op) {
-			this.$('.row .icon').attr('class', 'icon ' + op);
 			this.$('.true').removeClass('true');
-			this.$('.options .' + op).addClass('true');
+			this._('.row .icon').attr('class', 'icon ' + op);
+			this._('.options .' + op).addClass('true');
 		},
 
 		renderLength : function (model, length) {
-			this.$('.counter')
-			.text(length)
-			.stop(true, true)
-			.fadeOut('fast')
-			.fadeIn('fast');
+			this._('.counter')
+				.text(length)
+				.stop(true, true)
+				.fadeOut('fast')
+				.fadeIn('fast');
 		},
 
 		cancel : function(evt) {
@@ -103,7 +103,7 @@ define([
 		},
 
 		onDrop : function(evt) {
-			this.element.parent().find('.options').css({height : 0});
+			this.hideOptions();
 			this.cancel(evt);
 		},
 
@@ -136,11 +136,6 @@ define([
 
 		},
 
-		dragEnter : function(evt) {
-			this.slide('down');
-			return this.cancel(evt);
-		},
-
 		dragLeave : function(evt) {
 
 			var related = document.elementFromPoint(
@@ -150,7 +145,9 @@ define([
 
 			if(!related || related !== this.el) {
 				var inside = $.contains(this.el, related);
-				if(!inside) this.slide('up');
+				if(!inside){
+					this.hideOptions();
+				}
 			}
 
 		},
@@ -159,7 +156,7 @@ define([
 			var select = $(e.target),
 				op = select.attr('class').split(' ')[0];
 			this.model.set({ op : op });
-			this.slideUp();
+			this.hideOptions();
 		}
 
 	});
@@ -181,21 +178,14 @@ define([
 			new PathView({ model : model })
 			.render()
 			.then(function (el) {
+				var $el = $(el).hide();
 				if(next){
-					$(el).hide()
-						.insertBefore(next.view.el)
-						.slideDown();
+					$el.insertBefore(next.view.el).slideDown('fast');
 				} else {
-					this.el.append(el);
+					$el.appendTo(this.el).show();
 				}
 			}.bind(this));
 
-		},
-
-		empty : function () {
-			while (this.el[0].firstChild) {
-				this.el[0].removeChild(this.el[0].firstChild);
-			}
 		}
 
 	});
