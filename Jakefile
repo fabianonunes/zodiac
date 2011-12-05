@@ -1,5 +1,6 @@
 
 var fs = require('fs');
+var crypto = require('crypto');
 require('colors');
 
 desc('build and push');
@@ -28,10 +29,30 @@ task('build', function (params) {
 		out: 'scripts/production.js'
 	};
 
-	requirejs.optimize(config, function () {});
+	requirejs.optimize(config, function () {
+
+		var shasum = crypto.createHash('sha1');
+
+		var s = fs.ReadStream(config.out);
+		s.on('data', function(d) {
+			shasum.update(d);
+		});
+
+		s.on('end', function() {
+			var d = shasum.digest('hex');
+			fs.renameSync(config.out, config.out.replace('.js', '-'+d+'.js'));
+			jake.Task.indexHTML.invoke(d);
+		});
+
+	});
 
 	jake.Task.minify.invoke();
 	jake.Task.templates.invoke();
+
+});
+
+desc('uglify common scripts');
+task('minify', function () {
 
 });
 
