@@ -18,7 +18,7 @@ define([
 			'click .icon'          : 'showOptions',
 			'click .options .icon' : 'change',
 			'mouseleave'           : 'onMouseLeave',
-			// 'mouseenter .options'  : 'showOptions',
+			'mouseenter .options'  : 'showOptions',
 			'dragstart'            : 'onDrag'
 		},
 
@@ -41,6 +41,9 @@ define([
 
 		hideOptions : function (delay) {
 			var options = this._('.options');
+			if(options.queue().length > 0){
+				delay = 0;
+			}
 			options.stop(true).delay(delay || 0).animate({ height : 0 });
 		},
 
@@ -50,11 +53,11 @@ define([
 		},
 
 		onMouseLeave : function (evt) {
-			this.hideOptions(0);
+			this.hideOptions(400);
 		},
 
 		dragEnter : function(evt) {
-			this.showOptions(200);
+			this.showOptions(400);
 			return this.cancel(evt);
 		},
 

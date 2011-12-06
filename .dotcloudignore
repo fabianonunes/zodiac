@@ -1,4 +1,3 @@
-steal
 node_modules
 scripts/controllers
 scripts/models
@@ -8,4 +7,6 @@ scripts/workers/text-worker.js
 scripts/app.js
 scripts/main.js
 Jakefile
-dev.html
+views/dev*
+.monitor
+version

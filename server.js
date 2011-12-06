@@ -49,4 +49,8 @@ app.get('/', function(req, res){
 	res.render('index');
 });
 
+app.get('/dev', function(req, res){
+	res.render('dev');
+});
+
 app.listen(8080);
