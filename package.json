@@ -1,12 +1,16 @@
 {
-	"name" : "zodiac-builder",
+	"name" : "zodiac",
 	"version" : "0.0.1",
 	"dependencies" : {
 		"colors" : "*"
+		, "jade" : "*"
 		, "uglify-js" : "*"
 		, "dust" : "*"
 		, "sh" : "*"
 		, "requirejs" : "*"
 		, "nib" : "*"
+		, "express" : "*"
+		, "stylus" : "*"
+		, "connect-gzip" : "*"
 	}
 }

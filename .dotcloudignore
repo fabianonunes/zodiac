@@ -7,6 +7,5 @@ scripts/templates
 scripts/workers/text-worker.js
 scripts/app.js
 scripts/main.js
-package.json
 Jakefile
 dev.html

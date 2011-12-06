@@ -1,4 +1,5 @@
 node_modules/*
-scripts/production*
+public/scripts/production*
+public/scripts/libs/*min.js
 
 

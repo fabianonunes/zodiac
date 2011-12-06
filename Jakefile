@@ -12,21 +12,23 @@ task('deploy', function (params) {
 desc('build javascript/css');
 task('build', function (params) {
 
+	jake.Task.minify.invoke();
+
 	console.log('Compiling '.green + 'app scripts'.red.bold);
 
 	var requirejs = require('requirejs');
 
 	var config = {
-		baseUrl: 'scripts',
+		baseUrl: 'public/scripts',
 		name: 'main',
 		excludeShallow : ['underscore', 'dust', 'templates'],
 		paths: {
-			jquery : 'libs/jquery/jquery-1.7.1',
-			underscore: 'libs/underscore.min',
-			backbone: 'libs/backbone',
-			dust : 'libs/dust.min'
+			jquery     : 'libs/jquery/jquery-1.7.1',
+			underscore : 'libs/underscore-1.2.2.min',
+			backbone   : 'libs/backbone-0.5.3',
+			dust       : 'libs/dust-0.3.0.min'
 		},
-		out: 'scripts/production.js'
+		out: 'public/scripts/production.js'
 	};
 
 	requirejs.optimize(config, function () {
@@ -41,18 +43,12 @@ task('build', function (params) {
 		s.on('end', function() {
 			var d = shasum.digest('hex');
 			fs.renameSync(config.out, config.out.replace('.js', '-'+d+'.js'));
-			jake.Task.indexHTML.invoke(d);
+			fs.writeFileSync('version', d, encoding='utf8');
 		});
 
 	});
 
-	jake.Task.minify.invoke();
 	jake.Task.templates.invoke();
-
-});
-
-desc('uglify common scripts');
-task('minify', function () {
 
 });
 
@@ -65,9 +61,9 @@ task('minify', function () {
 	var pro = require("uglify-js").uglify;
 
 	var scripts = [
-		'scripts/workers/text-worker.js',
-		'scripts/libs/dust.js',
-		'scripts/libs/underscore.js'
+		'public/scripts/workers/text-worker.js',
+		'public/scripts/libs/dust-0.3.0.js',
+		'public/scripts/libs/underscore-1.2.2.js'
 	];
 
 	scripts.forEach(function(file){
@@ -96,7 +92,7 @@ task('templates', function (params) {
 
 	var dust = require('dust');
 	var list = new jake.FileList();
-	list.include('scripts/templates/*html');
+	list.include('public/scripts/templates/*html');
 
 	var compiled = 'define(["dust"], function (dust){';
 
@@ -109,6 +105,6 @@ task('templates', function (params) {
 
 	compiled += ' return dust; });';
 
-	fs.writeFileSync('scripts/templates.js', compiled, encoding='utf8');
+	fs.writeFileSync('public/scripts/templates.js', compiled, encoding='utf8');
 
 });

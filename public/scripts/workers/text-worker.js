@@ -1,6 +1,6 @@
 
-importScripts('../libs/underscore.min.js');
-importScripts('../libs/dust.min.js');
+importScripts('../libs/underscore-1.2.2.min.js');
+importScripts('../libs/dust-0.3.0.min.js');
 importScripts('../templates.js');
 
 var TextWorker = {
