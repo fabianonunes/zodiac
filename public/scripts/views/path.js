@@ -39,12 +39,12 @@ define([
 
 		},
 
-		hideOptions : function (delay) {
+		hideOptions : function (delay, t) {
 			var options = this._('.options');
-			if(options.queue().length > 0){
+			if(options.queue().length > 0 && !t){
 				delay = 0;
 			}
-			options.stop(true).delay(delay || 0).animate({ height : 0 });
+			options.stop(true).delay(delay || 0).animate({ height : 0 }, 500);
 		},
 
 		showOptions : function (delay) {
@@ -53,7 +53,7 @@ define([
 		},
 
 		onMouseLeave : function (evt) {
-			this.hideOptions(400);
+			this.hideOptions(600);
 		},
 
 		dragEnter : function(evt) {
