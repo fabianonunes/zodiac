@@ -6,13 +6,16 @@ define(['libs/jqmq', 'jquery', 'underscore'], function (jqmq, $, _) {
 	var queue = jqmq({
 		delay    : -1,
 		batch    : 1,
-		callback : function (item) {
-			item.worker.onmessage = function (event) {
+		callback : function callback (item) {
+			item.worker.onmessage = function onmessage (event) {
 				item.worker.onmessage = null;
+				item.worker.onerror = null;
 				item.promise.resolve(event);
 				queue.next();
 			};
-			item.worker.onerror = function () {
+			item.worker.onerror = function onerror () {
+				item.worker.onmessage = null;
+				item.worker.onerror = null;
 				item.promise.reject();
 				queue.next();
 			};
