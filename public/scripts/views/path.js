@@ -73,6 +73,7 @@ define([
 
 		destroy : function () {
 			this._ = null; // TODO: it's necesseray clear the memoized $ ?
+			this.model.view = null;
 			this.unbind();
 			this.subscription.detach(); // TODO: is this enough to clear subscriptions ?
 			this.element.off().slideUp('fast', this.remove);

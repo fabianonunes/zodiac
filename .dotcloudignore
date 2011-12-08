@@ -1,3 +1,4 @@
+*.gz
 node_modules
 scripts/controllers
 scripts/models
@@ -9,4 +10,3 @@ scripts/main.js
 Jakefile
 views/dev*
 .monitor
-version
