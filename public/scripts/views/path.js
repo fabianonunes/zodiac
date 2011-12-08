@@ -1,6 +1,6 @@
 define([
-	'jquery', 'underscore', 'backbone', 'renderer', 'libs/fs'
-], function ($, _, Backbone, renderer, fileSystem) {
+	'jquery', 'underscore', 'backbone', 'renderer', 'libs/fs', 'libs/publisher'
+], function ($, _, Backbone, renderer, fileSystem, publisher) {
 
 	var PathView, PathListView;
 
@@ -10,15 +10,12 @@ define([
 
 		events : {
 			'dragover'             : 'cancel',
-			'dragleave'            : 'dragLeave',
-			'dragenter'            : 'dragEnter',
+			'dragenter'            : 'debouncedShow',
 			'drop'                 : 'onDrop',
 			'drop .options .icon'  : 'onOpDrop',
 			'click .remove'        : 'destroy',
 			'click .icon'          : 'showOptions',
 			'click .options .icon' : 'change',
-			'mouseleave'           : 'onMouseLeave',
-			// 'mouseenter .options'  : 'showOptions',
 			'dragstart'            : 'onDrag'
 		},
 
@@ -31,32 +28,38 @@ define([
 			this.model.bind('change:op', this.renderOp);
 			this.model.bind('change:length', this.renderLength);
 
-			this.element = $(this.el).attr('draggable', 'true');
-
-			this.model.view = this;
-
-			this._ = _.memoize(this.$);
+			this._            = _.memoize(this.$);
+			this.element      = $(this.el); //.attr('draggable', 'true');
+			this.model.view   = this;
+			this.subscription = publisher.subscribe('show', this.hideOptions);
 
 		},
 
-		hideOptions : function (delay) {
-			var options = this._('.options');
-			options.stop(true).delay(delay || 0).animate({ height : 0 });
+		hideOptions : function hideOptions (delay) {
+			this.debouncedShow(false); // clear the debouncedShow timeout
+			this._('.options').stop(true).delay(delay || 0).animate({ height : 0 });
 		},
 
 		showOptions : function (delay) {
+
+			this.subscription.detach();
+			publisher.publish('show', 400);
+			this.subscription.attach();
+
 			var options = this._('.options');
-			options.stop(true).delay(delay || 0).animate({ height : options.prop('scrollHeight') });
+			options.stop(true).delay(delay || 0).animate({
+				height : options.prop('scrollHeight')
+			});
+
 		},
 
-		onMouseLeave : function (evt) {
-			this.hideOptions(0);
-		},
-
-		dragEnter : function(evt) {
-			this.showOptions(200);
-			return this.cancel(evt);
-		},
+		// debouncing here, affects all instances
+		debouncedShow : _.debounce(function debouncedShow (evt) {
+			if(evt !== false){
+				this.showOptions(0);
+				return this.cancel(evt);
+			}
+		}, 450),
 
 		onDrag : function (event) {
 			event = event.originalEvent;
@@ -71,6 +74,7 @@ define([
 		destroy : function () {
 			this._ = null; // TODO: it's necesseray clear the memoized $ ?
 			this.unbind();
+			this.subscription.detach(); // TODO: is this enough to clear subscriptions ?
 			this.element.off().slideUp('fast', this.remove);
 			this.model.destroy();
 		},
@@ -142,21 +146,21 @@ define([
 
 		},
 
-		dragLeave : function(evt) {
+		// dragLeave : function(evt) {
 
-			var x = evt.originalEvent.clientX;
-			var y = evt.originalEvent.clientY;
+		// 	var x = evt.originalEvent.clientX;
+		// 	var y = evt.originalEvent.clientY;
 
-			var related = document.elementFromPoint(x, y);
+		// 	var related = document.elementFromPoint(x, y);
 
-			if(!related || related !== this.el) {
-				var inside = $.contains(this.el, related);
-				if(!inside){
-					this.hideOptions(400);
-				}
-			}
+		// 	if(!related || related !== this.el) {
+		// 		var inside = $.contains(this.el, related);
+		// 		if(!inside){
+		// 			this.hideOptions(400);
+		// 		}
+		// 	}
 
-		},
+		// },
 
 		change : function (evt) {
 			var select = $(evt.target),

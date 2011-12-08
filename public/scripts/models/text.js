@@ -140,8 +140,8 @@ define([
 
 	var TextPeer = Backbone.Collection.extend({
 
-		model        : Text,
 		currentIndex : null,
+		model        : Text,
 		mask         : /[1-9]\d{0,6}-\d{2}\.\d{4}\.\d\.\d{2}\.\d{4}/g,
 
 		initialize : function () {
@@ -180,10 +180,10 @@ define([
 			var next = previous && this.get(previous).getNext();
 
 			var m = new Text({
-				op         : op,
-				origin     : file,
+				id         : _.uniqueId('text'),
 				fileName   : file.name,
-				id         : _.uniqueId('text')
+				origin     : file,
+				op         : op
 			}, {
 				collection : this,
 				previous   : this.get(previous) || this.currentDocument()
