@@ -7,16 +7,12 @@ define(['libs/jqmq', 'jquery', 'underscore'], function (jqmq, $, _) {
 		delay    : -1,
 		batch    : 1,
 		callback : function callback (item) {
-			item.worker.onmessage = function onmessage (event) {
-				item.worker.onmessage = null;
-				item.worker.onerror = null;
-				item.promise.resolve(event);
+			item.worker.onmessage = function (event) {
+				item.success(event);
 				queue.next();
 			};
-			item.worker.onerror = function onerror () {
-				item.worker.onmessage = null;
-				item.worker.onerror = null;
-				item.promise.reject();
+			item.worker.onerror = function (event) {
+				item.error(event);
 				queue.next();
 			};
 			item.worker.postMessage(item.optback());
@@ -30,12 +26,16 @@ define(['libs/jqmq', 'jquery', 'underscore'], function (jqmq, $, _) {
 		var worker = workers[file] || (workers[file] = new Worker(file));
 
 		queue.add({
-			worker   : worker,
-			optback  : optback,
-			promise  : defer
+			worker  : worker,
+			optback : optback,
+			success : defer.resolve,
+			error   : defer.reject
 		});
 
-		return defer.promise();
+		return defer.then(function(){
+			worker.onmessage = null;
+			worker.onerror = null;
+		});
 
 	};
 
