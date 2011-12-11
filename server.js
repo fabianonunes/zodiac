@@ -39,8 +39,8 @@ var fs          = require('fs'),
 			dumpExceptions: true
 		}));
 		app.use(app.router);
-		app.use(express['static']( __dirname + '/public',  { maxAge : 86400000*30 }));
-		app.use(express.staticCache());
+		app.use(express['static']( __dirname + '/public'));//,  { maxAge : 86400000*30 }));
+		// app.use(express.staticCache());
 		// app.use(gzip.staticGzip(__dirname + '/public', { maxAge : 86400000*30 }));
 
 	});

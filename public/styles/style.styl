@@ -93,6 +93,29 @@ body
 		&:hover
 			color #d00
 
+	footer
+		padding 0
+		z-index 10
+		overflow hidden
+		border-top 1px solid #cfcfcf
+		background linear-gradient(top, #f6f6f6 0%, #f3f3f3 50%, #e6e6e6 50%, #f6f6f6 100%)
+
+		.xicon
+			margin 0
+			width 34px
+			padding 4px 0
+			text-align center
+			box-shadow 1px 0 0 #ccc, -1px 0 0 #fff inset
+			// border-right 1px solid #fff
+
+			&:hover
+				box-shadow 1px 0 0 #ccc, 0px 0px 6px #ccc inset
+
+			div
+				width 16px
+				height 16px
+				display inline-block
+
 .deck
 	absolute(top 15px, left 35px, right 35px, bottom 25px)
 	box-shadow 0px 0px 10px rgba(0,0,0,0.35)
@@ -126,7 +149,7 @@ body
 	overflow-y auto
 	height 100%
 
-footer.options
+footer
 	z-index 11
 	background linear-gradient(top, #f0f0f0 0%, #d6d6d6 90%)
 	absolute(left 0, right 0, bottom 0)
