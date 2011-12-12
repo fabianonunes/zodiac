@@ -3,5 +3,5 @@ node_modules/*
 public/scripts/production*
 public/scripts/libs/*min.js
 .monitor
-version
+./version
 
