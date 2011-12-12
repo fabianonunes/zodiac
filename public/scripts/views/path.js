@@ -147,22 +147,6 @@ define([
 
 		},
 
-		// dragLeave : function(evt) {
-
-		// 	var x = evt.originalEvent.clientX;
-		// 	var y = evt.originalEvent.clientY;
-
-		// 	var related = document.elementFromPoint(x, y);
-
-		// 	if(!related || related !== this.el) {
-		// 		var inside = $.contains(this.el, related);
-		// 		if(!inside){
-		// 			this.hideOptions(400);
-		// 		}
-		// 	}
-
-		// },
-
 		change : function (evt) {
 			var select = $(evt.target),
 				op = select.attr('class').split(' ')[0];
@@ -176,10 +160,14 @@ define([
 
 		el: $('.path'),
 		template : 'path',
+		events : {
+			'dragleave' : 'dragLeave'
+		},
 
 		initialize: function () {
 			_.bindAll(this, 'render');
 			this.collection.bind('change:added', this.render);
+			this.contains = _.memoize($.contains);
 		},
 
 		render : function (model) {
@@ -197,7 +185,25 @@ define([
 				}
 			}.bind(this));
 
+		},
+
+		dragLeave : function(evt) {
+
+
+			var x = evt.originalEvent.clientX;
+			var y = evt.originalEvent.clientY;
+
+			var related = document.elementFromPoint(x, y);
+
+			if(!related || related !== this.el) {
+				var inside = $.contains(this.el[0], related);
+				if(!inside){
+					publisher.publish('show', 0); // forces all options to close at once
+				}
+			}
+
 		}
+
 
 	});
 
