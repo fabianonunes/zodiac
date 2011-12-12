@@ -167,7 +167,11 @@ define([
 		initialize: function () {
 			_.bindAll(this, 'render');
 			this.collection.bind('change:added', this.render);
-			this.contains = _.memoize($.contains);
+			this.contains = _.memoize(function (arg) {
+				return $.contains(this.el[0], arg);
+			}.bind(this), function (arg) {
+				return arg.id || ( arg.id = _.uniqueId('anonymous_element') );
+			});
 		},
 
 		render : function (model) {
@@ -189,21 +193,19 @@ define([
 
 		dragLeave : function(evt) {
 
-
 			var x = evt.originalEvent.clientX;
 			var y = evt.originalEvent.clientY;
 
 			var related = document.elementFromPoint(x, y);
 
 			if(!related || related !== this.el) {
-				var inside = $.contains(this.el[0], related);
+				var inside = this.contains(related);
 				if(!inside){
 					publisher.publish('show', 0); // forces all options to close at once
 				}
 			}
 
 		}
-
 
 	});
 
