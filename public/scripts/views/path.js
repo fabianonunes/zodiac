@@ -161,7 +161,9 @@ define([
 		el: $('.path'),
 		template : 'path',
 		events : {
-			'dragleave' : 'dragLeave'
+			'dragleave' : 'dragLeave',
+			'dragover' : 'cancel',
+			'drop' : 'cancel'
 		},
 
 		initialize: function () {
@@ -205,6 +207,12 @@ define([
 				}
 			}
 
+		},
+
+		cancel : function(evt) {
+			evt.preventDefault();
+			evt.originalEvent.dataTransfer.dropEffect = 'copy';
+			return false;
 		}
 
 	});
