@@ -29,6 +29,7 @@ app.configure(function(){
 	app.set('version', version);
 
 	app.use(app.router);
+	app.use(express.favicon(__dirname + '/public/images/favicon.ico'));
 
 });
 
@@ -62,9 +63,6 @@ app.configure('development', function () {
 
 app.get('/', function(req, res){
 	res.render('index');
-});
-app.get('/temp', function(req, res){
-	res.send(JSON.stringify(process.env));
 });
 
 app.listen(8080);
