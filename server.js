@@ -43,10 +43,6 @@ app.configure('development', function () {
 		showStack: true,
 		dumpExceptions: true
 	}));
-	app.use(express['static']( __dirname + '/public'));
-	app.get('/dev', function(req, res){
-		res.render('dev');
-	});
 	app.use(stylus.middleware({
 		src: __dirname + '/public',
 		compile: function(str, path) {
@@ -59,6 +55,11 @@ app.configure('development', function () {
 			.include(require('nib').path);
 		}
 	}));
+	app.use(express['static']( __dirname + '/public'));
+	app.get('/dev', function(req, res){
+		res.render('dev');
+	});
+
 });
 
 app.get('/', function(req, res){
