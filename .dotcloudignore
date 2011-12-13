@@ -1,4 +1,5 @@
 *.gz
+*.styl
 node_modules
 scripts/controllers
 scripts/models
