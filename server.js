@@ -1,5 +1,11 @@
 #!/usr/local/bin/node
 
+// dotcloud plataform doesn't support unix environment variable
+// this trick must be setted before requiring express
+if (process.env.HOME == '/home/dotcloud') {
+	process.env.NODE_ENV = 'production';
+}
+
 var fs          = require('fs'),
 	path        = require('path'),
 	express     = require('express'),
@@ -20,20 +26,7 @@ app.configure(function(){
 	app.use(express.methodOverride());
 
 	app.set('title', 'zodiac');
-	app.set('js', version);
-
-	app.use(stylus.middleware({
-		src: __dirname + '/public',
-		compile: function(str, path) {
-			return stylus(str)
-			.define('url', stylus.url({
-				paths: [__dirname + '/public/images']
-			}))
-			.set('compress', true)
-			.set('filename', path)
-			.include(require('nib').path);
-		}
-	}));
+	app.set('version', version);
 
 	app.use(app.router);
 
@@ -53,11 +46,25 @@ app.configure('development', function () {
 	app.get('/dev', function(req, res){
 		res.render('dev');
 	});
+	app.use(stylus.middleware({
+		src: __dirname + '/public',
+		compile: function(str, path) {
+			return stylus(str)
+			.define('url', stylus.url({
+				paths: [__dirname + '/public/images']
+			}))
+			.set('compress', true)
+			.set('filename', path)
+			.include(require('nib').path);
+		}
+	}));
 });
 
 app.get('/', function(req, res){
 	res.render('index');
 });
-
+app.get('/temp', function(req, res){
+	res.send(JSON.stringify(process.env));
+});
 
 app.listen(8080);

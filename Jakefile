@@ -28,7 +28,8 @@ task('build', function (params) {
 			backbone   : 'libs/backbone-0.5.3',
 			dust       : 'libs/dust-0.3.0.min'
 		},
-		out: 'public/scripts/production.js'
+		out: 'public/scripts/production.js',
+		css : 'public/styles/style.css'
 	};
 
 	requirejs.optimize(config, function () {
@@ -43,6 +44,7 @@ task('build', function (params) {
 		s.on('end', function() {
 			var d = shasum.digest('hex');
 			fs.renameSync(config.out, config.out.replace('.js', '-'+d+'.js'));
+			fs.renameSync(config.css, config.css.replace('.css', '-'+d+'.css'));
 			fs.writeFileSync('version', d, encoding='utf8');
 		});
 
