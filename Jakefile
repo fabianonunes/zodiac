@@ -13,6 +13,7 @@ desc('build javascript/css');
 task('build', function (params) {
 
 	jake.Task.minify.invoke();
+	jake.Task.templates.invoke();
 
 	console.log('Compiling '.green + 'app scripts'.red.bold);
 
@@ -42,15 +43,14 @@ task('build', function (params) {
 		});
 
 		s.on('end', function() {
-			var d = shasum.digest('hex');
-			fs.renameSync(config.out, config.out.replace('.js', '-'+d+'.js'));
-			fs.renameSync(config.css, config.css.replace('.css', '-'+d+'.css'));
-			fs.writeFileSync('version', d, encoding='utf8');
+			var version = shasum.digest('hex');
+			fs.renameSync(config.out, config.out.replace('.js', '-' + version + '.js'));
+			jake.Task.css.invoke(version);
+			fs.writeFileSync('version', version, 'utf8');
 		});
 
 	});
 
-	jake.Task.templates.invoke();
 
 });
 
@@ -88,6 +88,29 @@ task('push', function (params) {
 
 });
 
+desc('render stylus files');
+task('css', function (version) {
+
+	console.log('Rendenring '.green + 'stylus files'.red.bold);
+
+	var stylus = require('stylus');
+	var str = fs.readFileSync('public/styles/style.styl', 'utf8');
+	var filename = __dirname + '/public/styles/style-' + version + '.css';
+
+	stylus(str)
+	.include(require('nib').path)
+	.set('filename', filename )
+	.set('compress', true)
+	.define('url', stylus.url({
+		paths: [__dirname + '/public/images']
+	}))
+	.render(function (err, css) {
+		if (err) throw err;
+		fs.writeFileSync(filename, css, 'utf8');
+	});
+
+});
+
 
 desc('compile dust templates');
 task('templates', function (params) {
@@ -107,6 +130,6 @@ task('templates', function (params) {
 
 	compiled += ' return dust; });';
 
-	fs.writeFileSync('public/scripts/templates.js', compiled, encoding='utf8');
+	fs.writeFileSync('public/scripts/templates.js', compiled, 'utf8');
 
 });
