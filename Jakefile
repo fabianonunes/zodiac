@@ -18,19 +18,13 @@ task('build', function (params) {
 	console.log('Compiling '.green + 'app scripts'.red.bold);
 
 	var requirejs = require('requirejs');
-
 	var config = {
-		baseUrl: 'public/scripts',
-		name: 'main',
+		baseUrl        : 'public/scripts',
+		name           : 'main',
 		excludeShallow : ['underscore', 'dust', 'templates'],
-		paths: {
-			jquery     : 'libs/jquery/jquery-1.7.1',
-			underscore : 'libs/underscore-1.2.2.min',
-			backbone   : 'libs/backbone-0.5.3',
-			dust       : 'libs/dust-0.3.0.min'
-		},
-		out: 'public/scripts/production.js',
-		css : 'public/styles/style.css'
+		paths          : require('./public/scripts/config').paths,
+		out            : 'public/scripts/production.js',
+		css            : 'public/styles/style.css'
 	};
 
 	requirejs.optimize(config, function () {
@@ -95,7 +89,7 @@ task('css', function (version) {
 
 	var stylus = require('stylus');
 	var str = fs.readFileSync('public/styles/style.styl', 'utf8');
-	var filename = __dirname + '/public/styles/style-' + version + '.css';
+	var filename = __dirname + '/public/styles/production-' + version + '.css';
 
 	stylus(str)
 	.include(require('nib').path)
@@ -113,7 +107,7 @@ task('css', function (version) {
 
 
 desc('compile dust templates');
-task('templates', function (params) {
+task('templates', function  (params) {
 
 	var dust = require('dust');
 	var list = new jake.FileList();
@@ -121,7 +115,7 @@ task('templates', function (params) {
 
 	var compiled = 'define(["dust"], function (dust){';
 
-	list.toArray().forEach(function(v){
+	list.toArray().forEach(function (v) {
 		var file = fs.readFileSync(v, 'utf-8');
 		var name = v.split('.')[0];
 		console.log('Compiling '.green + v.red.bold);
