@@ -4,4 +4,4 @@ public/scripts/production*
 public/scripts/libs/*min.js
 public/styles/*css
 .monitor
-
+version
