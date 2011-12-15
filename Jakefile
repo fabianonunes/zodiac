@@ -13,22 +13,18 @@ desc('build javascript/css');
 task('build', function (params) {
 
 	jake.Task.minify.invoke();
+	jake.Task.templates.invoke();
 
 	console.log('Compiling '.green + 'app scripts'.red.bold);
 
 	var requirejs = require('requirejs');
-
 	var config = {
-		baseUrl: 'public/scripts',
-		name: 'main',
+		baseUrl        : 'public/scripts',
+		name           : 'main',
 		excludeShallow : ['underscore', 'dust', 'templates'],
-		paths: {
-			jquery     : 'libs/jquery/jquery-1.7.1',
-			underscore : 'libs/underscore-1.2.2.min',
-			backbone   : 'libs/backbone-0.5.3',
-			dust       : 'libs/dust-0.3.0.min'
-		},
-		out: 'public/scripts/production.js'
+		paths          : require('./public/scripts/config').paths,
+		out            : 'public/scripts/production.js',
+		css            : 'public/styles/style.css'
 	};
 
 	requirejs.optimize(config, function () {
@@ -41,14 +37,14 @@ task('build', function (params) {
 		});
 
 		s.on('end', function() {
-			var d = shasum.digest('hex');
-			fs.renameSync(config.out, config.out.replace('.js', '-'+d+'.js'));
-			fs.writeFileSync('version', d, encoding='utf8');
+			var version = shasum.digest('hex');
+			fs.renameSync(config.out, config.out.replace('.js', '-' + version + '.js'));
+			jake.Task.css.invoke(version);
+			fs.writeFileSync('version', version, 'utf8');
 		});
 
 	});
 
-	jake.Task.templates.invoke();
 
 });
 
@@ -86,9 +82,32 @@ task('push', function (params) {
 
 });
 
+desc('render stylus files');
+task('css', function (version) {
+
+	console.log('Rendenring '.green + 'stylus files'.red.bold);
+
+	var stylus = require('stylus');
+	var str = fs.readFileSync('public/styles/style.styl', 'utf8');
+	var filename = __dirname + '/public/styles/production-' + version + '.css';
+
+	stylus(str)
+	.include(require('nib').path)
+	.set('filename', filename )
+	.set('compress', true)
+	.define('url', stylus.url({
+		paths: [__dirname + '/public/images']
+	}))
+	.render(function (err, css) {
+		if (err) throw err;
+		fs.writeFileSync(filename, css, 'utf8');
+	});
+
+});
+
 
 desc('compile dust templates');
-task('templates', function (params) {
+task('templates', function  (params) {
 
 	var dust = require('dust');
 	var list = new jake.FileList();
@@ -96,7 +115,7 @@ task('templates', function (params) {
 
 	var compiled = 'define(["dust"], function (dust){';
 
-	list.toArray().forEach(function(v){
+	list.toArray().forEach(function (v) {
 		var file = fs.readFileSync(v, 'utf-8');
 		var name = v.split('.')[0];
 		console.log('Compiling '.green + v.red.bold);
@@ -105,6 +124,6 @@ task('templates', function (params) {
 
 	compiled += ' return dust; });';
 
-	fs.writeFileSync('public/scripts/templates.js', compiled, encoding='utf8');
+	fs.writeFileSync('public/scripts/templates.js', compiled, 'utf8');
 
 });
