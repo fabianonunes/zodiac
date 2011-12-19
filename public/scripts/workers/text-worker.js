@@ -38,27 +38,31 @@ var TextWorker = {
 
 	uniq : function (lines, classes) {
 
-		var strut = {},
-			base = dust.makeBase(),
-			value;
+		var strut  = {},
+			length = 0,
+			base   = dust.makeBase();
 
-		lines.forEach(function (v, k) {
-			if(!v) return;
-			strut[v] = 0;
-		});
+		template(lines, function (chunk, context, bodies) {
 
-		value = Object.keys(strut);
+			var value = context.current();
 
-		template(value, function (chunk, context, bodies) {
+			if (value && !strut[value]) {
 
-			chunk.render(bodies.block, base.push({
-				line : context.current()
-			}));
+				strut[value] = true;
+
+				chunk.render(
+					bodies.block,
+					base.push({ line : value })
+				);
+
+				length += 1;
+
+			}
 
 		}, function (out) {
 			postMessage({
 				html : out,
-				length : value.length
+				length : length
 			});
 		});
 
