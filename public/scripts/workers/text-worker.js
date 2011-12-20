@@ -120,8 +120,8 @@ var TextWorker = {
 	intersection : function (lines2, lines1) {
 
 		var value = [],
-			o = {},
-			base = dust.makeBase();
+			o     = {},
+			base  = dust.makeBase();
 
 		lines2.forEach(function (v, k) {
 			o[v] = true;
@@ -136,9 +136,12 @@ var TextWorker = {
 				// avoid duplicate lines
 				o[v] = false;
 
-				chunk.render(bodies.block, base.push({
-					line : v
-				}));
+				chunk.render(
+					bodies.block,
+					base.push({
+						line : v
+					})
+				);
 
 				value.push(v);
 
@@ -157,8 +160,8 @@ var TextWorker = {
 	symmetric : function (lines2, lines1) {
 
 		var value = [],
-			o = {},
-			base = dust.makeBase();
+			o     = {},
+			base  = dust.makeBase();
 
 		lines2.forEach(function (v) {
 			o[v] = +[o[v]] + 1;
@@ -174,9 +177,12 @@ var TextWorker = {
 
 			if(o[v] === 1) {
 
-				chunk.render(bodies.block, base.push({
-					line : v
-				}));
+				chunk.render(
+					bodies.block,
+					base.push({
+						line : v
+					})
+				);
 
 				value.push(v);
 
@@ -193,6 +199,8 @@ var TextWorker = {
 	},
 
 	charge : function (lines2, lines1) {
+
+		// throw JSON.stringify({data:'asdf'});
 
 		postMessage({
 			html : lines1.join('\n'),
@@ -223,9 +231,12 @@ var TextWorker = {
 
 			if(found) {
 
-				chunk.render(bodies.block, base.push({
-					line : v
-				}));
+				chunk.render(
+					bodies.block,
+					base.push({
+						line : v
+					})
+				);
 
 				value.push(original);
 
