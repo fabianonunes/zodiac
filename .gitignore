@@ -1,7 +1,7 @@
 *.gz
 node_modules/*
 public/scripts/production*
-public/scripts/libs/*min.js
+*.min.js
 public/styles/*css
 .monitor
 version
