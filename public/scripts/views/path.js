@@ -1,6 +1,6 @@
 define([
-	'jquery', 'underscore', 'backbone', 'renderer', 'libs/fs', 'libs/publisher'
-], function ($, _, Backbone, renderer, fileSystem, publisher) {
+	'jquery', 'underscore', 'backbone', 'renderer', 'libs/fs', 'libs/publisher', 'libs/blob'
+], function ($, _, Backbone, renderer, fileSystem, publisher, blob) {
 
 	var PathView, PathListView;
 
@@ -29,7 +29,7 @@ define([
 			this.model.bind('change:length', this.renderLength);
 
 			this._            = _.memoize(this.$);
-			this.element      = $(this.el); //.attr('draggable', 'true');
+			this.element      = $(this.el).attr('draggable', 'true');
 			this.model.view   = this;
 			this.subscription = publisher.subscribe('show', this.hideOptions);
 
@@ -109,7 +109,10 @@ define([
 
 		cancel : function(evt) {
 			evt.preventDefault();
-			evt.originalEvent.dataTransfer.dropEffect = 'copy';
+			var dt = evt.originalEvent.dataTransfer;
+			if (dt) {
+				dt.dropEffect = 'copy';
+			}
 			return false;
 		},
 
@@ -121,29 +124,13 @@ define([
 		onOpDrop : function (evt) {
 
 			this.cancel(evt);
-			// evt.stopImmediatePropagation();
 
 			var target = $(evt.target).removeClass('over'),
-				op = target.attr('class').split(' ')[0],
-				dt = evt.originalEvent.dataTransfer,
-				promise;
+				op     = target.attr('class').split(' ')[0],
+				dt     = evt.originalEvent.dataTransfer,
+				file   = blob(dt);
 
-			// accessing the files.length property directly is as expensive as plucking
-			// file names. thus, its making use of pluck op to get both information
-			var names = _.pluck(dt.files, 'name');
-			var filesLength = names.length;
-
-			if ( filesLength > 1 ) {
-				promise = fileSystem.createFile(names.join('\n'));
-			} else if ( _(dt.types).contains('text') ) {
-				promise = fileSystem.createFile(dt.getData('text'));
-			} else {
-				promise = $.Deferred().resolve(dt.files[0]);
-			}
-
-			promise.done(function(file){
-				this.model.collection.blend(op, file, this.model.id);
-			}.bind(this));
+			this.model.collection.blend(op, file, this.model.id);
 
 		},
 
