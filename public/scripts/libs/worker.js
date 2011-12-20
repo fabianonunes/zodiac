@@ -7,15 +7,15 @@ define(['libs/jqmq', 'jquery', 'underscore'], function (jqmq, $, _) {
 		delay    : -1,
 		batch    : 1,
 		callback : function callback (item) {
-			item.worker.onmessage = function (event) {
+			item.worker.onmessage = function onmessage (event) {
 				item.success(event);
 				queue.next();
 			};
-			item.worker.onerror = function (event) {
+			item.worker.onerror = function onerror (event) {
 				item.error(event);
 				queue.next();
 			};
-			item.worker.postMessage(item.optback());
+			item.worker.postMessage( item.optback() );
 		}
 	});
 
@@ -33,6 +33,7 @@ define(['libs/jqmq', 'jquery', 'underscore'], function (jqmq, $, _) {
 		});
 
 		return defer.then(function(){
+			// clear closures
 			worker.onmessage = null;
 			worker.onerror = null;
 		});
