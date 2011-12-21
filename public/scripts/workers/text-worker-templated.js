@@ -78,15 +78,20 @@ var TextWorker = {
 			uq[v] = true;
 		});
 
-		lines2.forEach(function (row) {
+		template(lines2, function (chunk, context, bodies) {
+			var row = context.current();
 			if(!uq[row]) {
+				chunk.render(bodies.block, base.push({
+					line : row
+				}));
 				value.push(row);
 			}
-		});
-
-		postMessage({
-			lines : value.join('\n'),
-			length : value.length
+		}, function (out) {
+			postMessage({
+				// html : out,
+				lines : value.join('\n'),
+				length : value.length
+			});
 		});
 
 	},
@@ -96,9 +101,18 @@ var TextWorker = {
 		var value = lines1.concat(lines2),
 			base = dust.makeBase();
 
-		postMessage({
-			lines : value.join('\n'),
-			length : value.length
+		template(value, function (chunk, context, bodies) {
+
+			chunk.render(bodies.block, base.push({
+				line : context.current()
+			}));
+
+		}, function (out) {
+			postMessage({
+				// html : out,
+				lines : value.join('\n'),
+				length : value.length
+			});
 		});
 
 	},
@@ -113,19 +127,32 @@ var TextWorker = {
 			o[v] = true;
 		});
 
-		lines1.forEach(function (v) {
+		template(lines1, function (chunk, context, bodies) {
+
+			var v = context.current();
 
 			if(o[v] === true) {
+
 				// avoid duplicate lines
 				o[v] = false;
+
+				chunk.render(
+					bodies.block,
+					base.push({
+						line : v
+					})
+				);
+
 				value.push(v);
+
 			}
 
-		});
-
-		postMessage({
-			lines : value.join('\n'),
-			length : value.length
+		}, function (out) {
+			postMessage({
+				// html : out,
+				lines : value.join('\n'),
+				length : value.length
+			});
 		});
 
 	},
@@ -144,18 +171,30 @@ var TextWorker = {
 			o[v] = +[o[v]] + 1;
 		});
 
-		Object.keys(o).forEach(function (v) {
+		template(Object.keys(o), function (chunk, context, bodies) {
+
+			var v = context.current();
+
 			if(o[v] === 1) {
+
+				chunk.render(
+					bodies.block,
+					base.push({
+						line : v
+					})
+				);
+
 				value.push(v);
+
 			}
-		});
 
-		postMessage({
-			// html : out,
-			lines : value.join('\n'),
-			length : value.length
+		}, function (out) {
+			postMessage({
+				// html : out,
+				lines : value.join('\n'),
+				length : value.length
+			});
 		});
-
 
 	},
 
@@ -164,6 +203,7 @@ var TextWorker = {
 		// throw JSON.stringify({data:'asdf'});
 
 		postMessage({
+			// html : lines1.join('\n'),
 			lines : lines1.join('\n'),
 			length : lines1.length
 		});
@@ -180,23 +220,34 @@ var TextWorker = {
 			return new RegExp(v, "i");
 		});
 
-		lines2.forEach(function (original) {
-			var v;
-			v = original;
+		template(lines2, function (chunk, context, bodies) {
+
+			var v, original;
+			v = original = context.current();
 
 			var found = regexes.some(function (r) {
 				return v !== (v = v.replace(r, '<b>$&</b>'));
 			});
 
 			if(found) {
-				value.push(original);
-			}
-		});
 
-		postMessage({
-			html : out,
-			lines : value.join('\n'),
-			length : value.length
+				chunk.render(
+					bodies.block,
+					base.push({
+						line : v
+					})
+				);
+
+				value.push(original);
+
+			}
+
+		}, function (out) {
+			postMessage({
+				html : out,
+				lines : value.join('\n'),
+				length : value.length
+			});
 		});
 
 	}

@@ -1,6 +1,6 @@
 define([
-	'underscore', 'backbone', 'libs/worker'
-], function (_, Backbone, worker) {
+	'underscore', 'backbone', 'libs/worker', 'libs/blob'
+], function (_, Backbone, worker, blob) {
 
 	var Text = Backbone.Model.extend({
 
@@ -17,12 +17,6 @@ define([
 			this.perform().done(function(){
 
 				this.trigger('change:added', this);
-
-				// TODO: arrumar essa lógica. ao se adicionar um documento, ele
-				// só deve ser ativado se for o último.
-				if(!this.getNext()){
-					this.activate();
-				}
 
 			}.bind(this));
 
@@ -71,32 +65,28 @@ define([
 		},
 
 		acessor : function (op) {
-			var self = this;
-			self.work(function () {
-				return {
-					op : op,
-					lines : self.lines
-				};
-			}).done( this.afterWorker );
+			this.work(function (op, lines) {
+				return { op : op, lines : lines };
+			}.bind(null, op, this.lines)).done( this.afterWorker );
 		},
 
-		activate : function () {
-			this.collection.updateDocument(this);
+		activate : function (html) {
+			this.collection.updateDocument(this, html);
 		},
 
 		afterWorker : function (message) {
 
 			// for now, sort and uniq dont return lines
 			if ( !_.isUndefined(message.data.lines) ) {
-				this.lines = message.data.lines;
+				this.lines = blob.createBlob(message.data.lines);
 			}
-
-			this.html = message.data.html;
 
 			this.set({ length : message.data.length });
 
-			if ( this.isActivated() ) {
-				this.activate();
+			// // TODO: arrumar essa lógica. ao se adicionar um documento, ele
+			// // só deve ser ativado se for o último.
+			if(!this.getNext()){
+				this.activate(message.data.lines);
 			}
 
 		},
@@ -149,9 +139,10 @@ define([
 			this.bind('destroy', this.remove);
 		},
 
-		updateDocument : function (m) {
+		updateDocument : function (m, html) {
 			this.currentIndex = m.id;
-			this.trigger('change:currentIndex', m.id, m, m.html);
+			html = html || '';
+			this.trigger('change:currentIndex', m.id, m, html);
 		},
 
 		destroy : function (m) {

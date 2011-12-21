@@ -1,7 +1,7 @@
 
 define([
-	'jquery', 'backbone', 'underscore', 'libs/fs'
-], function($, Backbone, _, fileSystem) {
+	'jquery', 'backbone', 'underscore', 'libs/blob'
+], function($, Backbone, _, blob) {
 
 	var dropper = Backbone.View.extend({
 
@@ -65,24 +65,11 @@ define([
 			// evt.stopImmediatePropagation();
 
 			var target = $(evt.target).removeClass('over'),
-				op = target.attr('class').split(' ')[0],
-				dt = evt.originalEvent.dataTransfer,
-				promise;
+				op     = target.attr('class').split(' ')[0],
+				dt     = evt.originalEvent.dataTransfer,
+				file   = blob.createFromDataTransfer(dt);
 
-			// accessing the files.length property directly is as expensive as plucking
-			// file names. thus, its making use of pluck op to get both information
-			var names = _.pluck(dt.files, 'name');
-			var filesLength = names.length;
-
-			if ( filesLength > 1 ) {
-				promise = fileSystem.createFile(names.join('\n'));
-			} else if ( _(dt.types).contains('text') ) {
-				promise = fileSystem.createFile(dt.getData('text'));
-			} else {
-				promise = $.Deferred().resolve(dt.files[0]);
-			}
-
-			promise.done(this.collection.blend.bind(this, op));
+			this.collection.blend(op, file);
 
 		},
 
