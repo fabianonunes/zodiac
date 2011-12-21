@@ -65,13 +65,9 @@ define([
 		},
 
 		acessor : function (op) {
-			var self = this;
-			self.work(function () {
-				return {
-					op : op,
-					lines : self.lines
-				};
-			}).done( this.afterWorker );
+			this.work(function (op, lines) {
+				return { op : op, lines : lines };
+			}.bind(null, op, this.lines)).done( this.afterWorker );
 		},
 
 		activate : function (html) {
