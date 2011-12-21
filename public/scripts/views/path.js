@@ -128,7 +128,7 @@ define([
 			var target = $(evt.target).removeClass('over'),
 				op     = target.attr('class').split(' ')[0],
 				dt     = evt.originalEvent.dataTransfer,
-				file   = blob(dt);
+				file   = blob.createFromDataTransfer(dt);
 
 			this.model.collection.blend(op, file, this.model.id);
 

@@ -8,7 +8,7 @@ define([
 
 	var blob = {};
 
-	var createBlob = function(data){
+	blob.createBlob = function createBlob (data) {
 
 		var path = _.uniqueId('selection_'),
 			self = this,
@@ -23,7 +23,7 @@ define([
 
 	};
 
-	return function createFromDataTransfer (dataTransfer) {
+	blob.createFromDataTransfer = function createFromDataTransfer (dataTransfer) {
 
 		// accessing the files.length property directly is as expensive as plucking
 		// file names. thus, its making use of pluck op to get both information
@@ -45,6 +45,8 @@ define([
 		return file;
 
 	};
+
+	return blob;
 
 });
 

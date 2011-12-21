@@ -7,15 +7,23 @@ define(['libs/jqmq', 'jquery', 'underscore'], function (jqmq, $, _) {
 		delay    : -1,
 		batch    : 1,
 		callback : function callback (item) {
-			item.worker.onmessage = function onmessage (event) {
-				item.success(event);
+
+			item.worker.onmessage = function onmessage (queue, event) {
+				this.worker.onmessage = null;
+				this.worker.onerror = null;
+				this.success(event);
 				queue.next();
-			};
-			item.worker.onerror = function onerror (event) {
-				item.error(event);
+			}.bind(item, queue);
+
+			item.worker.onerror = function onerror (queue, event) {
+				this.worker.onmessage = null;
+				this.worker.onerror = null;
+				this.error(event);
 				queue.next();
-			};
+			}.bind(item, queue);
+
 			item.worker.postMessage( item.optback() );
+
 		}
 	});
 
@@ -24,6 +32,7 @@ define(['libs/jqmq', 'jquery', 'underscore'], function (jqmq, $, _) {
 		var defer = $.Deferred();
 
 		var worker = workers[file] || (workers[file] = new Worker(file));
+		// var worker = new Worker(file);
 
 		queue.add({
 			worker  : worker,
@@ -32,11 +41,7 @@ define(['libs/jqmq', 'jquery', 'underscore'], function (jqmq, $, _) {
 			error   : defer.reject
 		});
 
-		return defer.then(function(){
-			// clear closures
-			worker.onmessage = null;
-			worker.onerror = null;
-		});
+		return defer;
 
 	};
 

@@ -88,8 +88,8 @@ var TextWorker = {
 			}
 		}, function (out) {
 			postMessage({
-				html : out,
-				lines : value,
+				// html : out,
+				lines : value.join('\n'),
 				length : value.length
 			});
 		});
@@ -109,8 +109,8 @@ var TextWorker = {
 
 		}, function (out) {
 			postMessage({
-				html : out,
-				lines : value,
+				// html : out,
+				lines : value.join('\n'),
 				length : value.length
 			});
 		});
@@ -149,8 +149,8 @@ var TextWorker = {
 
 		}, function (out) {
 			postMessage({
-				html : out,
-				lines : value,
+				// html : out,
+				lines : value.join('\n'),
 				length : value.length
 			});
 		});
@@ -190,8 +190,8 @@ var TextWorker = {
 
 		}, function (out) {
 			postMessage({
-				html : out,
-				lines : value,
+				// html : out,
+				lines : value.join('\n'),
 				length : value.length
 			});
 		});
@@ -203,8 +203,8 @@ var TextWorker = {
 		// throw JSON.stringify({data:'asdf'});
 
 		postMessage({
-			html : lines1.join('\n'),
-			lines : lines1,
+			// html : lines1.join('\n'),
+			lines : lines1.join('\n'),
 			length : lines1.length
 		});
 
@@ -245,7 +245,7 @@ var TextWorker = {
 		}, function (out) {
 			postMessage({
 				html : out,
-				lines : value,
+				lines : value.join('\n'),
 				length : value.length
 			});
 		});
@@ -262,9 +262,9 @@ onmessage = function (message) {
 	if(d.op === 'sort' || d.op === 'uniq') {
 		op(d.lines, d.classes);
 	} else if(d.op === 'grep') {
-		readFile(d.file, null, op.bind(TextWorker, d.previous));
+		op(readFile(d.previous), readFile(d.file));
 	} else {
-		readFile(d.file, d.mask, op.bind(TextWorker, d.previous));
+		op(readFile(d.previous), readFile(d.file, d.mask));
 	}
 
 };
@@ -287,6 +287,9 @@ function template(data, stream, cb) {
 }
 
 function readFile(file, mask, callback) {
+	if(!file){
+		return;
+	}
 	var reader = new FileReaderSync();
 	var result = reader.readAsText(file);
 	var r = [];
@@ -300,7 +303,7 @@ function readFile(file, mask, callback) {
 			}
 		}
 	});
-	callback(r);
+	return r;
 }
 
 function sortBy(obj, field, context) {
