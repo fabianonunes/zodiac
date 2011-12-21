@@ -13,18 +13,10 @@ define([
 
 		initialize: function () {
 
-			_.bindAll(this, 'updateText', 'selectText', 'empty');
+			_.bindAll(this);
 
 			this.collection.bind("change:currentIndex", this.updateText);
 			this.collection.bind("reset", this.empty);
-
-			// var self = this;
-			// $('.sort').click(function (evt) {
-			// self.collection.acessor('sort');
-			// });
-			// $('.uniq').click(function (evt) {
-			//	self.collection.acessor('uniq');
-			// });
 
 		},
 
@@ -37,8 +29,6 @@ define([
 		updateText : function (id, model, html) {
 
 			var self = this;
-
-			// self.trigger('updated', 'view/' + id);
 
 			_.defer(function () {
 				self.el.empty();
