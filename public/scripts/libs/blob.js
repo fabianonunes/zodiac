@@ -11,7 +11,6 @@ define([
 	blob.createBlob = function createBlob (data) {
 
 		var path = _.uniqueId('selection_'),
-			self = this,
 			bb   = new BlobBuilder(),
 			blob;
 
@@ -32,12 +31,12 @@ define([
 			file;
 
 		if ( filesLength > 1 ) {
-			file = createBlob(names.join('\n'));
+			file = this.createBlob(names.join('\n'));
 		} else if ( filesLength === 0 ) {
 			var type = _(dataTransfer.types).find(function(type){
 				return ~type.indexOf('text/plain') || ~type.indexOf('text/html');
 			});
-			file = createBlob(dataTransfer.getData(type));
+			file = this.createBlob(dataTransfer.getData(type));
 		} else {
 			file = dataTransfer.files[0];
 		}
