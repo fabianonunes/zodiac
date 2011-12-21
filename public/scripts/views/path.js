@@ -1,6 +1,6 @@
 define([
-	'jquery', 'underscore', 'backbone', 'renderer', 'libs/fs', 'libs/publisher', 'libs/blob'
-], function ($, _, Backbone, renderer, fileSystem, publisher, blob) {
+	'jquery', 'underscore', 'backbone', 'renderer', 'libs/publisher', 'libs/blob'
+], function ($, _, Backbone, renderer, publisher, blob) {
 
 	var PathView, PathListView;
 
