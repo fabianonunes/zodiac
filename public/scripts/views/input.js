@@ -42,14 +42,11 @@ define([
 
 			_.defer(function () {
 				self.el.empty();
-				html = html || model.lines.join('\n');
+				html = html || '';
 				self.el[0].insertAdjacentHTML(
 					'beforeend',
 					'<span>' + html + '</span>'
 				);
-				// var s = document.createElement('span');
-				// s.innerHTML = html || model.lines.join('\n');
-				// self.el[0].appendChild(s);
 			});
 
 		},
