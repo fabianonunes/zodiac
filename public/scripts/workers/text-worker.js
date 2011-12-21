@@ -19,19 +19,16 @@ var TextWorker = {
 
 		strut = sortBy(strut, 'line');
 
-		template(strut, function (chunk, context, bodies) {
-
-			var row = context.current();
+		strut.forEach(function (row) {
 
 			chunk.render(bodies.block, base.push({
 				line : row.line
 			}));
+		});
 
-		}, function (out) {
-			postMessage({
-				html : out,
-				length : strut.length
-			});
+		postMessage({
+			html : out,
+			length : strut.length
 		});
 
 	},
@@ -70,7 +67,8 @@ var TextWorker = {
 
 	difference : function (lines2, lines1) {
 
-		var value = [],
+		var value = '',
+			length = 0,
 			uq = {},
 			base = dust.makeBase();
 
@@ -80,13 +78,15 @@ var TextWorker = {
 
 		lines2.forEach(function (row) {
 			if(!uq[row]) {
-				value.push(row);
+				value += row;
+				value += '\n';
+				length += 1;
 			}
 		});
 
 		postMessage({
-			lines : value.join('\n'),
-			length : value.length
+			lines : value,
+			length : length
 		});
 
 	},
@@ -105,7 +105,8 @@ var TextWorker = {
 
 	intersection : function (lines2, lines1) {
 
-		var value = [],
+		var value = '',
+			length = 0,
 			o     = {},
 			base  = dust.makeBase();
 
@@ -118,21 +119,24 @@ var TextWorker = {
 			if(o[v] === true) {
 				// avoid duplicate lines
 				o[v] = false;
-				value.push(v);
+				value += row;
+				value += '\n';
+				length += 1;
 			}
 
 		});
 
 		postMessage({
-			lines : value.join('\n'),
-			length : value.length
+			lines : value,
+			length : length
 		});
 
 	},
 
 	symmetric : function (lines2, lines1) {
 
-		var value = [],
+		var value = '',
+			length = 0,
 			o     = {},
 			base  = dust.makeBase();
 
@@ -146,14 +150,15 @@ var TextWorker = {
 
 		Object.keys(o).forEach(function (v) {
 			if(o[v] === 1) {
-				value.push(v);
+				value += row;
+				value += '\n';
+				length += 1;
 			}
 		});
 
 		postMessage({
-			// html : out,
-			lines : value.join('\n'),
-			length : value.length
+			lines : value,
+			length : length
 		});
 
 
@@ -172,7 +177,8 @@ var TextWorker = {
 
 	grep : function (lines2, lines1) {
 
-		var value = [],
+		var value = '',
+			length = 0,
 			uq = {},
 			base = dust.makeBase();
 
@@ -181,6 +187,7 @@ var TextWorker = {
 		});
 
 		lines2.forEach(function (original) {
+
 			var v;
 			v = original;
 
@@ -189,14 +196,16 @@ var TextWorker = {
 			});
 
 			if(found) {
-				value.push(original);
+				value += original;
+				value += '\n';
+				length += 1;
 			}
+
 		});
 
 		postMessage({
-			html : out,
-			lines : value.join('\n'),
-			length : value.length
+			lines : value,
+			length : length
 		});
 
 	}
