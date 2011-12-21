@@ -119,7 +119,7 @@ var TextWorker = {
 			if(o[v] === true) {
 				// avoid duplicate lines
 				o[v] = false;
-				value += row;
+				value += v;
 				value += '\n';
 				length += 1;
 			}
@@ -150,7 +150,7 @@ var TextWorker = {
 
 		Object.keys(o).forEach(function (v) {
 			if(o[v] === 1) {
-				value += row;
+				value += v;
 				value += '\n';
 				length += 1;
 			}
