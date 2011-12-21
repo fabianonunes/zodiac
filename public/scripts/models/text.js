@@ -126,7 +126,7 @@ define([
 		},
 
 		work : function (optback) {
-			var path = '/scripts/workers/text-worker.js';
+			var path = '/scripts/workers/text-worker.min.js';
 			return worker( path, optback );
 		}
 
@@ -145,8 +145,8 @@ define([
 
 		updateDocument : function (m, html) {
 			this.currentIndex = m.id;
-			// html = html || '';
-			// this.trigger('change:currentIndex', m.id, m, html);
+			html = html || '';
+			this.trigger('change:currentIndex', m.id, m, html);
 		},
 
 		destroy : function (m) {
