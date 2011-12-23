@@ -13,7 +13,7 @@ define([
 			'dragenter'            : 'debouncedShow',
 			'drop'                 : 'onDrop',
 			'drop .options .icon'  : 'onOpDrop',
-			'click .remove'        : 'destroy',
+			'click .remove'        : 'untie',
 			'click .icon'          : 'showOptions',
 			'click .options .icon' : 'change',
 			'dragstart'            : 'onDrag'
@@ -27,6 +27,7 @@ define([
 
 			this.model.bind('change:op', this.renderOp);
 			this.model.bind('change:length', this.renderLength);
+			this.model.bind('destroy', this.destroy);
 
 			this._            = _.memoize(this.$);
 			this.element      = $(this.el).attr('draggable', 'true');
@@ -53,7 +54,7 @@ define([
 
 		},
 
-		// debouncing here, affects all instances
+		// debouncing here, affects all isnstances
 		debouncedShow : _.debounce(function debouncedShow (evt) {
 			if(evt !== false){
 				this.showOptions(0);
@@ -72,12 +73,23 @@ define([
 		},
 
 		destroy : function () {
-			this._ = null; // TODO: it's necesseray clear the memoized $ ?
-			this.model.view = null;
+
 			this.unbind();
+
+			this._ = null; // TODO: it's necesseray clear the memoized $ ?
 			this.subscription.detach(); // TODO: is this enough to clear subscriptions ?
 			this.element.off().slideUp('fast', this.remove);
-			this.model.destroy();
+
+			this.model.view = null;
+
+		},
+
+		untie : function () {
+			var model    = this.model,
+				next     = model.getNext(),
+				previous = model.getPrevious();
+			model.collection.tie(next, previous);
+			model.destroy();
 		},
 
 		render : function () {
@@ -154,13 +166,16 @@ define([
 		},
 
 		initialize: function () {
-			_.bindAll(this, 'render');
+
+			_.bindAll(this);
 			this.collection.bind('change:added', this.render);
+
 			this.contains = _.memoize(function (arg) {
 				return $.contains(this.el[0], arg);
 			}.bind(this), function (arg) {
 				return arg.id || ( arg.id = _.uniqueId('anonymous_element') );
 			});
+
 		},
 
 		render : function (model) {

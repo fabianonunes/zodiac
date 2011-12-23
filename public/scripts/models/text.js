@@ -14,11 +14,7 @@ define([
 
 			_.bindAll(this);
 
-			this.perform().done(function(){
-
-				this.trigger('change:added', this);
-
-			}.bind(this));
+			this.perform().done(this.trigger.bind(this, 'change:added', this));
 
 		},
 
@@ -48,8 +44,8 @@ define([
 		},
 
 		destroy : function () {
+			this.trigger("destroy", this); // bubbles to collection and removes this
 			this.unbind();
-			this.collection.destroy(this);
 		},
 
 		setPrevious : function (previous, options) {
@@ -92,7 +88,7 @@ define([
 		},
 
 		getPrevious : function () {
-			return this.collection.get(this.get('previous'));
+			return this.collection.get( this.get('previous') );
 		},
 
 		getNext : function () {
@@ -135,27 +131,13 @@ define([
 		mask         : /[1-9]\d{0,6}-\d{2}\.\d{4}\.\d\.\d{2}\.\d{4}/g,
 
 		initialize : function () {
-			_.bindAll(this, 'updateDocument', 'blend');
-			this.bind('destroy', this.remove);
+			_.bindAll(this);
 		},
 
 		updateDocument : function (m, html) {
 			this.currentIndex = m.id;
 			html = html || '';
 			this.trigger('change:currentIndex', m.id, m, html);
-		},
-
-		destroy : function (m) {
-			var next = m.getNext(), previous = m.getPrevious();
-			if (previous) {
-				previous.unbind('change:length', m.perform);
-			}
-			this.remove(m);
-			if (this.length) {
-				this.tie(next, previous);
-			} else {
-				this.reset();
-			}
 		},
 
 		tie : function (next, previous) {
@@ -196,6 +178,17 @@ define([
 
 		currentDocument : function () {
 			return this.get(this.currentIndex);
+		},
+
+		clear : function () {
+			var models = [];
+			this.forEach(function (m) {
+				models.push(m);
+				//_.defer(m.destroy);
+			});
+			models.forEach(function (m) {
+				m.destroy();
+			});
 		}
 
 	});
