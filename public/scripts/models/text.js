@@ -105,7 +105,12 @@ define([
 		destroy : function (m) {
 			var next = this.nextOf(m);
 			this.remove(m);
-			return next && next.perform();
+			if (this.length === 0) {
+				this.reset();
+			} else if (next) {
+console.log(next);
+				next.perform();
+			}
 		},
 
 		updateDocument : function (m) {

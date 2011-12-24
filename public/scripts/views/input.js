@@ -25,13 +25,9 @@ define([
 				batch    : 1,
 				callback : function jqmqCallback (text) {
 					text = text || '';
-					self.el[0].insertAdjacentHTML(
-						'beforeend',
-						'<span>' + text + '</span>'
-					);
+					self.el[0].insertAdjacentHTML('beforeend', text);
 				}
 			});
-
 
 		},
 
@@ -42,6 +38,7 @@ define([
 		},
 
 		updateText : function (id, model, html) {
+console.trace();
 			var substr, i = 0, step = 10000;
 
 			this.queue.clear();
