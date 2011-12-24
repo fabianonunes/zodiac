@@ -19,7 +19,6 @@ task('build', function (params) {
 
 	var requirejs = require('requirejs');
 	var config = {
-		optimize       : 'closure',
 		baseUrl        : 'public/scripts',
 		name           : 'main',
 		excludeShallow : ['underscore', 'dust', 'templates'],
