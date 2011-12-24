@@ -28,8 +28,7 @@ define([
 		},
 
 		destroy : function () {
-			var next = this.collection.nextOf(this);
-			this.trigger('destroy', this, next); // bubbles to collection, that removes this
+			this.trigger('destroy', this); // bubbles to collection, that removes this
 			this.unbind();
 		},
 
@@ -52,8 +51,7 @@ define([
 
 			this.set({ length : message.data.length });
 
-			var next = this.collection.nextOf(this);
-			this.trigger('perform', this, next);
+			this.trigger('perform', this);
 
 		},
 
@@ -96,15 +94,18 @@ define([
 		initialize : function () {
 			_.bindAll(this);
 			this.bind('perform', this.goNext);
-			this.bind('destroy', this.goNext);
+			this.bind('destroy', this.destroy);
 		},
 
-		goNext : function (m, next){
-			if (next) {
-				next.perform();
-			} else {
-				this.updateDocument(m);
-			}
+		goNext : function (m){
+			var next = this.nextOf(m);
+			return next ? next.perform() : this.updateDocument(m);
+		},
+
+		destroy : function (m) {
+			var next = this.nextOf(m);
+			this.remove(m);
+			return next && next.perform();
 		},
 
 		updateDocument : function (m) {
