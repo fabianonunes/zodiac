@@ -42,7 +42,7 @@ define([
 		},
 
 		updateText : function (id, model, html) {
-			var substr, i = 0, step = 5000;
+			var substr, i = 0, step = 10000;
 
 			this.queue.clear();
 			this.empty();
