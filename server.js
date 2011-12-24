@@ -36,6 +36,7 @@ app.configure(function(){
 app.configure('production', function () {
 	app.use(express.staticCache());
 	app.use(gzip.staticGzip(__dirname + '/public', { maxAge : 86400000*30 }));
+	app.listen(8080);
 });
 
 app.configure('development', function () {
@@ -59,11 +60,11 @@ app.configure('development', function () {
 	app.get('/dev', function(req, res){
 		res.render('dev');
 	});
-
+	app.listen(80);
 });
 
 app.get('/', function(req, res){
 	res.render('index');
 });
 
-app.listen(8080);
+

@@ -5,15 +5,9 @@ define([
 	var Text = Backbone.Model.extend({
 
 		initialize : function (attrs, options) {
-
 			_.bindAll(this);
-
 			this.collection = options.collection;
-
 			this.bind('change:op', this.perform, this);
-
-			// this.perform().done(this.trigger.bind(this, 'change:added', this));
-
 		},
 
 		perform : function () {
@@ -34,7 +28,8 @@ define([
 		},
 
 		destroy : function () {
-			this.trigger("destroy", this); // bubbles to collection, that removes this
+			var next = this.collection.nextOf(this);
+			this.trigger('destroy', this, next); // bubbles to collection, that removes this
 			this.unbind();
 		},
 
@@ -48,13 +43,7 @@ define([
 			}.bind(null, op, this.lines)).done( this.afterWorker );
 		},
 
-		activate : function (html) {
-			this.collection.updateDocument(this, html);
-		},
-
 		afterWorker : function (message) {
-
-			this.trigger('change:perform', this);
 
 			// for now, sort and uniq dont return lines
 			if ( !_.isUndefined(message.data.lines) ) {
@@ -63,25 +52,14 @@ define([
 
 			this.set({ length : message.data.length });
 
-			// // TODO: arrumar essa lógica. ao se adicionar um documento, ele
-			// // só deve ser ativado se for o último.
-			if(!this.getNext()){
-				// this.activate(message.data.lines);
-			}
+			var next = this.collection.nextOf(this);
+			this.trigger('perform', this, next);
 
 		},
 
 		getPrevious : function () {
 			var index = this.collection.indexOf(this);
 			return this.collection.at( index - 1 );
-		},
-
-		getNext : function () {
-			// TODO: improve this method
-			var id = this.id;
-			return this.collection.detect(function (model) {
-				return model.get('previous') === id;
-			});
 		},
 
 		getPath : function () {
@@ -103,7 +81,7 @@ define([
 		},
 
 		work : function (optback) {
-			var path = '/scripts/workers/text-worker.min.js';
+			var path = '/scripts/workers/text-worker.js';
 			return worker( path, optback );
 		}
 
@@ -117,17 +95,22 @@ define([
 
 		initialize : function () {
 			_.bindAll(this);
-			this.bind('change:perform', function (m) {
-				var index = this.indexOf(m);
-				var next = this.at(index + 1);
-				if (next) next.perform();
-			}.bind(this));
+			this.bind('perform', this.goNext);
+			this.bind('destroy', this.goNext);
 		},
 
-		updateDocument : function (m, html) {
-			this.currentIndex = m.id;
-			html = html || '';
-			this.trigger('change:currentIndex', m.id, m, html);
+		goNext : function (m, next){
+			if (next) {
+				next.perform();
+			} else {
+				this.updateDocument(m);
+			}
+		},
+
+		updateDocument : function (m) {
+			blob.readBlob(m.lines).done(function (event) {
+				this.trigger('change:currentIndex', m.id, m, event.target.result);
+			}.bind(this));
 		},
 
 		blend : function (op, file, previous) {
@@ -137,9 +120,7 @@ define([
 				fileName   : file.name,
 				origin     : file,
 				op         : op
-			}, {
-				collection : this
-			});
+			}, { collection : this });
 
 			if (previous) {
 				this.add(m, {
@@ -166,6 +147,11 @@ define([
 
 		currentDocument : function () {
 			return this.get(this.currentIndex);
+		},
+
+		nextOf : function (model) {
+			var index = this.indexOf(model);
+			return this.at(index + 1);
 		},
 
 		clear : function () {

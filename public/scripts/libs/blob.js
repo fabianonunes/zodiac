@@ -45,6 +45,14 @@ define([
 
 	};
 
+	blob.readBlob = function (file) {
+		return $.Deferred(function (dfd) {
+			var reader = new FileReader();
+			reader.onload = dfd.resolve;
+			reader.readAsText(file);
+		});
+	};
+
 	return blob;
 
 });

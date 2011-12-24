@@ -23,6 +23,7 @@ define([
 
 		initialize : function () {
 
+
 			_.bindAll(this);
 
 			this.model.bind('change:op', this.renderOp);
@@ -85,11 +86,7 @@ define([
 		},
 
 		untie : function () {
-			var model    = this.model,
-				next     = model.getNext(),
-				previous = model.getPrevious();
-			model.collection.tie(next, previous);
-			model.destroy();
+			this.model.destroy();
 		},
 
 		render : function () {
@@ -180,7 +177,7 @@ define([
 
 		render : function (model) {
 
-			var next = model.getNext();
+			var next = this.collection.nextOf(model);
 
 			new PathView({ model : model })
 			.render()
