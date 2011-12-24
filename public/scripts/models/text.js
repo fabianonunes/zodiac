@@ -20,7 +20,7 @@ define([
 		expand : function () {
 			var previous = this.getPrevious();
 			return {
-				op       : this.get('op'),
+				op       : previous ? this.get('op') : 'charge',
 				previous : previous && previous.lines,
 				file     : this.get('origin'),
 				mask     : this.collection.mask
