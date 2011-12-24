@@ -21,7 +21,7 @@ define([
 			var self = this;
 
 			this.queue = jqmq({
-				delay    : 50,
+				delay    : 25,
 				batch    : 1,
 				callback : function jqmqCallback (text) {
 					text = text || '';
