@@ -6,54 +6,36 @@ define([
 
 		initialize : function (attrs, options) {
 
-			this.collection = options.collection;
-			this.setPrevious(options.previous, { silent : true });
-
-			this.bind('change:op', this.perform, this);
-			this.bind('change:previous', this.perform, this);
-
 			_.bindAll(this);
 
-			this.perform().done(this.trigger.bind(this, 'change:added', this));
+			this.collection = options.collection;
+
+			this.bind('change:op', this.perform, this);
+
+			// this.perform().done(this.trigger.bind(this, 'change:added', this));
 
 		},
 
 		perform : function () {
-
-			var promise = this.work( this.expand )
+			return this.work( this.expand )
 				.done( this.afterWorker );
-
-			var next = this.getNext();
-			if ( next ) {
-				next.perform();
-			}
-
-			return promise;
-
 		},
 
 		// when adding the properties to a queue, the values
 		// must be the current values when invoking, not when added
 		expand : function () {
+			var previous = this.getPrevious();
 			return {
 				op       : this.get('op'),
-				previous : this.getPrevious() && this.getPrevious().lines,
+				previous : previous && previous.lines,
 				file     : this.get('origin'),
 				mask     : this.collection.mask
 			};
 		},
 
 		destroy : function () {
-			this.trigger("destroy", this); // bubbles to collection and removes this
+			this.trigger("destroy", this); // bubbles to collection, that removes this
 			this.unbind();
-		},
-
-		setPrevious : function (previous, options) {
-			if (previous) {
-				this.set({ previous : previous.id }, options);
-			} else {
-				this.set({ op : 'charge' });
-			}
 		},
 
 		isActivated : function () {
@@ -72,6 +54,8 @@ define([
 
 		afterWorker : function (message) {
 
+			this.trigger('change:perform', this);
+
 			// for now, sort and uniq dont return lines
 			if ( !_.isUndefined(message.data.lines) ) {
 				this.lines = blob.createBlob(message.data.lines);
@@ -82,13 +66,14 @@ define([
 			// // TODO: arrumar essa lógica. ao se adicionar um documento, ele
 			// // só deve ser ativado se for o último.
 			if(!this.getNext()){
-				this.activate(message.data.lines);
+				// this.activate(message.data.lines);
 			}
 
 		},
 
 		getPrevious : function () {
-			return this.collection.get( this.get('previous') );
+			var index = this.collection.indexOf(this);
+			return this.collection.at( index - 1 );
 		},
 
 		getNext : function () {
@@ -132,6 +117,11 @@ define([
 
 		initialize : function () {
 			_.bindAll(this);
+			this.bind('change:perform', function (m) {
+				var index = this.indexOf(m);
+				var next = this.at(index + 1);
+				if (next) next.perform();
+			}.bind(this));
 		},
 
 		updateDocument : function (m, html) {
@@ -140,17 +130,7 @@ define([
 			this.trigger('change:currentIndex', m.id, m, html);
 		},
 
-		tie : function (next, previous) {
-			if (next) {
-				next.setPrevious(previous);
-			} else if (previous) {
-				previous.activate();
-			}
-		},
-
 		blend : function (op, file, previous) {
-
-			var next = previous && this.get(previous).getNext();
 
 			var m = new Text({
 				id         : _.uniqueId('text'),
@@ -158,15 +138,23 @@ define([
 				origin     : file,
 				op         : op
 			}, {
-				collection : this,
-				previous   : this.get(previous) || this.currentDocument()
+				collection : this
 			});
 
-			if(next){
-				this.tie(next, m);
+			if (previous) {
+				this.add(m, {
+					at       : this.indexOf( this.get(previous) ) + 1,
+					silent   : true,
+					previous : previous
+				});
+			} else {
+				this.add(m, {
+					silent : true,
+					previous : previous
+				});
 			}
 
-			this.add(m, { silent : true, previous : previous });
+			m.perform().done(m.trigger.bind(m, 'change:added', m));
 
 		},
 
