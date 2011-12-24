@@ -21,7 +21,7 @@ define([
 			var self = this;
 
 			this.queue = jqmq({
-				delay    : 25,
+				delay    : 50,
 				batch    : 1,
 				callback : function jqmqCallback (text) {
 					text = text || '';
@@ -42,7 +42,6 @@ define([
 		},
 
 		updateText : function (id, model, html) {
-
 			var substr, i = 0, step = 5000;
 
 			this.queue.clear();
