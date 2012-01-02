@@ -108,7 +108,6 @@ define([
 			if (this.length === 0) {
 				this.reset();
 			} else if (next) {
-console.log(next);
 				next.perform();
 			}
 		},

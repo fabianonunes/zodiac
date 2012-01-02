@@ -23,7 +23,6 @@ define([
 
 		initialize : function () {
 
-
 			_.bindAll(this);
 
 			this.model.bind('change:op', this.renderOp);
@@ -39,7 +38,10 @@ define([
 
 		hideOptions : function hideOptions (delay) {
 			this.debouncedShow(false); // clear the debouncedShow timeout
-			this._('.options').stop(true).delay(delay || 0).animate({ height : 0 });
+			this._('.options')
+				.stop(true)
+				.delay(delay || 0)
+				.animate({ height : 0 });
 		},
 
 		showOptions : function (delay) {
@@ -49,9 +51,12 @@ define([
 			this.subscription.attach();
 
 			var options = this._('.options');
-			options.stop(true).delay(delay || 0).animate({
-				height : options.prop('scrollHeight')
-			});
+			options
+				.stop(true)
+				.delay(delay || 0)
+				.animate({
+					height : options.prop('scrollHeight')
+				});
 
 		},
 
@@ -158,8 +163,8 @@ define([
 		template : 'path',
 		events : {
 			'dragleave' : 'dragLeave',
-			'dragover' : 'cancel',
-			'drop' : 'cancel'
+			'dragover'  : 'cancel',
+			'drop'      : 'cancel'
 		},
 
 		initialize: function () {
@@ -180,15 +185,15 @@ define([
 			var next = this.collection.nextOf(model);
 
 			new PathView({ model : model })
-			.render()
-			.then(function (el) {
-				var $el = $(el).hide();
-				if(next){
-					$el.insertBefore(next.view.el).slideDown('fast');
-				} else {
-					$el.appendTo(this.el).show();
-				}
-			}.bind(this));
+				.render()
+				.then(function (el) {
+					var $el = $(el).hide();
+					if(next){
+						$el.insertBefore(next.view.el).slideDown('fast');
+					} else {
+						$el.appendTo(this.el).show();
+					}
+				}.bind(this));
 
 		},
 

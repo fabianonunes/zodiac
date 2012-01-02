@@ -38,23 +38,16 @@ define([
 		},
 
 		updateText : function (id, model, html) {
-console.trace();
 			var substr, i = 0, step = 10000;
 
 			this.queue.clear();
-			this.empty();
+			this.el.empty();
 
 			while( (substr = html.substring(i, i + step)) ){
 				this.queue.add(substr);
 				i += step;
 			}
 
-		},
-
-		empty : function () {
-			while (this.el[0].firstChild) {
-				this.el[0].removeChild(this.el[0].firstChild);
-			}
 		}
 
 	});
