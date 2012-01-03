@@ -1,34 +1,26 @@
 
-importScripts('../libs/underscore-1.2.2.min.js');
-importScripts('../libs/dust-0.3.0.min.js');
-importScripts('../templates.js');
-
 var TextWorker = {
 
 	sort : function (lines) {
 
-		var strut = [],
-			base = dust.makeBase();
+		var value  = '',
+			length = 0;
 
-		lines.forEach(function (v, k) {
-			if(!v) return;
-			strut.push({
-				line : v
-			});
+		var strut = lines.map(function (v) {
+			return { line : v };
 		});
 
 		strut = sortBy(strut, 'line');
 
 		strut.forEach(function (row) {
-
-			chunk.render(bodies.block, base.push({
-				line : row.line
-			}));
+			value += row;
+			value += '\n';
+			length += 1;
 		});
 
 		postMessage({
-			html : out,
-			length : strut.length
+			lines : value,
+			length : length
 		});
 
 	},
@@ -37,30 +29,22 @@ var TextWorker = {
 
 		var strut  = {},
 			length = 0,
-			base   = dust.makeBase();
+			value = '';
 
-		template(lines, function (chunk, context, bodies) {
+		lines.forEach(function (row) {
 
-			var value = context.current();
-
-			if (value && !strut[value]) {
-
-				strut[value] = true;
-
-				chunk.render(
-					bodies.block,
-					base.push({ line : value })
-				);
-
+			if (row && !strut[row]) {
+				strut[row] = true;
+				value += row;
+				value += '\n';
 				length += 1;
-
 			}
 
-		}, function (out) {
-			postMessage({
-				html : out,
-				length : length
-			});
+		});
+
+		postMessage({
+			lines : value,
+			length : length
 		});
 
 	},
@@ -69,8 +53,7 @@ var TextWorker = {
 
 		var value = '',
 			length = 0,
-			uq = {},
-			base = dust.makeBase();
+			uq = {};
 
 		lines1.forEach(function (v, k) {
 			uq[v] = true;
@@ -93,8 +76,7 @@ var TextWorker = {
 
 	union : function (lines2, lines1) {
 
-		var value = lines1.concat(lines2),
-			base = dust.makeBase();
+		var value = lines1.concat(lines2);
 
 		postMessage({
 			lines : value.join('\n'),
@@ -107,8 +89,7 @@ var TextWorker = {
 
 		var value = '',
 			length = 0,
-			o     = {},
-			base  = dust.makeBase();
+			o     = {};
 
 		lines2.forEach(function (v, k) {
 			o[v] = true;
@@ -137,8 +118,7 @@ var TextWorker = {
 
 		var value = '',
 			length = 0,
-			o     = {},
-			base  = dust.makeBase();
+			o     = {};
 
 		lines2.forEach(function (v) {
 			o[v] = +[o[v]] + 1;
@@ -179,8 +159,7 @@ var TextWorker = {
 
 		var value = '',
 			length = 0,
-			uq = {},
-			base = dust.makeBase();
+			uq = {};
 
 		var regexes = lines1.map(function (v) {
 			return new RegExp(v, "i");
@@ -226,23 +205,6 @@ onmessage = function (message) {
 	}
 
 };
-
-
-function template(data, stream, cb) {
-
-	var streamed = '';
-
-	dust.stream("row-stream", {
-		data : data,
-		stream : stream
-	}).on("data", function (data) {
-		streamed += data;
-	})
-	.on("end", function () {
-		cb(streamed);
-	});
-
-}
 
 function readFile(file, mask, callback) {
 	if(!file){
