@@ -16,7 +16,7 @@ define([
 			_.bindAll(this);
 
 			this.collection.bind("change:currentIndex", this.updateText);
-			this.collection.bind("reset", this.empty);
+			this.collection.bind("reset", this.el.empty.bind(this.el));
 
 			var self = this;
 
@@ -38,12 +38,13 @@ define([
 		},
 
 		updateText : function (id, model, html) {
+
 			var substr, i = 0, step = 10000;
 
 			this.queue.clear();
 			this.el.empty();
 
-			while( (substr = html.substring(i, i + step)) ){
+			while ( (substr = html.substring(i, i + step)) ) {
 				this.queue.add(substr);
 				i += step;
 			}
