@@ -53,6 +53,16 @@ define([
 		});
 	};
 
+	blob.downloadURL = function (file, name) {
+		var mime = file.type;
+		return $.Deferred(function (dfd) {
+			blob.readBlob(file).then(function (event) {
+				var data = event.target.result;
+				dfd.resolve(mime+':'+name+'.txt:data:'+mime+';base64,'+window.btoa(data));
+			});
+		});
+	};
+
 	return blob;
 
 });
