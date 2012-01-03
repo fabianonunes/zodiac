@@ -5,8 +5,9 @@ define([
 	'models/text',
 	'views/dropper',
 	'views/input',
-	'views/path'
-], function (_, dust, TextPeer, Dropper, Input, Path) {
+	'views/path',
+	'views/toolbar'
+], function (_, dust, TextPeer, Dropper, Input, Path, Toolbar) {
 
 	var app = {};
 
@@ -20,9 +21,16 @@ define([
 		new Input({
 			collection: this.documents
 		});
+
 		new Path({
+			collection: this.documents,
+			el: $('.path')
+		});
+
+		new Toolbar({
 			collection: this.documents
 		});
+
 
 	};
 

@@ -5,59 +5,31 @@ define([
 	var Text = Backbone.Model.extend({
 
 		initialize : function (attrs, options) {
-
-			this.collection = options.collection;
-			this.setPrevious(options.previous, { silent : true });
-
-			this.bind('change:op', this.perform, this);
-			this.bind('change:previous', this.perform, this);
-
 			_.bindAll(this);
-
-			this.perform().done(function(){
-
-				this.trigger('change:added', this);
-
-			}.bind(this));
-
+			this.collection = options.collection;
+			this.bind('change:op', this.perform, this);
 		},
 
 		perform : function () {
-
-			var promise = this.work( this.expand )
+			return this.work( this.expand )
 				.done( this.afterWorker );
-
-			var next = this.getNext();
-			if ( next ) {
-				next.perform();
-			}
-
-			return promise;
-
 		},
 
 		// when adding the properties to a queue, the values
 		// must be the current values when invoking, not when added
 		expand : function () {
+			var previous = this.getPrevious();
 			return {
-				op       : this.get('op'),
-				previous : this.getPrevious() && this.getPrevious().lines,
+				op       : previous ? this.get('op') : 'charge',
+				previous : previous && previous.lines,
 				file     : this.get('origin'),
 				mask     : this.collection.mask
 			};
 		},
 
-		destroy : function () {
+		destroy : function (options) {
+			this.trigger('destroy', this); // bubbles to collection, that removes this
 			this.unbind();
-			this.collection.destroy(this);
-		},
-
-		setPrevious : function (previous, options) {
-			if (previous) {
-				this.set({ previous : previous.id }, options);
-			} else {
-				this.set({ op : 'charge' });
-			}
 		},
 
 		isActivated : function () {
@@ -65,13 +37,7 @@ define([
 		},
 
 		acessor : function (op) {
-			this.work(function (op, lines) {
-				return { op : op, lines : lines };
-			}.bind(null, op, this.lines)).done( this.afterWorker );
-		},
-
-		activate : function (html) {
-			this.collection.updateDocument(this, html);
+			this.work({ op : op, lines : lines }).done( this.afterWorker );
 		},
 
 		afterWorker : function (message) {
@@ -83,24 +49,13 @@ define([
 
 			this.set({ length : message.data.length });
 
-			// // TODO: arrumar essa lógica. ao se adicionar um documento, ele
-			// // só deve ser ativado se for o último.
-			if(!this.getNext()){
-				this.activate(message.data.lines);
-			}
+			this.trigger('perform', this);
 
 		},
 
 		getPrevious : function () {
-			return this.collection.get(this.get('previous'));
-		},
-
-		getNext : function () {
-			// TODO: improve this method
-			var id = this.id;
-			return this.collection.detect(function (model) {
-				return model.get('previous') === id;
-			});
+			var index = this.collection.indexOf(this);
+			return this.collection.at( index - 1 );
 		},
 
 		getPath : function () {
@@ -135,56 +90,47 @@ define([
 		mask         : /[1-9]\d{0,6}-\d{2}\.\d{4}\.\d\.\d{2}\.\d{4}/g,
 
 		initialize : function () {
-			_.bindAll(this, 'updateDocument', 'blend');
-			this.bind('destroy', this.remove);
+			_.bindAll(this);
+			this.bind('perform', this.goNext);
+			this.bind('destroy', this.destroy);
 		},
 
-		updateDocument : function (m, html) {
-			this.currentIndex = m.id;
-			html = html || '';
-			this.trigger('change:currentIndex', m.id, m, html);
+		goNext : function (m){
+			var next = this.nextOf(m);
+			return next ? next.perform() : this.updateDocument(m);
 		},
 
 		destroy : function (m) {
-			var next = m.getNext(), previous = m.getPrevious();
-			if (previous) {
-				previous.unbind('change:length', m.perform);
-			}
+			var next = this.nextOf(m);
 			this.remove(m);
-			if (this.length) {
-				this.tie(next, previous);
-			} else {
+			if (this.length < 1) {
 				this.reset();
+			} else if (next) {
+				next.perform();
 			}
 		},
 
-		tie : function (next, previous) {
-			if (next) {
-				next.setPrevious(previous);
-			} else if (previous) {
-				previous.activate();
-			}
+		updateDocument : function (m) {
+			blob.readBlob(m.lines).done(function (event) {
+				this.trigger('change:currentIndex', m.id, m, event.target.result);
+			}.bind(this));
 		},
 
 		blend : function (op, file, previous) {
-
-			var next = previous && this.get(previous).getNext();
 
 			var m = new Text({
 				id         : _.uniqueId('text'),
 				fileName   : file.name,
 				origin     : file,
 				op         : op
-			}, {
-				collection : this,
-				previous   : this.get(previous) || this.currentDocument()
+			}, { collection : this });
+
+			this.add(m, {
+				at       : previous ? this.indexOf( this.get(previous) ) + 1 : Number.MAX_VALUE,
+				silent   : true
 			});
 
-			if(next){
-				this.tie(next, m);
-			}
-
-			this.add(m, { silent : true, previous : previous });
+			m.perform().done(m.trigger.bind(m, 'change:added', m));
 
 		},
 
@@ -196,6 +142,23 @@ define([
 
 		currentDocument : function () {
 			return this.get(this.currentIndex);
+		},
+
+		nextOf : function (model) {
+			var index = this.indexOf(model);
+			return this.at(index + 1);
+		},
+
+		clear : function () {
+			var models = [];
+			this.forEach(function (m) {
+				models.push(m);
+				_.defer(m.destroy);
+			});
+			models.forEach(function (m) {
+				// m.destroy();
+			});
+			this.reset();
 		}
 
 	});

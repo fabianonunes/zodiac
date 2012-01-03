@@ -1,6 +1,6 @@
 define([
-	'jquery', 'underscore', 'backbone', 'renderer', 'libs/publisher', 'libs/blob'
-], function ($, _, Backbone, renderer, publisher, blob) {
+	'jquery', 'underscore', 'backbone', 'renderer', 'libs/publisher', 'libs/blob', 'libs/event'
+], function ($, _, Backbone, renderer, publisher, blob, events) {
 
 	var PathView, PathListView;
 
@@ -13,10 +13,10 @@ define([
 			'dragenter'            : 'debouncedShow',
 			'drop'                 : 'onDrop',
 			'drop .options .icon'  : 'onOpDrop',
-			'click .remove'        : 'destroy',
+			'click .remove'        : 'untie',
 			'click .icon'          : 'showOptions',
-			'click .options .icon' : 'change',
-			'dragstart'            : 'onDrag'
+			'click .options .icon' : 'change'
+			// 'dblclick'             : 'onDrag'
 		},
 
 		template : 'path',
@@ -27,24 +27,25 @@ define([
 
 			this.model.bind('change:op', this.renderOp);
 			this.model.bind('change:length', this.renderLength);
+			this.model.bind('destroy', this.destroy);
 
 			this._            = _.memoize(this.$);
 			this.element      = $(this.el).attr('draggable', 'true');
-			this.model.view   = this;
 			this.subscription = publisher.subscribe('show', this.hideOptions);
 
 		},
 
 		hideOptions : function hideOptions (delay) {
 			this.debouncedShow(false); // clear the debouncedShow timeout
-			this._('.options').stop(true).delay(delay || 0).animate({ height : 0 });
+			this._('.options')
+				.stop(true)
+				.delay(delay || 0)
+				.animate({ height : 0 });
 		},
 
 		showOptions : function (delay) {
 
-			this.subscription.detach();
 			publisher.publish('show', 400);
-			this.subscription.attach();
 
 			var options = this._('.options');
 			options.stop(true).delay(delay || 0).animate({
@@ -55,42 +56,42 @@ define([
 
 		// debouncing here, affects all instances
 		debouncedShow : _.debounce(function debouncedShow (evt) {
-			if(evt !== false){
+			if(evt){
 				this.showOptions(0);
 				return this.cancel(evt);
 			}
 		}, 450),
 
 		onDrag : function (event) {
-			event = event.originalEvent;
-			event.dataTransfer.setData(
-				'DownloadURL',
-				'text/plain:' + this.model.getPath() +
-					'.txt:data:text/plain;base64,' +
-					window.btoa(this.model.lines.join('\n'))
-			);
+			event = event.originalEvent || event;
+			var m = this.model;
+			var self = this;
+			blob.downloadURL( m.lines, m.getPath() ).then(function (url) {
+				var a = $('<a></a>');
+				a.attr('href', 'data:text/plain;base64,4oiaDQo%3D');
+				a.text('olá');
+				a.appendTo(self.el);
+			});
 		},
 
 		destroy : function () {
-			this._ = null; // TODO: it's necesseray clear the memoized $ ?
-			this.model.view = null;
 			this.unbind();
+			this._ = null; // TODO: it's necesseray clear the memoized $ ?
 			this.subscription.detach(); // TODO: is this enough to clear subscriptions ?
 			this.element.off().slideUp('fast', this.remove);
+		},
+
+		untie : function () {
 			this.model.destroy();
 		},
 
 		render : function () {
-
-			var dfd = $.Deferred();
-
-			renderer({
-				documents : [this.model.attributes],
-				ops : oprs
-			}, this.template, this.el, dfd.resolve.bind(dfd, this.el));
-
-			return dfd.promise();
-
+			return $.Deferred(function (dfd) {
+				renderer({
+					documents : [this.model.attributes],
+					ops : oprs
+				}, this.template, this.el, dfd.resolve.bind(dfd, this.el));
+			}.bind(this));
 		},
 
 		renderOp : function (model, op) {
@@ -107,14 +108,7 @@ define([
 				.fadeIn('fast');
 		},
 
-		cancel : function(evt) {
-			evt.preventDefault();
-			var dt = evt.originalEvent.dataTransfer;
-			if (dt) {
-				dt.dropEffect = 'copy';
-			}
-			return false;
-		},
+		cancel : events.cancel,
 
 		onDrop : function(evt) {
 			this.hideOptions();
@@ -145,62 +139,55 @@ define([
 
 	PathListView = Backbone.View.extend({
 
-		el: $('.path'),
 		template : 'path',
 		events : {
 			'dragleave' : 'dragLeave',
-			'dragover' : 'cancel',
-			'drop' : 'cancel'
+			'dragover'  : 'cancel',
+			'drop'      : 'cancel'
 		},
 
 		initialize: function () {
-			_.bindAll(this, 'render');
+
+			_.bindAll(this);
 			this.collection.bind('change:added', this.render);
+
 			this.contains = _.memoize(function (arg) {
 				return $.contains(this.el[0], arg);
 			}.bind(this), function (arg) {
 				return arg.id || ( arg.id = _.uniqueId('anonymous_element') );
 			});
+
 		},
 
 		render : function (model) {
+			var index = this.collection.indexOf(model),
+				view = new PathView({ model : model });
+			view.render().then(this.addRow.bind(this, index));
+		},
 
-			var next = model.getNext();
-
-			new PathView({ model : model })
-			.render()
-			.then(function (el) {
-				var $el = $(el).hide();
-				if(next){
-					$el.insertBefore(next.view.el).slideDown('fast');
-				} else {
-					$el.appendTo(this.el).show();
-				}
-			}.bind(this));
-
+		addRow : function (index, el) {
+			var $el = $(el).hide(),
+			previous = this.$('>div').eq(index);
+			if ( previous.length ) {
+				$el.insertBefore(previous).slideDown('fast');
+			} else {
+				$el.appendTo(this.el).show();
+			}
 		},
 
 		dragLeave : function(evt) {
 
-			var x = evt.originalEvent.clientX;
-			var y = evt.originalEvent.clientY;
-
-			var related = document.elementFromPoint(x, y);
+			var related = events.elementFromCursor(evt);
 
 			if(!related || related !== this.el) {
-				var inside = this.contains(related);
-				if(!inside){
+				if(!this.contains(related)){
 					publisher.publish('show', 0); // forces all options to close at once
 				}
 			}
 
 		},
 
-		cancel : function(evt) {
-			evt.preventDefault();
-			evt.originalEvent.dataTransfer.dropEffect = 'copy';
-			return false;
-		}
+		cancel : events.cancel
 
 	});
 

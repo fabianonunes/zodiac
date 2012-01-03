@@ -1,7 +1,7 @@
 
 define([
-	'jquery', 'underscore', 'backbone'
-], function ($, _, Backbone) {
+	'jquery', 'underscore', 'backbone', 'libs/jqmq'
+], function ($, _, Backbone, jqmq) {
 
 	var InputView = Backbone.View.extend({
 
@@ -16,7 +16,18 @@ define([
 			_.bindAll(this);
 
 			this.collection.bind("change:currentIndex", this.updateText);
-			this.collection.bind("reset", this.empty);
+			this.collection.bind("reset", this.el.empty.bind(this.el));
+
+			var self = this;
+
+			this.queue = jqmq({
+				delay    : 50,
+				batch    : 1,
+				callback : function jqmqCallback (text) {
+					text = text || '';
+					self.el[0].insertAdjacentHTML('beforeend', text);
+				}
+			});
 
 		},
 
@@ -28,23 +39,16 @@ define([
 
 		updateText : function (id, model, html) {
 
-			var self = this;
+			var substr, i = 0, step = 10000;
 
-			_.defer(function () {
-				self.el.empty();
-				html = html || '';
-				self.el[0].insertAdjacentHTML(
-					'beforeend',
-					'<span>' + html + '</span>'
-				);
-			});
+			this.queue.clear();
+			this.el.empty();
 
-		},
-
-		empty : function () {
-			while (this.el[0].firstChild) {
-				this.el[0].removeChild(this.el[0].firstChild);
+			while ( (substr = html.substring(i, i + step)) ) {
+				this.queue.add(substr);
+				i += step;
 			}
+
 		}
 
 	});

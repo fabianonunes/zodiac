@@ -9,7 +9,8 @@ define(['libs/jqmq', 'jquery', 'underscore'], function (jqmq, $, _) {
 		callback : function jqmqCallback (item) {
 			item.worker.onmessage = onresponse(item.worker, item.success, queue.next);
 			item.worker.onerror = onresponse(item.worker, item.error, queue.next);
-			item.worker.postMessage( item.optback() );
+			var message = _.isFunction(item.optback) ? item.optback() : item.optback;
+			item.worker.postMessage( message );
 		}
 	});
 
