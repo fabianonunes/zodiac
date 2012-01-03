@@ -12,6 +12,7 @@ task('deploy', function (params) {
 desc('build javascript/css');
 task('build', function (params) {
 
+	jake.Task.clean.invoke();
 	jake.Task.minify.invoke();
 	jake.Task.templates.invoke();
 
@@ -21,7 +22,7 @@ task('build', function (params) {
 	var config = {
 		baseUrl        : 'public/scripts',
 		name           : 'main',
-		excludeShallow : ['underscore', 'dust', 'templates'],
+		// excludeShallow : ['underscore', 'dust', 'templates'],
 		paths          : require('./public/scripts/config').paths,
 		out            : 'public/scripts/production.js',
 		css            : 'public/styles/style.css'
@@ -125,5 +126,21 @@ task('templates', function  (params) {
 	compiled += ' return dust; });';
 
 	fs.writeFileSync('public/scripts/templates.js', compiled, 'utf8');
+
+});
+
+desc('remove production files');
+task('clean', function  (params) {
+
+	console.log('Removing prodution files'.green);
+
+	var list = new jake.FileList();
+	list.include('public/scripts/production-*');
+	list.include('public/styles/production-*');
+
+	list.toArray().forEach(function (v) {
+		fs.unlinkSync(v);
+	});
+
 
 });
