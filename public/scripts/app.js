@@ -21,9 +21,12 @@ define([
 		new Input({
 			collection: this.documents
 		});
+
 		new Path({
-			collection: this.documents
+			collection: this.documents,
+			el: $('.path')
 		});
+
 		new Toolbar({
 			collection: this.documents
 		});
