@@ -27,7 +27,7 @@ define([
 			};
 		},
 
-		destroy : function () {
+		destroy : function (options) {
 			this.trigger('destroy', this); // bubbles to collection, that removes this
 			this.unbind();
 		},
@@ -37,9 +37,7 @@ define([
 		},
 
 		acessor : function (op) {
-			this.work(function (op, lines) {
-				return { op : op, lines : lines };
-			}.bind(null, op, this.lines)).done( this.afterWorker );
+			this.work({ op : op, lines : lines }).done( this.afterWorker );
 		},
 
 		afterWorker : function (message) {
@@ -79,7 +77,7 @@ define([
 		},
 
 		work : function (optback) {
-			var path = '/scripts/workers/text-worker.min.js';
+			var path = '/scripts/workers/text-worker.js';
 			return worker( path, optback );
 		}
 
@@ -105,7 +103,7 @@ define([
 		destroy : function (m) {
 			var next = this.nextOf(m);
 			this.remove(m);
-			if (this.length === 0) {
+			if (this.length < 1) {
 				this.reset();
 			} else if (next) {
 				next.perform();
@@ -127,18 +125,10 @@ define([
 				op         : op
 			}, { collection : this });
 
-			if (previous) {
-				this.add(m, {
-					at       : this.indexOf( this.get(previous) ) + 1,
-					silent   : true,
-					previous : previous
-				});
-			} else {
-				this.add(m, {
-					silent : true,
-					previous : previous
-				});
-			}
+			this.add(m, {
+				at       : previous ? this.indexOf( this.get(previous) ) + 1 : Number.MAX_VALUE,
+				silent   : true
+			});
 
 			m.perform().done(m.trigger.bind(m, 'change:added', m));
 
@@ -163,11 +153,12 @@ define([
 			var models = [];
 			this.forEach(function (m) {
 				models.push(m);
-				//_.defer(m.destroy);
+				_.defer(m.destroy);
 			});
 			models.forEach(function (m) {
-				m.destroy();
+				// m.destroy();
 			});
+			this.reset();
 		}
 
 	});
