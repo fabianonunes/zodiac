@@ -77,7 +77,7 @@ define([
 		},
 
 		work : function (optback) {
-			var path = '/scripts/workers/text-worker.js';
+			var path = '/scripts/workers/text-worker.min.js';
 			return worker( path, optback );
 		}
 
