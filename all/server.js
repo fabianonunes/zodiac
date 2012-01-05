@@ -1,70 +1,49 @@
 #!/usr/local/bin/node
 
+var matador = require('matador'),
+	routes = require('./app/config/routes'),
+	fs = require('fs');
+
 // dotcloud plataform doesn't support unix environment variable
 // this trick must be setted before requiring express
 if (process.env.HOME == '/home/dotcloud') {
 	process.env.NODE_ENV = 'production';
 }
 
-var fs          = require('fs'),
-	path        = require('path'),
-	express     = require('express'),
-	app         = express.createServer(),
-	stylus      = require('stylus'),
-	envfile     = process.env.HOME + '/environment.json',
-	environment = JSON.parse( fs.readFileSync(envfile) ),
-	version     = fs.readFileSync('version'),
-	gzip        = require('connect-gzip');
+app.configure(function () {
 
-app.configure(function(){
+	app.set('models', __dirname + '/app/models');
+	app.set('helpers', __dirname + '/app/helpers');
+	app.set('views', __dirname + '/app/views');
+	app.set('controllers', __dirname + '/app/controllers');
 
-	app.set('views', __dirname + '/views');
 	app.set('view engine', 'jade');
 	app.set('view options', { layout : false });
 	app.enable('view cache');
-	app.use(express.bodyParser());
-	app.use(express.methodOverride());
 
-	app.set('title', 'zodiac');
-	app.set('version', version);
+	app.use(matador.cookieParser());
+	app.use(matador.bodyParser());
+	app.use(matador.methodOverride());
 
-	app.use(app.router);
-	app.use(express.favicon(__dirname + '/public/images/favicon.ico'));
+	app.set('version', fs.readFileSync(__dirname + '/version'));
 
-});
-
-app.configure('production', function () {
-	app.use(express.staticCache());
-	app.use(gzip.staticGzip(__dirname + '/public', { maxAge : 86400000*30 }));
-	app.listen(8080);
 });
 
 app.configure('development', function () {
-	app.use(express.errorHandler({
-		showStack: true,
-		dumpExceptions: true
+	app.use(matador.errorHandler({
+		dumpExceptions: true,
+		showStack: true
 	}));
-	app.use(stylus.middleware({
-		src: __dirname + '/public',
-		compile: function(str, path) {
-			return stylus(str)
-			.define('url', stylus.url({
-				paths: [__dirname + '/public/images']
-			}))
-			.set('compress', true)
-			.set('filename', path)
-			.include(require('nib').path);
-		}
-	}));
-	app.use(express['static']( __dirname + '/public'));
-	app.get('/dev', function(req, res){
-		res.render('dev');
-	});
-	app.listen(80);
+	app.use(matador['static']( __dirname + '/public'));
+	routes.root.push(['get', '/dev', 'Dev']);
 });
 
-app.get('/', function(req, res){
-	res.render('index');
+app.configure('production', function () {
+	var gzip = require('connect-gzip');
+	app.use(matador.errorHandler());
+	app.use(matador.staticCache());
+	app.use(gzip.staticGzip(__dirname + '/public', { maxAge : 86400000*30 }));
 });
 
-
+matador.mount(routes);
+app.listen(8080);
