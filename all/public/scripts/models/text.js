@@ -1,19 +1,16 @@
 /*global define*/
-define([
-	'underscore', 'backbone', 'libs/worker', 'libs/blob'
-], function (_, Backbone, worker, blob) {
+define(['underscore', 'backbone'], function (_, Backbone) {
 
 	var Text = Backbone.Model.extend({
 
 		initialize : function (attrs, options) {
 			_.bindAll(this);
-			this.collection = options.collection;
 			this.bind('change:op', this.perform, this);
+			this.store = Text.storeFactory();
 		},
 
 		perform : function () {
-			return this.work( this.expand )
-				.done( this.afterWorker );
+			return Text.performer( this.expand ).done( this.afterWorker );
 		},
 
 		// when adding the properties to a queue, the values
@@ -22,7 +19,7 @@ define([
 			var previous = this.getPrevious();
 			return {
 				op       : previous ? this.get('op') : 'charge',
-				previous : previous && previous.lines,
+				previous : previous && previous.store.data,
 				file     : this.get('origin'),
 				mask     : this.collection.mask
 			};
@@ -33,19 +30,15 @@ define([
 			this.unbind();
 		},
 
-		isActivated : function () {
-			return this.collection.currentIndex === this.id;
-		},
-
 		acessor : function (op) {
-			this.work({ op : op, lines : this.lines }).done( this.afterWorker );
+			this.work({ op : op, lines : this.store.data }).done( this.afterWorker );
 		},
 
 		afterWorker : function (message) {
 
 			// for now, sort and uniq dont return lines
 			if ( !_.isUndefined(message.data.lines) ) {
-				this.lines = blob.createBlob(message.data.lines);
+				this.store.write(message.data.lines);
 			}
 
 			this.set({ length : message.data.length });
@@ -60,6 +53,7 @@ define([
 		},
 
 		getPath : function () {
+
 			var ops = {
 				union        : '\u222a',
 				intersection : '\u2229',
@@ -75,13 +69,11 @@ define([
 			path.pop();
 
 			return path.reverse().join('');
-		},
 
-		work : function (optback) {
-			var path = '/scripts/workers/text-worker.min.js';
-			return worker( path, optback );
 		}
 
+	}, {
+		fabiano : 'nunes'
 	});
 
 	var TextPeer = Backbone.Collection.extend({
@@ -90,10 +82,16 @@ define([
 		model        : Text,
 		mask         : /[1-9]\d{0,6}-\d{2}\.\d{4}\.\d\.\d{2}\.\d{4}/g,
 
-		initialize : function () {
+		initialize : function (models, options) {
+
 			_.bindAll(this);
+
 			this.bind('perform', this.goNext);
 			this.bind('destroy', this.destroy);
+
+			Text.storeFactory = options.store;
+			Text.performer = options.performer;
+
 		},
 
 		goNext : function (m){
@@ -112,8 +110,8 @@ define([
 		},
 
 		updateDocument : function (m) {
-			blob.readBlob(m.lines).done(function (event) {
-				this.trigger('change:currentIndex', m.id, m, event.target.result);
+			m.store.read().done(function (result) {
+				this.trigger('change:currentIndex', m.id, m, result);
 			}.bind(this));
 		},
 
@@ -121,10 +119,12 @@ define([
 
 			var m = new Text({
 				id         : _.uniqueId('text'),
-				fileName   : file.name,
+				op         : op,
 				origin     : file,
-				op         : op
-			}, { collection : this });
+				fileName   : file.name
+			}, {
+				collection : this
+			});
 
 			this.add(m, {
 				at       : previous ? this.indexOf( this.get(previous) ) + 1 : Number.MAX_VALUE,
@@ -151,13 +151,8 @@ define([
 		},
 
 		clear : function () {
-			var models = [];
 			this.forEach(function (m) {
-				models.push(m);
 				_.defer(m.destroy);
-			});
-			models.forEach(function (m) {
-				// m.destroy();
 			});
 			this.reset();
 		}
