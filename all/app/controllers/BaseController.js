@@ -1,3 +1,4 @@
+/*global Class, app, v*/
 var beforeFilters = []
   , excludeFilters = []
 
