@@ -1,3 +1,22 @@
+/*global define*/
+
+function oprs(chunk, context, bodies) {
+
+	var ops = 'union intersection difference symmetric grep'.split(' ');
+	var symbols = '\u222a \u2229 \u2216 \u2296 *'.split(' ');
+
+	var document = context.current(), retval = [];
+
+	return ops.map(function (v, k) {
+		return {
+			type     : v,
+			symbol   : symbols[k],
+			selected : document.op === v
+		};
+	});
+
+}
+
 define([
 	'jquery', 'underscore', 'backbone', 'renderer', 'libs/publisher', 'libs/blob', 'libs/event'
 ], function ($, _, Backbone, renderer, publisher, blob, events) {
@@ -190,23 +209,6 @@ define([
 		cancel : events.cancel
 
 	});
-
-	function oprs(chunk, context, bodies) {
-
-		var ops = 'union intersection difference symmetric grep'.split(' ');
-		var symbols = '\u222a \u2229 \u2216 \u2296 *'.split(' ');
-
-		var document = context.current(), retval = [];
-
-		return ops.map(function (v, k) {
-			return {
-				type     : v,
-				symbol   : symbols[k],
-				selected : document.op === v
-			};
-		});
-
-	}
 
 	return PathListView;
 

@@ -1,3 +1,4 @@
+/*global define*/
 /*!
  * jQuery Message Queuing - v1.0 - 1/5/2010
  * http://benalman.com/projects/jquery-message-queuing-plugin/
@@ -40,6 +41,15 @@
 			addEach,
 			size,
 			start;
+
+		// Stop a running queue, optionally flagging it as paused.
+		function stop() {
+			if (timeout_id) {
+				clearTimeout( timeout_id );
+			}
+			timeout_id = undefined;
+		}
+
 
 		self.add = function( item, priority ) {
 			return addEach( [ item ], priority );
@@ -103,7 +113,7 @@
 						recent = [];
 						timeout_id = setTimeout( loopy, delay );
 					}
-				})();
+				}());
 			}
 		};
 
@@ -164,14 +174,6 @@
 		self.indexOf = function( item ) {
 			return $.inArray( item, queue );
 		};
-
-		// Stop a running queue, optionally flagging it as paused.
-		function stop() {
-			if (timeout_id) {
-				clearTimeout( timeout_id );
-			}
-			timeout_id = undefined;
-		}
 
 		// If queue isn't explicitly paused, start it.
 		if (!paused) {

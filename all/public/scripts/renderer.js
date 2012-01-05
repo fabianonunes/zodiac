@@ -1,3 +1,4 @@
+/*global define*/
 define(['dust'], function(dust){
 	return function(data, template, el, cb){
 
