@@ -3,20 +3,22 @@
 
 define([
 	'jquery',
-	'underscore',
 	'templates',
 	'models/text',
 	'views/dropper',
 	'views/input',
 	'views/path',
-	'views/toolbar'
-], function ($, _, dust, TextPeer, Dropper, Input, Path, Toolbar) {
+	'views/toolbar',
+	'libs/blobstore'
+], function ($, dust, TextPeer, Dropper, Input, Path, Toolbar, BlobStore) {
 
 	var app = {};
 
 	app.initialize = function () {
 
-		this.documents = new TextPeer();
+		this.documents = new TextPeer([], {
+			store : BlobStore.factory
+		});
 
 		new Dropper({
 			collection: this.documents
