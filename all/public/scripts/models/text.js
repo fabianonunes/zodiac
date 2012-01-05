@@ -33,10 +33,6 @@ define([
 			this.unbind();
 		},
 
-		isActivated : function () {
-			return this.collection.currentIndex === this.id;
-		},
-
 		acessor : function (op) {
 			this.work({ op : op, lines : this.lines }).done( this.afterWorker );
 		},
@@ -60,6 +56,7 @@ define([
 		},
 
 		getPath : function () {
+
 			var ops = {
 				union        : '\u222a',
 				intersection : '\u2229',
@@ -75,6 +72,7 @@ define([
 			path.pop();
 
 			return path.reverse().join('');
+
 		},
 
 		work : function (optback) {
