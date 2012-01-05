@@ -1,43 +1,52 @@
+/*global define*/
+define([
+	'libs/jqmq',
+	'jquery',
+	'underscore',
+	'libs/klass'
+], function (jqmq, $, _, Class) {
 
-define(['libs/jqmq', 'jquery', 'underscore'], function (jqmq, $, _) {
-
-	var workers = {};
-
-	var queue = jqmq({
-		delay    : -1,
-		batch    : 1,
-		callback : function jqmqCallback (item) {
-			item.worker.onmessage = onresponse(item.worker, item.success, queue.next);
-			item.worker.onerror = onresponse(item.worker, item.error, queue.next);
+	return Class({
+		initialize : function (file) {
+			_.bindAll(this);
+			this.queue = jqmq({
+				delay    : -1,
+				batch    : 1,
+				callback : this.jqmqCallback
+			});
+			this.worker = new Worker(file);
+		},
+		onresponse : function onresponse (worker, resolve, next) {
+			return function onresp (event) {
+				worker.onmessage = worker.onerror = null;
+				resolve(event);
+				next();
+			};
+		},
+		jqmqCallback : function jqmqCallback (item) {
+			item.worker.onmessage = this.onresponse(item.worker, item.success, this.queue.next);
+			item.worker.onerror = this.onresponse(item.worker, item.error, this.queue.next);
 			var message = _.isFunction(item.optback) ? item.optback() : item.optback;
 			item.worker.postMessage( message );
-		}
-	});
+		},
+		perform : function workerPerform (optback) {
 
-	function onresponse (worker, resolve, next) {
-		return function onresp (event) {
-			worker.onmessage = null;
-			worker.onerror = null;
-			resolve(event);
-			next();
-		};
-	}
+			var defer = $.Deferred();
 
-	return function (file, optback) {
-
-		return $.Deferred(function workerDfd (defer) {
-
-			var worker = workers[file] || (workers[file] = new Worker(file));
-
-			queue.add({
-				worker  : worker,
+			this.queue.add({
+				worker  : this.worker,
 				optback : optback,
 				success : defer.resolve,
 				error   : defer.reject
 			});
 
-		});
-
-	};
+			return defer;
+		}
+	}).statics({
+		factory : function(file) {
+			var worker = new this(file);
+			return worker.perform;
+		}
+	});
 
 });

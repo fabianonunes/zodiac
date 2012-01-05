@@ -1,23 +1,16 @@
 /*global define*/
-define([
-	'underscore', 'backbone', 'libs/worker'
-], function (_, Backbone, worker) {
+define(['underscore', 'backbone'], function (_, Backbone) {
 
 	var Text = Backbone.Model.extend({
 
 		initialize : function (attrs, options) {
-
 			_.bindAll(this);
-
-			this.store = options.store;
-			this.collection = options.collection;
-
 			this.bind('change:op', this.perform, this);
-
+			this.store = Text.storeFactory();
 		},
 
 		perform : function () {
-			return this.work( this.expand ).done( this.afterWorker );
+			return Text.performer( this.expand ).done( this.afterWorker );
 		},
 
 		// when adding the properties to a queue, the values
@@ -77,13 +70,10 @@ define([
 
 			return path.reverse().join('');
 
-		},
-
-		work : function (optback) {
-			var path = '/scripts/workers/text-worker.min.js';
-			return worker( path, optback );
 		}
 
+	}, {
+		fabiano : 'nunes'
 	});
 
 	var TextPeer = Backbone.Collection.extend({
@@ -93,10 +83,15 @@ define([
 		mask         : /[1-9]\d{0,6}-\d{2}\.\d{4}\.\d\.\d{2}\.\d{4}/g,
 
 		initialize : function (models, options) {
+
 			_.bindAll(this);
+
 			this.bind('perform', this.goNext);
 			this.bind('destroy', this.destroy);
-			this.storeFactory = options.store;
+
+			Text.storeFactory = options.store;
+			Text.performer = options.performer;
+
 		},
 
 		goNext : function (m){
@@ -128,8 +123,7 @@ define([
 				origin     : file,
 				fileName   : file.name
 			}, {
-				collection : this,
-				store      : this.storeFactory()
+				collection : this
 			});
 
 			this.add(m, {
