@@ -1,10 +1,11 @@
+/*global define*/
 (function (def){
-	if (typeof define == 'function'){ // AMD
+	if (typeof define === 'function'){ // AMD
 		define(function () { return def(); });
-	} else if (typeof module != 'undefined' && module.exports) { // Node.js
+	} else if (typeof module !== 'undefined' && module.exports) { // Node.js
 		module.exports = def();
 	}
-})(function () {
+}(function () {
 	return {
 		paths : {
 			jquery     : 'libs/jquery/jquery-1.7.1',
@@ -13,4 +14,4 @@
 			dust       : 'libs/dust-0.3.0.min'
 		}
 	};
-});
+}));

@@ -1,3 +1,4 @@
+/*global define*/
 define([
 	'underscore', 'backbone', 'libs/worker', 'libs/blob'
 ], function (_, Backbone, worker, blob) {
@@ -37,7 +38,7 @@ define([
 		},
 
 		acessor : function (op) {
-			this.work({ op : op, lines : lines }).done( this.afterWorker );
+			this.work({ op : op, lines : this.lines }).done( this.afterWorker );
 		},
 
 		afterWorker : function (message) {

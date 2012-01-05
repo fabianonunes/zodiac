@@ -1,4 +1,4 @@
-
+/*global define*/
 define([
 	'jquery', 'underscore', 'backbone', 'libs/jqmq'
 ], function ($, _, Backbone, jqmq) {

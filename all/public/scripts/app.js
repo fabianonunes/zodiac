@@ -1,5 +1,8 @@
 
+/*global define*/
+
 define([
+	'jquery',
 	'underscore',
 	'templates',
 	'models/text',
@@ -7,7 +10,7 @@ define([
 	'views/input',
 	'views/path',
 	'views/toolbar'
-], function (_, dust, TextPeer, Dropper, Input, Path, Toolbar) {
+], function ($, _, dust, TextPeer, Dropper, Input, Path, Toolbar) {
 
 	var app = {};
 

@@ -2,6 +2,6 @@
 *.min.js
 version
 node_modules/*
-public/scripts/production*
-public/styles/*css
+all/public/scripts/production*
+all/public/styles/*css
 .monitor

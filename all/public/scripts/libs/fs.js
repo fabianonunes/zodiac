@@ -1,4 +1,4 @@
-
+/*global define, BlobBuilder, FileError*/
 define([
 	'jquery',
 	'underscore'
@@ -16,7 +16,7 @@ define([
 		if (window.requestFileSystem) {
 			window.requestFileSystem(window.TEMPORARY, 5*1024*1024, function(filesystem) {
 				self.filesystem = filesystem;
-			}, errorHandler);
+			}, this.errorHandler);
 		}
 
 	};
@@ -41,9 +41,9 @@ define([
 					bb.append(data);
 					writer.write(bb.getBlob('text/plain'));
 
-				}, errorHandler);
+				}, this.errorHandler);
 
-			}, errorHandler);
+			}, this.errorHandler);
 
 		});
 
@@ -64,15 +64,15 @@ define([
 
 				fileWriter.truncate(0);
 
-			}, errorHandler);
+			}, this.errorHandler);
 
-		}, errorHandler);
+		}, this.errorHandler);
 
 		return dfd.promise();
 
 	};
 
-	function errorHandler(e) {
+	fs.errorHandler = function errorHandler(e) {
 		var msg = '';
 		switch (e.code) {
 			case FileError.QUOTA_EXCEEDED_ERR:

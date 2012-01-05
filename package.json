@@ -1,16 +1,30 @@
 {
 	"name" : "zodiac",
-	"version" : "0.0.1",
+	"version" : "1.2.0",
+	"author": "Fabiano Nunes <@fab_tc>",
+	"scripts": {
+		"start": "node ./all/server.js"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/fabianonunes/zodiac.git"
+	},
 	"dependencies" : {
 		"colors" : "*"
 		, "jade" : "*"
-		, "uglify-js" : "*"
 		, "dust" : "*"
-		, "sh" : "*"
-		, "requirejs" : "*"
 		, "nib" : "*"
 		, "express" : "*"
 		, "stylus" : "*"
 		, "connect-gzip" : "*"
+		, "matador" : "*"
+	},
+	"devDependencies" : {
+		"uglify-js" : "*",
+		"sh" : "*",
+		"requirejs" : "*"
+	},
+	"engine": {
+		"node": ">=0.6"
 	}
 }

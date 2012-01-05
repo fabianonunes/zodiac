@@ -1,4 +1,4 @@
-
+/*global postMessage, onmessage:true, FileReaderSync */
 var TextWorker = {
 
 	sort : function (lines) {
@@ -231,12 +231,4 @@ function sortBy(obj, field, context) {
 		var a = left[field], b = right[field];
 		return a < b ? -1 : a > b ? 1 : 0;
 	});
-}
-
-function define(deps, module) {
-	var root = this, args = [];
-	deps.forEach(function (v) {
-		args.push(this[v]);
-	});
-	module.apply(root, args);
 }

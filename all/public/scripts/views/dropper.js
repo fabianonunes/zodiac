@@ -1,4 +1,4 @@
-
+/*global define*/
 define([
 	'jquery', 'backbone', 'underscore', 'libs/blob'
 ], function($, Backbone, _, blob) {

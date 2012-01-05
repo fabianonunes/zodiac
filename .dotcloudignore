@@ -8,6 +8,6 @@ scripts/templates
 scripts/workers/text-worker.js
 scripts/app.js
 scripts/main.js
-Jakefile
+Jakefile.js
 views/dev*
 .monitor

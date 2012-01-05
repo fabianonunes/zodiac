@@ -1,3 +1,5 @@
+/*global define*/
+
 define([
 	'jquery', 'underscore', 'backbone', 'renderer', 'libs/publisher', 'libs/blob', 'libs/event'
 ], function ($, _, Backbone, renderer, publisher, blob, events) {
@@ -89,7 +91,7 @@ define([
 			return $.Deferred(function (dfd) {
 				renderer({
 					documents : [this.model.attributes],
-					ops : oprs
+					ops : PathView.oprs
 				}, this.template, this.el, dfd.resolve.bind(dfd, this.el));
 			}.bind(this));
 		},
@@ -133,6 +135,24 @@ define([
 				op = select.attr('class').split(' ')[0];
 			this.model.set({ op : op });
 			this.hideOptions();
+		}
+
+	}, {
+
+		oprs : function oprs (chunk, context, bodies) {
+
+			var ops = 'union intersection difference symmetric grep'.split(' ');
+			var symbols = '\u222a \u2229 \u2216 \u2296 *'.split(' ');
+
+			var document = context.current(), retval = [];
+
+			return ops.map(function (v, k) {
+				return {
+					type     : v,
+					symbol   : symbols[k],
+					selected : document.op === v
+				};
+			});
 		}
 
 	});
@@ -190,23 +210,6 @@ define([
 		cancel : events.cancel
 
 	});
-
-	function oprs(chunk, context, bodies) {
-
-		var ops = 'union intersection difference symmetric grep'.split(' ');
-		var symbols = '\u222a \u2229 \u2216 \u2296 *'.split(' ');
-
-		var document = context.current(), retval = [];
-
-		return ops.map(function (v, k) {
-			return {
-				type     : v,
-				symbol   : symbols[k],
-				selected : document.op === v
-			};
-		});
-
-	}
 
 	return PathListView;
 
