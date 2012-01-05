@@ -4,12 +4,6 @@ var matador = require('matador'),
 	routes = require('./app/config/routes'),
 	fs = require('fs');
 
-// dotcloud plataform doesn't support unix environment variable
-// this trick must be setted before requiring express
-if (process.env.HOME == '/home/dotcloud') {
-	process.env.NODE_ENV = 'production';
-}
-
 app.configure(function () {
 
 	app.set('models', __dirname + '/app/models');

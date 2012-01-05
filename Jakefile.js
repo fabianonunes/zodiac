@@ -20,12 +20,11 @@ task('build', function (params) {
 
 	var requirejs = require('requirejs');
 	var config = {
-		baseUrl        : 'public/scripts',
+		baseUrl        : 'all/public/scripts',
 		name           : 'main',
 		// excludeShallow : ['underscore', 'dust', 'templates'],
-		paths          : require('./public/scripts/config').paths,
-		out            : 'public/scripts/production.js',
-		css            : 'public/styles/style.css'
+		paths          : require('./all/public/scripts/config').paths,
+		out            : 'all/public/scripts/production.js'
 	};
 
 	requirejs.optimize(config, function () {
@@ -41,7 +40,7 @@ task('build', function (params) {
 			var version = shasum.digest('hex');
 			fs.renameSync(config.out, config.out.replace('.js', '-' + version + '.js'));
 			jake.Task.css.invoke(version);
-			fs.writeFileSync('version', version, 'utf8');
+			fs.writeFileSync(__dirname + '/all/version', version, 'utf8');
 		});
 
 	});
@@ -58,9 +57,9 @@ task('minify', function () {
 	var pro = require("uglify-js").uglify;
 
 	var scripts = [
-		'public/scripts/workers/text-worker.js',
-		'public/scripts/libs/dust-0.3.0.js',
-		'public/scripts/libs/underscore-1.2.2.js'
+		'all/public/scripts/workers/text-worker.js',
+		'all/public/scripts/libs/dust-0.3.0.js',
+		'all/public/scripts/libs/underscore-1.2.2.js'
 	];
 
 	scripts.forEach(function(file){
@@ -89,15 +88,15 @@ task('css', function (version) {
 	console.log('Rendenring '.green + 'stylus files'.red.bold);
 
 	var stylus = require('stylus');
-	var str = fs.readFileSync('public/styles/style.styl', 'utf8');
-	var filename = __dirname + '/public/styles/production-' + version + '.css';
+	var str = fs.readFileSync('all/public/styles/style.styl', 'utf8');
+	var filename = __dirname + '/all/public/styles/production-' + version + '.css';
 
 	stylus(str)
 	.include(require('nib').path)
 	.set('filename', filename )
 	.set('compress', true)
 	.define('url', stylus.url({
-		paths: [__dirname + '/public/images']
+		paths: [__dirname + '/all/public/images']
 	}))
 	.render(function (err, css) {
 		if (err) throw err;
@@ -112,7 +111,7 @@ task('templates', function  (params) {
 
 	var dust = require('dust');
 	var list = new jake.FileList();
-	list.include('public/scripts/templates/*html');
+	list.include('all/public/scripts/templates/*html');
 
 	var compiled = 'define(["dust"], function (dust){';
 
@@ -125,7 +124,7 @@ task('templates', function  (params) {
 
 	compiled += ' return dust; });';
 
-	fs.writeFileSync('public/scripts/templates.js', compiled, 'utf8');
+	fs.writeFileSync('all/public/scripts/templates.js', compiled, 'utf8');
 
 });
 
@@ -135,12 +134,11 @@ task('clean', function  (params) {
 	console.log('Removing prodution files'.green);
 
 	var list = new jake.FileList();
-	list.include('public/scripts/production-*');
-	list.include('public/styles/production-*');
+	list.include('all/public/scripts/production-*');
+	list.include('all/public/styles/production-*');
 
 	list.toArray().forEach(function (v) {
 		fs.unlinkSync(v);
 	});
-
 
 });
