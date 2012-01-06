@@ -11,15 +11,15 @@ define([
 	'views/toolbar',
 	'libs/blobstore',
 	'libs/worker'
-], function ($, dust, TextPeer, Dropper, Input, Path, Toolbar, BlobStore, Worker) {
+], function ($, dust, TextPeer, Dropper, Input, Path, Toolbar) {
 
 	var app = {};
 
 	app.initialize = function () {
 
 		this.documents = new TextPeer([], {
-			store : BlobStore.factory,
-			performer : Worker.factory('/scripts/workers/text-worker.min.js')
+			store : require('libs/blobstore').factory,
+			performer : require('libs/worker').factory('/scripts/workers/text-worker.min.js')
 		});
 
 		new Dropper({
