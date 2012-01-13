@@ -1,4 +1,4 @@
-
+/*global desc task jake*/
 var fs = require('fs');
 var crypto = require('crypto');
 require('colors');
@@ -22,7 +22,7 @@ task('build', function (params) {
 	var config = {
 		baseUrl        : 'all/public/scripts',
 		name           : 'main',
-		// excludeShallow : ['underscore', 'dust', 'templates'],
+		// excludeShallow : ['underscore', 'jquery'],
 		paths          : require('./all/public/scripts/config').paths,
 		out            : 'all/public/scripts/production.js'
 	};
@@ -57,9 +57,7 @@ task('minify', function () {
 	var pro = require("uglify-js").uglify;
 
 	var scripts = [
-		'all/public/scripts/workers/text-worker.js',
-		'all/public/scripts/libs/dust-0.3.0.js',
-		'all/public/scripts/libs/underscore-1.2.2.js'
+		'all/public/scripts/workers/text-worker.js'
 	];
 
 	scripts.forEach(function(file){
@@ -68,7 +66,7 @@ task('minify', function () {
 		ast = pro.ast_mangle(ast);
 		ast = pro.ast_squeeze(ast);
 		var final_code = pro.gen_code(ast);
-		fs.writeFileSync(file.replace('.js', '.min.js'), final_code, encoding='utf8');
+		fs.writeFileSync(file.replace('.js', '.min.js'), final_code, 'utf8');
 	});
 
 

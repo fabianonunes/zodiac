@@ -22,6 +22,7 @@ app.configure(function () {
 	app.use(matador.methodOverride())
 
 	app.set('version', fs.readFileSync(__dirname + '/version'))
+	app.set('title', 'zodiac')
 
 })
 

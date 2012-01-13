@@ -1,12 +1,13 @@
 /*global define*/
-
 define([
-	'jquery', 'underscore', 'backbone', 'renderer', 'libs/publisher', 'libs/blob', 'libs/event'
+	'jquery', 'underscore', 'backbone', 'renderer', 'publisher', 'lib/blob', 'lib/event'
 ], function ($, _, Backbone, renderer, publisher, blob, events) {
 
-	var PathView, PathListView;
+	var PathView = Backbone.View.extend({
 
-	PathView = Backbone.View.extend({
+		constructor : function PathView () {
+			return Backbone.View.apply(this, arguments);
+		},
 
 		tagName : 'div',
 
@@ -157,7 +158,11 @@ define([
 
 	});
 
-	PathListView = Backbone.View.extend({
+	var PathListView = Backbone.View.extend({
+
+		constructor : function PathListView () {
+			return Backbone.View.apply(this, arguments);
+		},
 
 		template : 'path',
 		events : {

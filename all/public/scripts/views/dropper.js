@@ -1,9 +1,13 @@
 /*global define*/
 define([
-	'jquery', 'backbone', 'underscore', 'libs/blob'
+	'jquery', 'backbone', 'underscore', 'lib/blob'
 ], function($, Backbone, _, blob) {
 
 	var dropper = Backbone.View.extend({
+
+		constructor : function DropperView () {
+			return Backbone.View.apply(this, arguments);
+		},
 
 		el: $('.dropper'),
 

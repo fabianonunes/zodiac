@@ -5,6 +5,10 @@ define([
 
 	return Backbone.View.extend({
 
+		constructor : function ToolbarView () {
+			return Backbone.View.apply(this, arguments);
+		},
+
 		el: $('.path footer'),
 
 		events : {
