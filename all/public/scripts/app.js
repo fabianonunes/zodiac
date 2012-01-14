@@ -13,34 +13,36 @@ define([
 	'lib/worker'
 ], function ($, dust, TextPeer, Dropper, Input, Path, Toolbar) {
 
-	var app = {};
+	var app = {}
 
 	app.initialize = function () {
 
 		this.documents = new TextPeer([], {
 			store : require('lib/blobstore').factory,
 			performer : require('lib/worker').factory('/scripts/workers/text-worker.min.js')
-		});
+		})
 
-		new Dropper({
-			collection: this.documents
-		});
-		new Input({
-			collection: this.documents
-		});
+		var views = [
+			new Dropper({
+				collection: this.documents,
+				el: $('.dropper')
+			})
+			, new Input({
+				collection: this.documents,
+				el: $('.input')
+			})
+			, new Path({
+				collection: this.documents,
+				el: $('.path')
+			})
+			, new Toolbar({
+				collection: this.documents,
+				el: $('.path footer')
+			})
+		]
 
-		new Path({
-			collection: this.documents,
-			el: $('.path')
-		});
+	}
 
-		new Toolbar({
-			collection: this.documents
-		});
+	return app
 
-
-	};
-
-	return app;
-
-});
+})

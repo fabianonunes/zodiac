@@ -9,8 +9,6 @@ define([
 			return Backbone.View.apply(this, arguments)
 		},
 
-		el: $('.input'),
-
 		events : {
 			'dblclick' : 'selectText'
 		},
@@ -40,7 +38,7 @@ define([
 			window.getSelection().addRange(range)
 		},
 
-		updateText : function (model, html) {
+		updateText : function (html, id) {
 
 			var substr, i = 0, step = 10000
 

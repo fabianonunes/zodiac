@@ -1,15 +1,13 @@
 /*global define*/
 define([
-	'jquery', 'backbone', 'underscore', 'lib/blob'
-], function($, Backbone, _, blob) {
+	'jquery', 'backbone', 'underscore', 'lib/blob', 'lib/event'
+], function($, Backbone, _, blob, events) {
 
 	var dropper = Backbone.View.extend({
 
 		constructor : function DropperView () {
 			return Backbone.View.apply(this, arguments);
 		},
-
-		el: $('.dropper'),
 
 		events: {
 			'dragover'		: 'cancel',
@@ -36,10 +34,7 @@ define([
 
 		dragLeave : function(evt) {
 
-			var related = document.elementFromPoint(
-				evt.originalEvent.clientX,
-				evt.originalEvent.clientY
-			);
+			var related = events.elementFromCursor(evt);
 
 			if(!related || related !== this.mask[0]) {
 				var inside = $.contains(this.mask[0], related);
@@ -50,10 +45,7 @@ define([
 
 		onLeave : function(evt) {
 
-			var related = document.elementFromPoint(
-				evt.originalEvent.clientX,
-				evt.originalEvent.clientY
-			);
+			var related = events.elementFromCursor(evt);
 
 			if(!related || related !== evt.target) {
 				var inside = $.contains(evt.target, related);
@@ -77,11 +69,7 @@ define([
 
 		},
 
-		cancel : function(evt) {
-			evt.preventDefault();
-			evt.originalEvent.dataTransfer.dropEffect = 'copy';
-			return false;
-		}
+		cancel : events.cancel
 
 	});
 

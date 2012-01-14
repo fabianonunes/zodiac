@@ -9,8 +9,6 @@ define([
 			return Backbone.View.apply(this, arguments);
 		},
 
-		el: $('.path footer'),
-
 		events : {
 			'click .recycle' : 'reset'
 		},
