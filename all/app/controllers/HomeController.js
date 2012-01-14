@@ -1,10 +1,6 @@
-module.exports = require('./ApplicationController').extend()
-  .methods({
-    index: function () {
-      this.response.render('index', {
-        locals: {
-          title: 'The Matador Framework'
-        }
-      })
-    }
-  })
+module.exports = require(app.set('controllers') + '/ApplicationController').extend()
+	.methods({
+		index: function () {
+			this.response.render('index')
+		}
+	})
