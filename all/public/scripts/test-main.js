@@ -6,6 +6,6 @@ require(['config'], function (config) {
 		'jquery', 'underscore', 'test/spec/input.view', 'test/spec/dropper.view', 'test/spec/model'
 	], function($, _){
 		mocha.runner = mocha.run()
-		// mocha.reporters.TAP(mocha.runner)
+		mocha.reporters.TAP(mocha.runner)
 	});
 });

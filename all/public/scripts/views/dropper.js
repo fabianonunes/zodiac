@@ -15,8 +15,8 @@ define([
 			'dragleave div' : 'onLeave',
 			'dragenter'     : 'dragEnter',
 			'dragenter div' : 'onEnter',
-			'drop'          : 'cancel',
-			'drop div'      : 'onDrop'
+			'drop .icon'    : 'onDrop',
+			'drop'          : 'drop'
 		},
 
 		initialize: function() {
@@ -68,6 +68,11 @@ define([
 
 			this.collection.blend(op, file);
 
+		},
+
+		drop : function (evt) {
+			this.mask.hide()
+			return this.cancel(evt)
 		},
 
 		cancel : events.cancel
