@@ -3,7 +3,7 @@ define([
 	'jquery', 'underscore', 'backbone', 'lib/jqmq'
 ], function ($, _, Backbone, jqmq) {
 
-	var InputView = Backbone.View.extend({
+	return Backbone.View.extend({
 
 		constructor : function InputView () {
 			return Backbone.View.apply(this, arguments)
@@ -13,21 +13,18 @@ define([
 			'dblclick' : 'selectText'
 		},
 
-		initialize: function () {
+		initialize: function (options) {
+
+      var self = this
 
 			_.bindAll(this)
 
-			this.collection.bind("change:currentIndex", this.updateText)
-			this.collection.bind("reset", this.el.empty.bind(this.el))
-
-			var self = this
+			this.collection.bind( 'change:currentIndex', _.proxy('updateText', this) )
+			this.collection.bind( 'reset', _.proxy('empty', this.el) )
 
 			this.queue = jqmq({
 				delay    : 50,
-				callback : function jqmqCallback (text) {
-					text = text || ''
-					self.el[0].insertAdjacentHTML('beforeend', text)
-				}
+				callback : this._injectHtml
 			})
 
 		},
@@ -39,21 +36,20 @@ define([
 		},
 
 		updateText : function (html, id) {
-
 			var substr, i = 0, step = 10000
-
 			this.queue.clear()
 			this.el.empty()
-
 			while ( (substr = html.substring(i, i + step)) ) {
 				this.queue.add(substr)
 				i += step
 			}
+		},
 
-		}
+    _injectHtml : function _injectHtml (text) {
+        text = text || ''
+        this.el[0].insertAdjacentHTML('beforeend', text)
+    }
 
 	})
-
-	return InputView
 
 })

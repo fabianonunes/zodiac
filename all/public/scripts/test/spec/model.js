@@ -1,5 +1,5 @@
 /*global describe it sinon expect define beforeEach afterEach*/
-define(['underscore', 'jquery', 'models/text'], function (_ , $, Collection) {
+define(['underscore', 'jquery', 'models/text', 'test/lib/expect-jquery'], function (_ , $, Collection, expect) {
 
 	describe('Text Model', function () {
 
@@ -124,4 +124,5 @@ define(['underscore', 'jquery', 'models/text'], function (_ , $, Collection) {
 		})
 
 	})
+
 })

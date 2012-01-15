@@ -10,16 +10,17 @@ define([
 		},
 
 		events: {
-			'dragover'		: 'cancel',
-			'dragleave'		: 'dragLeave',
-			'dragleave div'	: 'onLeave',
-			'dragenter'		: 'dragEnter',
-			'dragenter div'	: 'onEnter',
-			'drop'			: 'onDrop'
+			'dragover'      : 'cancel',
+			'dragleave'     : 'dragLeave',
+			'dragleave div' : 'onLeave',
+			'dragenter'     : 'dragEnter',
+			'dragenter div' : 'onEnter',
+			'drop'          : 'cancel',
+			'drop div'      : 'onDrop'
 		},
 
 		initialize: function() {
-			_.bindAll(this, 'dragEnter', 'dragLeave');
+			_.bindAll(this);
 			this.mask = $('.mask', this.el);
 		},
 
@@ -58,11 +59,11 @@ define([
 
 			this.cancel(evt);
 			this.mask.hide();
-			// evt.stopImmediatePropagation();
+			evt.stopImmediatePropagation();
 
 			var target = $(evt.target).removeClass('over'),
 				op     = target.attr('class').split(' ')[0],
-				dt     = evt.originalEvent.dataTransfer,
+				dt     = evt.originalEvent && evt.originalEvent.dataTransfer,
 				file   = blob.createFromDataTransfer(dt);
 
 			this.collection.blend(op, file);
