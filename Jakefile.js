@@ -122,7 +122,7 @@ task('templates', function  (params) {
 
 	compiled += ' return dust; });';
 
-	fs.writeFileSync('all/public/scripts/templates.js', compiled, 'utf8');
+	fs.writeFileSync('all/public/scripts/templates/templates.js', compiled, 'utf8');
 
 });
 

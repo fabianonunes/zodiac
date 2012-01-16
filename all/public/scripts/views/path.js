@@ -1,6 +1,6 @@
 /*global define*/
 define([
-	'jquery', 'underscore', 'backbone', 'renderer', 'publisher', 'lib/blob', 'lib/event'
+	'jquery', 'underscore', 'backbone', 'lib/renderer', 'publisher', 'lib/blob', 'lib/event'
 ], function ($, _, Backbone, renderer, publisher, blob, events) {
 
 	var PathView = Backbone.View.extend({

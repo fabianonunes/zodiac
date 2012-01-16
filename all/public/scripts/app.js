@@ -3,7 +3,7 @@
 
 define([
 	'jquery',
-	'templates',
+	'templates/templates',
 	'models/text',
 	'views/dropper',
 	'views/input',
