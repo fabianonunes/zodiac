@@ -15,15 +15,13 @@ define([
 
 		initialize: function (options) {
 
-      var self = this
-
 			_.bindAll(this)
 
-			this.collection.bind( 'change:currentIndex', _.proxy('updateText', this) )
-			this.collection.bind( 'reset', _.proxy('empty', this.el) )
+			this.collection.bind('publish', this.updateText)
+			this.collection.bind('reset', this.empty)
 
 			this.queue = jqmq({
-				delay    : 50,
+				delay : 50,
 				callback : this._injectHtml
 			})
 
@@ -45,10 +43,14 @@ define([
 			}
 		},
 
-    _injectHtml : function _injectHtml (text) {
-        text = text || ''
-        this.el[0].insertAdjacentHTML('beforeend', text)
-    }
+		empty : function () {
+			this.el.empty()
+		},
+
+		_injectHtml : function _injectHtml (text) {
+			text = text || ''
+			this.el[0].insertAdjacentHTML('beforeend', text)
+		}
 
 	})
 

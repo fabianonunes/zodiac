@@ -1,101 +1,107 @@
 /*global describe it sinon expect define beforeEach afterEach*/
-define(['underscore', 'jquery', 'models/text', 'test/lib/expect-jquery'], function (_ , $, Collection, expect) {
+define([
+	'underscore', 'jquery', 'models/text', 'test/lib/expect-jquery', 'backbone'
+], function (_ , $, Collection, expect, Backbone) {
 
 	describe('Text Model', function () {
 
 		var factory    = {
 				write : _.identity,
-				read : function () { return $.Deferred().resolve(' ') }
+				resolved : $.Deferred().resolve(' '),
+				read : function () { return this.resolved }
 			},
-			performer  = $.Deferred().resolve({ lines : [] , length : 0 }),
-			collection = new Collection(null, {
-				store     : function () { return factory },
-				performer : function () { return performer }
-			}),
-			models
+			performer  = _.extend({
+				resolved : $.Deferred().resolve({ lines : [] , length : 0 }),
+				perform : function () { return performer.resolved }
+			}, Backbone.Events),
+			collection, mock
 
 		beforeEach(function () {
-			models = []
-			_(5).times(function (n) {
-				var m = collection.blend()
-				models.push(m)
-				sinon.spy(m, "postPerform")
+			collection = new Collection(null, {
+				store     : function () { return factory },
+				performer : performer
 			})
-			sinon.spy(performer, "done")
+			mock = sinon.mock(collection)
+			_(5).times(function (n) {
+				sinon.spy(collection.blend(), "postPerform")
+			})
+			sinon.spy(performer.resolved, "done")
+// try {
+// } catch (e) {
+// console.log(e.stack)
+// }
 		})
 
 		afterEach(function () {
-			if (performer.done.restore) performer.done.restore()
-			collection.reset()
+			if (performer.resolved.done.restore) performer.resolved.done.restore()
+			performer.unbind()
 		})
 
 		describe('collection', function () {
 
 			it('should perform on blend', function () {
 				var model = collection.blend()
-				expect(performer.done.called).to.be.ok()
+				expect(performer.resolved.done.called).to.be.ok()
 			})
 
 			it('should blend new models at end', function () {
 				var model0 = collection.last()
 				var model1 = collection.blend()
-				expect(collection.previousOf(model1).id).to.be(model0.id)
 				expect(model1).to.be(collection.last())
 			})
 
 			it('should reorder on "insert at"', function () {
-				var model1 = collection.nextOf(models[0])
-				var model2 = collection.blend(null, null, models[0])
-				expect(collection.nextOf(models[0]).id).to.be(model2.id)
-				expect(collection.previousOf(model1).id).to.be(model2.id)
+				var model0 = collection.first()
+				var model1 = collection.nextOf(model0)
+				var model2 = collection.blend(null, null, model0)
+				expect(collection.nextOf(model0)).to.be(model2)
+				expect(collection.previousOf(model1)).to.be(model2)
 			})
 
 			it('should perform when the first precedent perform', function () {
-				models[0].perform()
-				expect(models[1].postPerform.calledOnce).to.be.ok()
+				var first = collection.first()
+				first.perform()
+				expect(collection.nextOf(first).postPerform.calledOnce).to.be.ok()
 			})
 
 			it('should perform all next models in order on perform', function () {
-				models[0].perform()
-				expect(performer.done.callCount).to.be(collection.length)
+				collection.first().perform()
+				expect(performer.resolved.done.callCount).to.be(collection.length)
 				collection.each(function (m) {
 					var next = this.nextOf(m)
-					if (next) {
-						expect(m.postPerform.calledBefore(next.postPerform)).to.be.ok()
-					}
+					if (next) expect(m.postPerform.calledBefore(next.postPerform)).to.be.ok()
 				}, collection)
 			})
 
 			it('should trigger perform on next model when destroy', function () {
-				models[0].destroy()
-				expect(models[0].postPerform.called).to.not.be.ok()
-				expect(models[1].postPerform.called).to.be.ok()
+				var first = collection.first(), next = collection.nextOf(first)
+				first.destroy()
+				expect(next.postPerform.called).to.be.ok()
+			})
+
+			it('shouldn\'t perform on destroy', function () {
+				var first = collection.first()
+				first.destroy()
+				expect(first.postPerform.called).to.not.be.ok()
 			})
 
 			it('should trigger perform on next model when "insert at"', function () {
-				collection.blend(null, null, models[0])
-				expect(models[0].postPerform.called).to.not.be.ok()
-				expect(models[1].postPerform.called).to.be.ok()
+				var first = collection.first()
+				var next = collection.nextOf(first)
+				collection.blend(null, null, first)
+				expect(next.postPerform.called).to.be.ok()
 			})
 
-			it('should publish only when the last model performs', function () {
+			it('should publish when performer completes', function () {
+				mock.expects('publish').once()
+				performer.trigger('complete')
+				mock.verify()
+			})
 
-				sinon.spy(collection, "publish")
-
-				var last = collection.last()
-				var trigger = sinon.spy(collection, "trigger")
-				var lastTrigger = trigger.withArgs('change:currentIndex', ' ', last.id)
-
-				collection.first().perform()
-
-				expect(collection.publish.callCount).to.be(1)
-				expect(collection.publish.calledWithExactly(collection.last())).to.be.ok()
-
-				expect(lastTrigger.callCount).to.be(1)
-
-				collection.publish.restore()
-				collection.trigger.restore()
-
+			it('should trigger publish event with the last model', function () {
+				mock.expects('trigger').withArgs('publish', ' ', collection.last().id)
+				collection.publish()
+				mock.verify()
 			})
 
 		})
@@ -103,14 +109,14 @@ define(['underscore', 'jquery', 'models/text', 'test/lib/expect-jquery'], functi
 		describe('model', function () {
 
 			it('should perform on {op} change', function () {
-				models[0].set({op : 'op'})
-				expect(models[0].postPerform.called).to.be.ok()
+				var first = collection.first()
+				first.set({op : 'op'})
+				expect(first.postPerform.called).to.be.ok()
 			})
 
 			it('should fire perform custom event on perform', function () {
-				var spy = sinon.spy();
-				models[0].bind('perform', spy)
-				models[0].perform()
+				var spy = sinon.spy()
+				collection.first().bind('perform', spy).perform()
 				expect(spy.called).to.be.ok()
 			})
 

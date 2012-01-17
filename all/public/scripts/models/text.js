@@ -15,7 +15,9 @@ define(['underscore', 'backbone'], function (_, Backbone) {
 		},
 
 		perform : function () {
-			return this.performer(this.expand).done(this.postPerform)
+			var q = this.performer(this.expand).done(this.postPerform)
+			this.trigger('perform', this)
+			return q
 		},
 
 		// when adding the properties to a queue, the values
@@ -47,7 +49,6 @@ define(['underscore', 'backbone'], function (_, Backbone) {
 
 			this.set({ length : data.length })
 
-			this.trigger('perform', this)
 		}
 
 	})
@@ -65,6 +66,8 @@ define(['underscore', 'backbone'], function (_, Backbone) {
 
 		initialize : function (models, options) {
 
+			var self = this
+
 			_.bindAll(this)
 
 			this.bind('perform', this.goNext)
@@ -73,15 +76,13 @@ define(['underscore', 'backbone'], function (_, Backbone) {
 			this.storeFactory = options.store
 			this.performer = options.performer
 
+			this.performer.bind('complete', _.proxy(this, 'publish') )
+
 		},
 
 		goNext : function (m) {
 			var next = this.nextOf(m)
-			if(next) {
-				next.perform()
-			} else {
-				this.publish(m)
-			}
+			if(next) next.perform()
 		},
 
 		destroy : function (m) {
@@ -95,9 +96,9 @@ define(['underscore', 'backbone'], function (_, Backbone) {
 		},
 
 		publish : function (m) {
-			var self = this
-			m.store.read().done(function (contents) {
-				self.trigger('change:currentIndex', contents, m.id)
+			var self = this, last = this.last()
+			last.store.read().done(function (contents) {
+				self.trigger('publish', contents, last.id)
 			})
 		},
 
@@ -111,7 +112,7 @@ define(['underscore', 'backbone'], function (_, Backbone) {
 			}, {
 				collection : this,
 				store      : this.storeFactory(),
-				performer  : this.performer
+				performer  : this.performer.perform
 			})
 
 			this.add(m, {

@@ -176,6 +176,9 @@ define([
 			_.bindAll(this);
 			this.collection.bind('change:added', this.render);
 
+			this.collection.bind('perform', this.block);
+			this.collection.bind('complete', this.unblock);
+
 			this.contains = _.memoize(function (arg) {
 				return $.contains(this.el[0], arg);
 			}.bind(this), function (arg) {
@@ -212,7 +215,15 @@ define([
 
 		},
 
-		cancel : events.cancel
+		cancel : events.cancel,
+
+		block : function () {
+			// this.el.hide()
+		},
+
+		unblock : function () {
+			this.el.show()
+		}
 
 	});
 
