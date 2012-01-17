@@ -35,8 +35,8 @@ define(['underscore', 'backbone'], function (_, Backbone) {
 			}
 		},
 
-		destroy : function (options) {
-			this.trigger('destroy', this)
+		destroy : function () {
+			this.trigger('destroy', this, { at : this.collection.indexOf(this) })
 			this.unbind()
 		}
 
@@ -74,13 +74,12 @@ define(['underscore', 'backbone'], function (_, Backbone) {
 			if(next) next.perform()
 		},
 
-		destroy : function (m) {
-			var next = this.nextOf(m)
-			this.remove(m)
+		destroy : function (m, options) {
 			if (this.length < 1) {
 				this.reset()
-			} else if (next) {
-				next.perform()
+			} else {
+				var next = this.at(options.at)
+				if (next) next.perform()
 			}
 		},
 
@@ -119,12 +118,12 @@ define(['underscore', 'backbone'], function (_, Backbone) {
 
 		nextOf : function (model) {
 			var index = this.indexOf(model)
-			return this.at(index + 1)
+			return ~index ? this.at(index + 1) : null
 		},
 
 		previousOf : function (model) {
 			var index = this.indexOf(model)
-			return this.at(index - 1)
+			return ~index ? this.at(index - 1) : null
 		},
 
 		clear : function () {
