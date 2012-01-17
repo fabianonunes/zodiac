@@ -76,7 +76,7 @@ define(['underscore', 'backbone'], function (_, Backbone) {
 			this.storeFactory = options.store
 			this.performer = options.performer
 
-			this.performer.bind('complete', _.proxy(this, 'publish') )
+			this.performer.bind('complete', this.publish)
 
 		},
 

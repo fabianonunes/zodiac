@@ -44,11 +44,11 @@ define([
 			return defer
 
 		},
-		bind : function () {
+		bind : function workerqueue () {
 			this.on.apply(this, arguments);
 		}
 	}).statics({
-		factory : function(file) {
+		factory : function factory (file) {
 			var worker = new WorkerPerformer(file)
 			return worker
 		}
