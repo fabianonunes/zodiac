@@ -13,7 +13,7 @@ define([
 			batch    : 1,
 			delay    : -1,
 			callback : this.jqmqCallback,
-			complete : this.emit.bind(this, 'complete')
+			complete : this.complete
 		})
 		this.worker = new Worker(file)
 	}).methods({
@@ -44,8 +44,11 @@ define([
 			return defer
 
 		},
-		bind : function workerqueue () {
+		bind : function () {
 			this.on.apply(this, arguments);
+		},
+		complete : function () {
+			this.emit('complete')
 		}
 	}).statics({
 		factory : function factory (file) {

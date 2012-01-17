@@ -17,11 +17,11 @@ define([
 
 			_.bindAll(this)
 
-			this.collection.bind('publish', this.updateText)
-			this.collection.bind('reset', this.empty)
+			this.collection.bind('publish', _.proxy(this, 'updateText'))
+			this.collection.bind('reset', _.proxy(this, 'empty'))
 
 			this.queue = jqmq({
-				delay : 50,
+				delay : 10,
 				callback : this._injectHtml
 			})
 

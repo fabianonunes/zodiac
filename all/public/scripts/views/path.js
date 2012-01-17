@@ -19,12 +19,11 @@ define([
 			'click .remove'        : 'untie',
 			'click .icon'          : 'showOptions',
 			'click .options .icon' : 'change'
-			// 'dblclick'             : 'onDrag'
 		},
 
 		template : 'path',
 
-		initialize : function () {
+		initialize : function initialize () {
 
 			_.bindAll(this);
 
@@ -89,12 +88,12 @@ define([
 		},
 
 		render : function () {
-			return $.Deferred(function (dfd) {
-				renderer({
-					documents : [this.model.attributes],
-					ops : PathView.oprs
-				}, this.template, this.el, dfd.resolve.bind(dfd, this.el));
-			}.bind(this));
+			var dfd = $.Deferred()
+			renderer({
+				documents : [this.model.attributes],
+				ops : PathView.oprs
+			}, this.template, this.el, dfd.resolve);
+			return dfd;
 		},
 
 		renderOp : function (model, op) {
@@ -168,38 +167,29 @@ define([
 		events : {
 			'dragleave' : 'dragLeave',
 			'dragover'  : 'cancel',
-			'drop'      : 'cancel'
+			'drop'      : 'cancel',
+			'dragenter' : 'cancel'
 		},
 
 		initialize: function () {
-
 			_.bindAll(this);
 			this.collection.bind('change:added', this.render);
-
-			this.collection.bind('perform', this.block);
-			this.collection.bind('complete', this.unblock);
-
-			this.contains = _.memoize(function (arg) {
-				return $.contains(this.el[0], arg);
-			}.bind(this), function (arg) {
-				return arg.id || ( arg.id = _.uniqueId('anonymous_element') );
-			});
-
+			this.contains = _.memoize(this.contains, events.domhash);
 		},
 
 		render : function (model) {
-			var index = this.collection.indexOf(model),
-				view = new PathView({ model : model });
-			view.render().then(this.addRow.bind(this, index));
+			var view  = new PathView({ model : model }),
+				index = this.collection.indexOf(model);
+			view.render().then( _.bind(this.addRow, this, index) );
 		},
 
 		addRow : function (index, el) {
-			var $el = $(el).hide(),
-			previous = this.$('>div').eq(index);
+			var previous = this.el.children('div').eq(index);
+			el = $(el).hide();
 			if ( previous.length ) {
-				$el.insertBefore(previous).slideDown('fast');
+				el.insertBefore(previous).slideDown('fast');
 			} else {
-				$el.appendTo(this.el).show();
+				el.appendTo(this.el).show();
 			}
 		},
 
@@ -217,12 +207,8 @@ define([
 
 		cancel : events.cancel,
 
-		block : function () {
-			// this.el.hide()
-		},
-
-		unblock : function () {
-			this.el.show()
+		contains : function (el) {
+			return el ? $.contains(this.el[0], el) : false
 		}
 
 	});

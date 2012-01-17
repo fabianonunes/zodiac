@@ -26,10 +26,6 @@ define([
 				sinon.spy(collection.blend(), "postPerform")
 			})
 			sinon.spy(performer.resolved, "done")
-// try {
-// } catch (e) {
-// console.log(e.stack)
-// }
 		})
 
 		afterEach(function () {

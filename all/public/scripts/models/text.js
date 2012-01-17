@@ -3,7 +3,7 @@ define(['underscore', 'backbone'], function (_, Backbone) {
 
 	var TextModel = Backbone.Model.extend({
 
-		constructor : function TextModel () { // Correct name of instances
+		constructor : function TextModel () {
 			return Backbone.Model.apply(this, arguments)
 		},
 
@@ -20,8 +20,11 @@ define(['underscore', 'backbone'], function (_, Backbone) {
 			return q
 		},
 
-		// when adding the properties to a queue, the values
-		// must be the current values when invoking, not when added
+		postPerform : function (data) {
+			if (data.lines) this.store.write(data.lines)
+			this.set({ length : data.length })
+		},
+
 		expand : function () {
 			var previous = this.collection.previousOf(this)
 			return {
@@ -35,20 +38,6 @@ define(['underscore', 'backbone'], function (_, Backbone) {
 		destroy : function (options) {
 			this.trigger('destroy', this)
 			this.unbind()
-		},
-
-		acessor : function (op) {
-			this.perform({ op : op, lines : this.store.data }).done(this.postPerform)
-		},
-
-		postPerform : function (data) {
-			// for now, sort and uniq dont return lines
-			if (!_.isUndefined(data.lines)) {
-				this.store.write(data.lines)
-			}
-
-			this.set({ length : data.length })
-
 		}
 
 	})
@@ -76,7 +65,7 @@ define(['underscore', 'backbone'], function (_, Backbone) {
 			this.storeFactory = options.store
 			this.performer = options.performer
 
-			this.performer.bind('complete', this.publish)
+			this.performer.bind('complete', _.proxy(this, 'publish'))
 
 		},
 
