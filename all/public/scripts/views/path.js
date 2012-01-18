@@ -14,8 +14,8 @@ define([
 		events : {
 			'dragover'             : 'cancel',
 			'dragenter'            : 'debouncedShow',
-			'drop'                 : 'onDrop',
-			'drop .options .icon'  : 'onOpDrop',
+			'drop'                 : 'drop',
+			'drop .options .icon'  : 'opDrop',
 			'click .remove'        : 'untie',
 			'click .icon'          : 'showOptions',
 			'click .options .icon' : 'change'
@@ -46,23 +46,17 @@ define([
 		},
 
 		showOptions : function (delay) {
-
-			publisher.publish('show', 400);
-
+			publisher.publish('show', 300);
 			var options = this._('.options');
 			options.stop(true).delay(delay || 0).animate({
 				height : options.prop('scrollHeight')
 			});
-
 		},
 
 		// debouncing here, affects all instances
 		debouncedShow : _.debounce(function debouncedShow (evt) {
-			if(evt){
-				this.showOptions(0);
-				return this.cancel(evt);
-			}
-		}, 450),
+			if(evt)	this.showOptions(0)
+		}, 350),
 
 		onDrag : function (event) {
 			event = event.originalEvent || event;
@@ -112,12 +106,12 @@ define([
 
 		cancel : events.cancel,
 
-		onDrop : function(evt) {
+		drop : function(evt) {
 			this.hideOptions();
 			this.cancel(evt);
 		},
 
-		onOpDrop : function (evt) {
+		opDrop : function (evt) {
 
 			this.cancel(evt);
 
@@ -165,7 +159,7 @@ define([
 
 		template : 'path',
 		events : {
-			'dragleave' : 'dragLeave',
+			'dragleave' : 'dragleave',
 			'dragover'  : 'cancel',
 			'drop'      : 'cancel',
 			'dragenter' : 'cancel'
@@ -193,16 +187,11 @@ define([
 			}
 		},
 
-		dragLeave : function(evt) {
-
-			var related = events.elementFromCursor(evt);
-
-			if(!related || related !== this.el) {
-				if(!this.contains(related)){
-					publisher.publish('show', 0); // forces all options to close at once
-				}
+		dragleave : function(evt) {
+			var related = events.elementFromCursor(evt)
+			if(related !== this.el[0] && !this.contains(related)) {
+				publisher.publish('show', 400) // forces all options to close at once
 			}
-
 		},
 
 		cancel : events.cancel,
