@@ -35,8 +35,11 @@ define(['underscore', 'backbone'], function (_, Backbone) {
 			}
 		},
 
-		destroy : function () {
-			this.trigger('destroy', this, { at : this.collection.indexOf(this) })
+		destroy : function (options) {
+			options = options || {}
+			this.trigger('destroy', this, {
+				at : this.collection.indexOf(this)
+			})
 			this.unbind()
 		}
 
@@ -75,9 +78,10 @@ define(['underscore', 'backbone'], function (_, Backbone) {
 		},
 
 		destroy : function (m, options) {
+			options = options || {}
 			if (this.length < 1) {
 				this.reset()
-			} else {
+			} else if (_.isNumber(options.at) ) {
 				var next = this.at(options.at)
 				if (next) next.perform()
 			}
@@ -127,8 +131,12 @@ define(['underscore', 'backbone'], function (_, Backbone) {
 		},
 
 		clear : function () {
+			var models = []
 			this.forEach(function (m) {
-				_.defer(m.destroy)
+				models.push(m)
+			})
+			models.reverse().forEach(function (m) {
+				m.destroy()
 			})
 			this.reset()
 		}
