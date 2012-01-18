@@ -21,7 +21,7 @@ define(['underscore', 'backbone'], function (_, Backbone) {
 		},
 
 		postPerform : function (data) {
-			if (data.lines) this.store.write(data.lines)
+			if ( undefined !== data.lines ) this.store.write(data.lines)
 			this.set({ length : data.length })
 		},
 
@@ -135,6 +135,7 @@ define(['underscore', 'backbone'], function (_, Backbone) {
 			this.forEach(function (m) {
 				models.push(m)
 			})
+			// reversing prevent perform-next in each exclusion
 			models.reverse().forEach(function (m) {
 				m.destroy()
 			})
