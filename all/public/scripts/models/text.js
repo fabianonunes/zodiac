@@ -1,164 +1,149 @@
 /*global define*/
 define(['underscore', 'backbone'], function (_, Backbone) {
 
-	var Text = Backbone.Model.extend({
+	var TextModel = Backbone.Model.extend({
+
+		constructor : function TextModel () {
+			return Backbone.Model.apply(this, arguments)
+		},
 
 		initialize : function (attrs, options) {
-			_.bindAll(this);
-			this.bind('change:op', this.perform, this);
-			this.store = Text.storeFactory();
+			_.bindAll(this)
+			this.store = options.store
+			this.performer = options.performer
+			this.bind('change:op', this.perform)
 		},
 
 		perform : function () {
-			return Text.performer( this.expand ).done( this.afterWorker );
+			var q = this.performer(this.expand).done(this.postPerform)
+			this.trigger('perform', this)
+			return q
 		},
 
-		// when adding the properties to a queue, the values
-		// must be the current values when invoking, not when added
+		postPerform : function (data) {
+			if ( undefined !== data.lines ) this.store.write(data.lines)
+			this.set({ length : data.length })
+		},
+
 		expand : function () {
-			var previous = this.getPrevious();
+			var previous = this.collection.previousOf(this)
 			return {
 				op       : previous ? this.get('op') : 'charge',
 				previous : previous && previous.store.data,
 				file     : this.get('origin'),
 				mask     : this.collection.mask
-			};
+			}
 		},
 
 		destroy : function (options) {
-			this.trigger('destroy', this); // bubbles to collection, that removes this
-			this.unbind();
-		},
-
-		acessor : function (op) {
-			this.work({ op : op, lines : this.store.data }).done( this.afterWorker );
-		},
-
-		afterWorker : function (message) {
-
-			// for now, sort and uniq dont return lines
-			if ( !_.isUndefined(message.data.lines) ) {
-				this.store.write(message.data.lines);
-			}
-
-			this.set({ length : message.data.length });
-
-			this.trigger('perform', this);
-
-		},
-
-		getPrevious : function () {
-			var index = this.collection.indexOf(this);
-			return this.collection.at( index - 1 );
-		},
-
-		getPath : function () {
-
-			var ops = {
-				union        : '\u222a',
-				intersection : '\u2229',
-				difference   : '\u2216',
-				symmetric    : '\u2296',
-				grep         : '*'
-			}, path = [], m = this;
-
-			while ( m ) {
-				path.push(m.get('fileName'), ops[m.get('op')]);
-				m = m.getPrevious();
-			}
-			path.pop();
-
-			return path.reverse().join('');
-
+			options = options || {}
+			this.trigger('destroy', this, {
+				at : this.collection.indexOf(this)
+			})
+			this.unbind()
 		}
 
-	}, {
-		fabiano : 'nunes'
-	});
+	})
 
 	var TextPeer = Backbone.Collection.extend({
 
 		currentIndex : null,
-		model        : Text,
+		model        : TextModel,
+		// TODO: decouple this
 		mask         : /[1-9]\d{0,6}-\d{2}\.\d{4}\.\d\.\d{2}\.\d{4}/g,
+
+		constructor : function TextPeer () {
+			return Backbone.Collection.apply(this, arguments)
+		},
 
 		initialize : function (models, options) {
 
-			_.bindAll(this);
+			var self = this
 
-			this.bind('perform', this.goNext);
-			this.bind('destroy', this.destroy);
+			_.bindAll(this)
 
-			Text.storeFactory = options.store;
-			Text.performer = options.performer;
+			this.bind('perform', this.goNext)
+			this.bind('destroy', this.destroy)
+
+			this.storeFactory = options.store
+			this.performer = options.performer
+
+			this.performer.bind('complete', _.proxy(this, 'publish'))
 
 		},
 
-		goNext : function (m){
-			var next = this.nextOf(m);
-			return next ? next.perform() : this.updateDocument(m);
+		goNext : function (m) {
+			var next = this.nextOf(m)
+			if(next) next.perform()
 		},
 
-		destroy : function (m) {
-			var next = this.nextOf(m);
-			this.remove(m);
+		destroy : function (m, options) {
+			options = options || {}
 			if (this.length < 1) {
-				this.reset();
-			} else if (next) {
-				next.perform();
+				this.reset()
+			} else if (_.isNumber(options.at) ) {
+				var next = this.at(options.at)
+				if (next) next.perform()
 			}
 		},
 
-		updateDocument : function (m) {
-			m.store.read().done(function (result) {
-				this.trigger('change:currentIndex', m.id, m, result);
-			}.bind(this));
+		publish : function (m) {
+			var self = this, last = this.last()
+			last.store.read().done(function (contents) {
+				self.trigger('publish', contents, last.id)
+			})
 		},
 
 		blend : function (op, file, previous) {
 
-			var m = new Text({
+			var m = new TextModel({
 				id         : _.uniqueId('text'),
 				op         : op,
 				origin     : file,
-				fileName   : file.name
+				fileName   : file && file.name
 			}, {
-				collection : this
-			});
+				collection : this,
+				store      : this.storeFactory(),
+				performer  : this.performer.perform
+			})
 
 			this.add(m, {
-				at       : previous ? this.indexOf( this.get(previous) ) + 1 : Number.MAX_VALUE,
+				at       : previous ? this.indexOf(this.get(previous)) + 1 : Number.MAX_VALUE,
 				silent   : true
-			});
+			})
 
-			m.perform().done(m.trigger.bind(m, 'change:added', m));
+			m.perform().done(
+				_.bind(m.trigger, m, 'change:added', m)
+			)
 
-		},
+			return m
 
-		acessor : function (op) {
-			if (this.currentIndex) {
-				this.currentDocument().acessor(op);
-			}
-		},
-
-		currentDocument : function () {
-			return this.get(this.currentIndex);
 		},
 
 		nextOf : function (model) {
-			var index = this.indexOf(model);
-			return this.at(index + 1);
+			var index = this.indexOf(model)
+			return ~index ? this.at(index + 1) : null
+		},
+
+		previousOf : function (model) {
+			var index = this.indexOf(model)
+			return ~index ? this.at(index - 1) : null
 		},
 
 		clear : function () {
+			var models = []
 			this.forEach(function (m) {
-				_.defer(m.destroy);
-			});
-			this.reset();
+				models.push(m)
+			})
+			// reversing prevent perform-next in each exclusion
+			models.reverse().forEach(function (m) {
+				m.destroy()
+			})
+			this.reset()
 		}
 
-	});
+	})
 
-	return TextPeer;
+	return TextPeer
 
-});
+})

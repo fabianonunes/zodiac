@@ -5,7 +5,9 @@ define([
 
 	return Backbone.View.extend({
 
-		el: $('.path footer'),
+		constructor : function ToolbarView () {
+			return Backbone.View.apply(this, arguments);
+		},
 
 		events : {
 			'click .recycle' : 'reset'

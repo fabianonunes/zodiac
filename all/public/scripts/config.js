@@ -8,10 +8,11 @@
 }(function () {
 	return {
 		paths : {
-			jquery     : 'libs/jquery/jquery-1.7.1',
-			underscore : 'libs/underscore-1.2.2.min',
-			backbone   : 'libs/backbone-0.5.3',
-			dust       : 'libs/dust-0.3.0.min'
+			jquery     : 'lib/vendor/jquery-1.7.1',
+			underscore : 'lib/vendor/underscore',
+			backbone   : 'lib/vendor/backbone-0.5.3',
+			publisher  : 'lib/vendor/publisher-1.3.0',
+			dust       : 'lib/vendor/dust-0.3.0'
 		}
 	};
 }));

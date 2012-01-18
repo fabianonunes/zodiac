@@ -1,23 +1,26 @@
 /*global define*/
 define([
-	'jquery', 'backbone', 'underscore', 'libs/blob'
-], function($, Backbone, _, blob) {
+	'jquery', 'backbone', 'underscore', 'lib/blob', 'lib/event'
+], function($, Backbone, _, blob, events) {
 
 	var dropper = Backbone.View.extend({
 
-		el: $('.dropper'),
+		constructor : function DropperView () {
+			return Backbone.View.apply(this, arguments);
+		},
 
 		events: {
-			'dragover'		: 'cancel',
-			'dragleave'		: 'dragLeave',
-			'dragleave div'	: 'onLeave',
-			'dragenter'		: 'dragEnter',
-			'dragenter div'	: 'onEnter',
-			'drop'			: 'onDrop'
+			'dragover'      : 'cancel',
+			'dragleave'     : 'dragLeave',
+			'dragleave div' : 'onLeave',
+			'dragenter'     : 'dragEnter',
+			'dragenter div' : 'onEnter',
+			'drop .icon'    : 'onDrop',
+			'drop'          : 'drop'
 		},
 
 		initialize: function() {
-			_.bindAll(this, 'dragEnter', 'dragLeave');
+			_.bindAll(this);
 			this.mask = $('.mask', this.el);
 		},
 
@@ -32,10 +35,7 @@ define([
 
 		dragLeave : function(evt) {
 
-			var related = document.elementFromPoint(
-				evt.originalEvent.clientX,
-				evt.originalEvent.clientY
-			);
+			var related = events.elementFromCursor(evt);
 
 			if(!related || related !== this.mask[0]) {
 				var inside = $.contains(this.mask[0], related);
@@ -46,10 +46,7 @@ define([
 
 		onLeave : function(evt) {
 
-			var related = document.elementFromPoint(
-				evt.originalEvent.clientX,
-				evt.originalEvent.clientY
-			);
+			var related = events.elementFromCursor(evt);
 
 			if(!related || related !== evt.target) {
 				var inside = $.contains(evt.target, related);
@@ -62,22 +59,23 @@ define([
 
 			this.cancel(evt);
 			this.mask.hide();
-			// evt.stopImmediatePropagation();
+			evt.stopImmediatePropagation();
 
 			var target = $(evt.target).removeClass('over'),
 				op     = target.attr('class').split(' ')[0],
-				dt     = evt.originalEvent.dataTransfer,
+				dt     = evt.originalEvent && evt.originalEvent.dataTransfer,
 				file   = blob.createFromDataTransfer(dt);
 
 			this.collection.blend(op, file);
 
 		},
 
-		cancel : function(evt) {
-			evt.preventDefault();
-			evt.originalEvent.dataTransfer.dropEffect = 'copy';
-			return false;
-		}
+		drop : function (evt) {
+			this.mask.hide()
+			return this.cancel(evt)
+		},
+
+		cancel : events.cancel
 
 	});
 

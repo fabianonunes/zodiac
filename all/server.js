@@ -22,6 +22,7 @@ app.configure(function () {
 	app.use(matador.methodOverride())
 
 	app.set('version', fs.readFileSync(__dirname + '/version'))
+	app.set('title', 'zodiac')
 
 })
 
@@ -40,6 +41,6 @@ app.configure('production', function () {
 	app.use(matador.staticCache())
 	app.use(gzip.staticGzip(__dirname + '/public', { maxAge : 86400000*30 }))
 })
-
+app.set('viewPartials', matador.partials.build(app.set('views')))
 matador.mount(routes)
 app.listen(8080)

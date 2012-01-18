@@ -1,4 +1,4 @@
-define(["require", "exports", "module", "underscore", "jquery"], function(require, exports, module) {
+define(function(require, exports, module) {
 
 (function(){
 

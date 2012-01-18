@@ -5,3 +5,4 @@ node_modules/*
 all/public/scripts/production*
 all/public/styles/*css
 .monitor
+.nide

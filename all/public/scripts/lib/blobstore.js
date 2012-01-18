@@ -1,11 +1,11 @@
 /*global define*/
 
 define([
-	'libs/klass',
-	'libs/blob'
-], function (Class, blob) {
+	'lib/klass',
+	'lib/blob'
+], function (clazz, blob) {
 
-	var BlobStore = Class({
+	var BlobStore = clazz({
 		write : function (data) {
 			this.data = blob.createBlob(data);
 		},

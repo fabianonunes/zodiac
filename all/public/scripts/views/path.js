@@ -1,29 +1,29 @@
 /*global define*/
-
 define([
-	'jquery', 'underscore', 'backbone', 'renderer', 'libs/publisher', 'libs/blob', 'libs/event'
+	'jquery', 'underscore', 'backbone', 'lib/renderer', 'publisher', 'lib/blob', 'lib/event'
 ], function ($, _, Backbone, renderer, publisher, blob, events) {
 
-	var PathView, PathListView;
+	var PathView = Backbone.View.extend({
 
-	PathView = Backbone.View.extend({
+		constructor : function PathView () {
+			return Backbone.View.apply(this, arguments);
+		},
 
 		tagName : 'div',
 
 		events : {
 			'dragover'             : 'cancel',
 			'dragenter'            : 'debouncedShow',
-			'drop'                 : 'onDrop',
-			'drop .options .icon'  : 'onOpDrop',
+			'drop'                 : 'drop',
+			'drop .options .icon'  : 'opDrop',
 			'click .remove'        : 'untie',
 			'click .icon'          : 'showOptions',
 			'click .options .icon' : 'change'
-			// 'dblclick'             : 'onDrag'
 		},
 
 		template : 'path',
 
-		initialize : function () {
+		initialize : function initialize () {
 
 			_.bindAll(this);
 
@@ -46,23 +46,17 @@ define([
 		},
 
 		showOptions : function (delay) {
-
-			publisher.publish('show', 400);
-
+			publisher.publish('show', 300);
 			var options = this._('.options');
 			options.stop(true).delay(delay || 0).animate({
 				height : options.prop('scrollHeight')
 			});
-
 		},
 
 		// debouncing here, affects all instances
 		debouncedShow : _.debounce(function debouncedShow (evt) {
-			if(evt){
-				this.showOptions(0);
-				return this.cancel(evt);
-			}
-		}, 450),
+			if(evt)	this.showOptions(0)
+		}, 350),
 
 		onDrag : function (event) {
 			event = event.originalEvent || event;
@@ -88,12 +82,12 @@ define([
 		},
 
 		render : function () {
-			return $.Deferred(function (dfd) {
-				renderer({
-					documents : [this.model.attributes],
-					ops : PathView.oprs
-				}, this.template, this.el, dfd.resolve.bind(dfd, this.el));
-			}.bind(this));
+			var dfd = $.Deferred()
+			renderer({
+				documents : [this.model.attributes],
+				ops : PathView.oprs
+			}, this.template, this.el, dfd.resolve);
+			return dfd;
 		},
 
 		renderOp : function (model, op) {
@@ -112,12 +106,12 @@ define([
 
 		cancel : events.cancel,
 
-		onDrop : function(evt) {
+		drop : function(evt) {
 			this.hideOptions();
 			this.cancel(evt);
 		},
 
-		onOpDrop : function (evt) {
+		opDrop : function (evt) {
 
 			this.cancel(evt);
 
@@ -157,57 +151,54 @@ define([
 
 	});
 
-	PathListView = Backbone.View.extend({
+	var PathListView = Backbone.View.extend({
+
+		constructor : function PathListView () {
+			return Backbone.View.apply(this, arguments);
+		},
 
 		template : 'path',
 		events : {
-			'dragleave' : 'dragLeave',
+			'dragleave' : 'dragleave',
 			'dragover'  : 'cancel',
-			'drop'      : 'cancel'
+			'drop'      : 'cancel',
+			'dragenter' : 'cancel'
 		},
 
 		initialize: function () {
-
 			_.bindAll(this);
 			this.collection.bind('change:added', this.render);
-
-			this.contains = _.memoize(function (arg) {
-				return $.contains(this.el[0], arg);
-			}.bind(this), function (arg) {
-				return arg.id || ( arg.id = _.uniqueId('anonymous_element') );
-			});
-
+			this.contains = _.memoize(this.contains, events.domhash);
 		},
 
 		render : function (model) {
-			var index = this.collection.indexOf(model),
-				view = new PathView({ model : model });
-			view.render().then(this.addRow.bind(this, index));
+			var view  = new PathView({ model : model }),
+				index = this.collection.indexOf(model);
+			view.render().then( _.bind(this.addRow, this, index) );
 		},
 
 		addRow : function (index, el) {
-			var $el = $(el).hide(),
-			previous = this.$('>div').eq(index);
+			var previous = this.el.children('div').eq(index);
+			el = $(el).hide();
 			if ( previous.length ) {
-				$el.insertBefore(previous).slideDown('fast');
+				el.insertBefore(previous).slideDown('fast');
 			} else {
-				$el.appendTo(this.el).show();
+				el.appendTo(this.el).show();
 			}
 		},
 
-		dragLeave : function(evt) {
-
-			var related = events.elementFromCursor(evt);
-
-			if(!related || related !== this.el) {
-				if(!this.contains(related)){
-					publisher.publish('show', 0); // forces all options to close at once
-				}
+		dragleave : function(evt) {
+			var related = events.elementFromCursor(evt)
+			if(related !== this.el[0] && !this.contains(related)) {
+				publisher.publish('show', 400) // forces all options to close at once
 			}
-
 		},
 
-		cancel : events.cancel
+		cancel : events.cancel,
+
+		contains : function (el) {
+			return el ? $.contains(this.el[0], el) : false
+		}
 
 	});
 

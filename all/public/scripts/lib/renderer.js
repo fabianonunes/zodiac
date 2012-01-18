@@ -12,7 +12,7 @@ define(['dust'], function(dust){
 
 			el.appendChild(s);
 
-			if(cb) cb();
+			if(cb) cb(el);
 
 		});
 

@@ -24,6 +24,10 @@ define([
 
 	blob.createFromDataTransfer = function createFromDataTransfer (dataTransfer) {
 
+		if (!dataTransfer) {
+			return null
+		}
+
 		// accessing the files.length property directly is as expensive as plucking
 		// file names. thus, its making use of pluck op to get both information
 		var names = _.pluck(dataTransfer.files, 'name'),
