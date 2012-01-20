@@ -9,15 +9,28 @@ define(['underscore', 'backbone'], function (_, Backbone) {
 
 		initialize : function (attrs, options) {
 			_.bindAll(this)
+			options = options || {}
 			this.store = options.store
 			this.performer = options.performer
 			this.bind('change:op', this.perform)
+			this.set({ operable : !this.isAccessor() })
 		},
 
-		perform : function () {
-			var q = this.performer(this.expand).done(this.postPerform)
-			this.trigger('perform', this)
-			return q
+		validate : function (attrs) {
+			if ( this.isAccessor() ) {
+				if (undefined !== attrs.op) {
+					return 'can\'t change op from accessors models'
+				}
+			}
+		},
+
+		perform : function (callback) {
+			if ( this.collection.indexOf(this) === 0 && this.isAccessor() ) {
+				this.destroy() // never perform accessor when first
+			} else {
+				this.performer(this.expand).done(this.postPerform, callback)
+				this.trigger('perform', this)
+			}
 		},
 
 		postPerform : function (data) {
@@ -41,8 +54,18 @@ define(['underscore', 'backbone'], function (_, Backbone) {
 				at : this.collection.indexOf(this)
 			})
 			this.unbind()
+		},
+
+		isAccessor : function () {
+			return _.contains( TextModel.ACCESSORS, this.get('op') )
 		}
 
+	}, {
+		ACCESSORS : ['sort', 'uniq'],
+		NAMING : {
+			uniq : 'Remover duplicados',
+			sort : 'Ordenar'
+		}
 	})
 
 	var TextPeer = Backbone.Collection.extend({
@@ -78,16 +101,17 @@ define(['underscore', 'backbone'], function (_, Backbone) {
 		},
 
 		destroy : function (m, options) {
-			options = options || {}
-			if (this.length < 1) {
+			if ( this.length === 0 ) {
 				this.reset()
-			} else if (_.isNumber(options.at) ) {
+			} else {
+				options = options || {}
 				var next = this.at(options.at)
 				if (next) next.perform()
 			}
 		},
 
-		publish : function (m) {
+		publish : function () {
+			// TODO : publish when the last is destroyed
 			var self = this, last = this.last()
 			last.store.read().done(function (contents) {
 				self.trigger('publish', contents, last.id)
@@ -99,8 +123,8 @@ define(['underscore', 'backbone'], function (_, Backbone) {
 			var m = new TextModel({
 				id         : _.uniqueId('text'),
 				op         : op,
-				origin     : file,
-				fileName   : file && file.name
+				name       : file ? file.name : TextModel.NAMING[op],
+				origin     : file
 			}, {
 				collection : this,
 				store      : this.storeFactory(),
@@ -108,11 +132,11 @@ define(['underscore', 'backbone'], function (_, Backbone) {
 			})
 
 			this.add(m, {
-				at       : previous ? this.indexOf(this.get(previous)) + 1 : Number.MAX_VALUE,
-				silent   : true
+				at : previous ? this.indexOf(this.get(previous)) + 1 : Number.MAX_VALUE,
+				silent : true
 			})
 
-			m.perform().done(
+			m.perform(
 				_.bind(m.trigger, m, 'change:added', m)
 			)
 
