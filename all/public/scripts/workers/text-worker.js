@@ -13,7 +13,7 @@ var TextWorker = {
 		strut = sortBy(strut, 'line');
 
 		strut.forEach(function (row) {
-			value += row;
+			value += row.line;
 			value += '\n';
 			length += 1;
 		});
