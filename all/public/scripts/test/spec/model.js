@@ -110,6 +110,19 @@ define([
 				expect(first.postPerform.called).to.be.ok()
 			})
 
+			it('shouldn\'t allow changes in op attr from accessor models', function () {
+				var sort = collection.blend('sort')
+				sort.set({ op : 'union' })
+				expect(sort.get('op')).to.be('sort')
+			})
+
+			it('should destroy accessors models when first ', function () {
+				var first = collection.first(),
+					m = collection.blend('uniq', null, first.id)
+				first.destroy()
+				expect(collection.indexOf(m)).to.be(-1)
+			})
+
 			it('should fire perform custom event on perform', function () {
 				var spy = sinon.spy()
 				collection.first().bind('perform', spy).perform()

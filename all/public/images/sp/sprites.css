@@ -1,0 +1,44 @@
+.sprite-sprites-difference,
+.sprite-sprites-right-difference,
+.sprite-sprites-sort_ascending,
+.sprite-sprites-left-difference,
+.sprite-sprites-symmetric,
+.sprite-sprites-union,
+.sprite-sprites-grep,
+.sprite-sprites-sort,
+.sprite-sprites-uniq,
+.sprite-sprites-data_table,
+.sprite-sprites-grep_,
+.sprite-sprites-edit_diff,
+.sprite-sprites-intersection,
+.sprite-sprites-sort_columns,
+.sprite-sprites-document_inspect,
+.sprite-sprites-page_paste,
+.sprite-sprites-b_intersection,
+.sprite-sprites-sql_join_right_exclude,
+.sprite-sprites-b_symmetric,
+.sprite-sprites-b_union,
+.sprite-sprites-asterisk_yellow,
+.sprite-sprites-b_difference{background-image:url('sprites.png');background-repeat:no-repeat;}
+.sprite-sprites-difference{background-position:0px 0px;width:32px; height:32px;}
+.sprite-sprites-right-difference{background-position:-32px 0px;width:32px; height:32px;}
+.sprite-sprites-sort_ascending{background-position:0px -32px;width:32px; height:29px;}
+.sprite-sprites-left-difference{background-position:-64px 0px;width:32px; height:32px;}
+.sprite-sprites-symmetric{background-position:0px -61px;width:32px; height:32px;}
+.sprite-sprites-union{background-position:-32px -61px;width:32px; height:32px;}
+.sprite-sprites-grep{background-position:-64px -61px;width:32px; height:32px;}
+.sprite-sprites-sort{background-position:-64px -32px;width:32px; height:29px;}
+.sprite-sprites-uniq{background-position:-32px -32px;width:32px; height:28px;}
+.sprite-sprites-data_table{background-position:-96px 0px;width:32px; height:28px;}
+.sprite-sprites-grep_{background-position:-96px -28px;width:32px; height:32px;}
+.sprite-sprites-edit_diff{background-position:-96px -60px;width:32px; height:32px;}
+.sprite-sprites-intersection{background-position:0px -93px;width:32px; height:32px;}
+.sprite-sprites-sort_columns{background-position:-32px -93px;width:31px; height:32px;}
+.sprite-sprites-document_inspect{background-position:-63px -93px;width:32px; height:32px;}
+.sprite-sprites-page_paste{background-position:-95px -93px;width:32px; height:32px;}
+.sprite-sprites-b_intersection{background-position:-128px 0px;width:16px; height:16px;}
+.sprite-sprites-sql_join_right_exclude{background-position:-128px -16px;width:16px; height:16px;}
+.sprite-sprites-b_symmetric{background-position:-128px -32px;width:16px; height:16px;}
+.sprite-sprites-b_union{background-position:-128px -48px;width:16px; height:16px;}
+.sprite-sprites-asterisk_yellow{background-position:-128px -64px;width:16px; height:16px;}
+.sprite-sprites-b_difference{background-position:-128px -80px;width:16px; height:16px;}

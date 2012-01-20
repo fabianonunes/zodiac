@@ -1,12 +1,12 @@
 /*global postMessage, onmessage:true, FileReaderSync */
 var TextWorker = {
 
-	sort : function (lines) {
+	sort : function (lines2) {
 
 		var value  = '',
 			length = 0;
 
-		var strut = lines.map(function (v) {
+		var strut = lines2.map(function (v) {
 			return { line : v };
 		});
 
@@ -25,15 +25,15 @@ var TextWorker = {
 
 	},
 
-	uniq : function (lines, classes) {
+	uniq : function (lines2) {
 
 		var strut  = {},
 			length = 0,
 			value = '';
 
-		lines.forEach(function (row) {
+		lines2.forEach(function (row) {
 
-			if (row && !strut[row]) {
+			if (!strut[row]) {
 				strut[row] = true;
 				value += row;
 				value += '\n';
@@ -196,9 +196,7 @@ onmessage = function (message) {
 	var d = message.data,
 		op = TextWorker[d.op];
 
-	if(d.op === 'sort' || d.op === 'uniq') {
-		op(d.lines, d.classes);
-	} else if(d.op === 'grep') {
+	if(d.op === 'grep') {
 		op(readFile(d.previous), readFile(d.file));
 	} else {
 		op(readFile(d.previous), readFile(d.file, d.mask));
@@ -208,7 +206,7 @@ onmessage = function (message) {
 
 function readFile(file, mask, callback) {
 	if(!file){
-		return;
+		return null;
 	}
 	var reader = new FileReaderSync();
 	var result = reader.readAsText(file);
