@@ -74,7 +74,8 @@ define([
 			this.unbind();
 			this._ = null; // TODO: it's necesseray clear the memoized $ ?
 			this.subscription.detach(); // TODO: is this enough to clear subscriptions ?
-			this.element.off().slideUp('fast', this.remove);
+			var speed = 0.2 // 40/200
+			this.element.off().slideUp(this.element.height()/speed, this.remove);
 		},
 
 		untie : function () {
