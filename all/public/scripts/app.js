@@ -20,7 +20,7 @@ define([
 
 		this.documents = new TextPeer([], {
 			store : require('lib/blobstore').factory,
-			performer : require('lib/worker').factory('/scripts/workers/text-worker.js')
+			performer : require('lib/worker').factory('/scripts/workers/text-worker.min.js')
 		})
 
 		var views = [
