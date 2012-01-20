@@ -226,7 +226,7 @@ function readFile(file, mask, callback) {
 
 function sortBy(obj, field, context) {
 	return obj.sort(function (left, right) {
-		var a = left[field], b = right[field];
+		var a = parseInt(left[field], 10), b = parseInt(right[field], 10);
 		return a < b ? -1 : a > b ? 1 : 0;
 	});
 }
