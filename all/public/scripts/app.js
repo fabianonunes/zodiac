@@ -4,7 +4,7 @@
 define([
 	'jquery',
 	'templates/templates',
-	'models/text',
+	'models/text.peer',
 	'views/dropper',
 	'views/input',
 	'views/path',
