@@ -64,8 +64,10 @@ define(['underscore', 'backbone', 'models/text'], function (_, Backbone, TextMod
 				performer  : this.performer.perform
 			})
 
+			previous = this.get(previous) || this.last()
+
 			this.add(m, {
-				at : previous ? this.indexOf(this.get(previous)) + 1 : Number.MAX_VALUE,
+				at : previous ? this.indexOf(previous) + 1 : 0,
 				silent : true
 			})
 

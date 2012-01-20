@@ -25,12 +25,14 @@ define(['underscore', 'backbone'], function (_, Backbone) {
 		},
 
 		perform : function (callback) {
-			if ( this.collection.indexOf(this) === 0 && this.isAccessor() ) {
-				this.destroy() // never perform accessor when first
-			} else {
-				this.performer(this.expand).done(this.postPerform, callback)
-				this.trigger('perform', this)
+			if (this.isAccessor()) {
+				var previous = this.collection.previousOf(this)
+				if (!previous || previous.get('op') === this.get('op') ) {
+					return this.destroy() // never perform accessor when first or is duplicate
+				}
 			}
+			this.performer(this.expand).done(this.postPerform, callback)
+			this.trigger('perform', this)
 		},
 
 		postPerform : function (data) {
