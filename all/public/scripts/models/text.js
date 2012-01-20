@@ -12,6 +12,15 @@ define(['underscore', 'backbone'], function (_, Backbone) {
 			this.store = options.store
 			this.performer = options.performer
 			this.bind('change:op', this.perform)
+			this.set({ operable : !this.isAccessor() })
+		},
+
+		validate : function (attrs) {
+			if ( this.isAccessor() ) {
+				if (undefined !== attrs.op) {
+					return 'can\'t change op from accessors models'
+				}
+			}
 		},
 
 		perform : function () {
@@ -26,9 +35,10 @@ define(['underscore', 'backbone'], function (_, Backbone) {
 		},
 
 		expand : function () {
-			var previous = this.collection.previousOf(this)
+			var previous = this.collection.previousOf(this),
+				isFirst = this.collection.indexOf(this) === 0
 			return {
-				op       : previous ? this.get('op') : 'charge',
+				op       : isFirst ? 'charge' : this.get('op'),
 				previous : previous && previous.store.data,
 				file     : this.get('origin'),
 				mask     : this.collection.mask
@@ -41,8 +51,18 @@ define(['underscore', 'backbone'], function (_, Backbone) {
 				at : this.collection.indexOf(this)
 			})
 			this.unbind()
+		},
+
+		isAccessor : function () {
+			return _.contains( TextModel.ACCESSORS, this.get('op') )
 		}
 
+	}, {
+		NAMING : {
+			uniq : 'non-dups',
+			sort : 'sort-asc'
+		},
+		ACCESSORS : ['sort', 'uniq']
 	})
 
 	var TextPeer = Backbone.Collection.extend({
@@ -79,9 +99,9 @@ define(['underscore', 'backbone'], function (_, Backbone) {
 
 		destroy : function (m, options) {
 			options = options || {}
-			if (this.length < 1) {
+			if ( this.length < 1 ) {
 				this.reset()
-			} else if (_.isNumber(options.at) ) {
+			} else {
 				var next = this.at(options.at)
 				if (next) next.perform()
 			}
@@ -99,8 +119,8 @@ define(['underscore', 'backbone'], function (_, Backbone) {
 			var m = new TextModel({
 				id         : _.uniqueId('text'),
 				op         : op,
-				origin     : file,
-				fileName   : file && file.name
+				name       : file ? file.name : TextModel.NAMING[op],
+				origin     : file
 			}, {
 				collection : this,
 				store      : this.storeFactory(),

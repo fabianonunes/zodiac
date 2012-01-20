@@ -10,7 +10,8 @@ define([
 		},
 
 		events : {
-			'click .recycle' : 'reset'
+			'click .recycle' : 'reset',
+			'click .plus' : 'uniq'
 		},
 
 		initialize: function () {
@@ -19,6 +20,10 @@ define([
 
 		reset : function () {
 			this.options.collection.clear();
+		},
+
+		uniq : function () {
+			this.options.collection.blend('uniq')
 		}
 
 	});

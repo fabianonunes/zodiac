@@ -110,6 +110,16 @@ define([
 				expect(first.postPerform.called).to.be.ok()
 			})
 
+			it('shouldn\'t allow changes in op attr from accessor models', function () {
+				var sort = collection.blend('sort')
+				var uniq = collection.blend('uniq')
+				sort.set({ op : 'union' })
+				uniq.set({ op : 'union' })
+				expect(sort.get('op')).to.be('sort')
+				expect(uniq.get('op')).to.be('uniq')
+			})
+
+
 			it('should fire perform custom event on perform', function () {
 				var spy = sinon.spy()
 				collection.first().bind('perform', spy).perform()
