@@ -1,16 +1,15 @@
 {#documents}
 		<div class="row">
 			<span class="iconic remove">x</span>
-			{fileName}
+			{name}
 			<span class="counter">{length}</span>
-		{?op}
+			{?operable}
 			<span class="icon {op}"></span>
+			{/operable}
 		</div>
 		<div class="options">
 			{#ops}
-
 				<div class="{type} icon	{selected}">{id}</div>
 			{/ops}
-		{/op}
 		</div>
 {/documents}
