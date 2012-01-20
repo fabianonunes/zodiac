@@ -9,9 +9,10 @@ define([
 	'views/input',
 	'views/path',
 	'views/toolbar',
+	'views/footer',
 	'lib/blobstore',
 	'lib/worker'
-], function ($, dust, TextPeer, Dropper, Input, Path, Toolbar) {
+], function ($, dust, TextPeer, Dropper, Input, Path, Toolbar, Footer) {
 
 	var app = {}
 
@@ -38,6 +39,10 @@ define([
 			, new Toolbar({
 				collection: this.documents,
 				el: $('.path footer')
+			})
+			, new Footer({
+				collection: this.documents,
+				el: $('.deck footer')
 			})
 		]
 
