@@ -9,6 +9,7 @@ define(['underscore', 'backbone'], function (_, Backbone) {
 
 		initialize : function (attrs, options) {
 			_.bindAll(this)
+			options = options || {}
 			this.store = options.store
 			this.performer = options.performer
 			this.bind('change:op', this.perform)
@@ -23,10 +24,13 @@ define(['underscore', 'backbone'], function (_, Backbone) {
 			}
 		},
 
-		perform : function () {
-			var q = this.performer(this.expand).done(this.postPerform)
-			this.trigger('perform', this)
-			return q
+		perform : function (callback) {
+			if ( this.collection.indexOf(this) === 0 && this.isAccessor() ) {
+				this.destroy() // never perform accessor when first
+			} else {
+				this.performer(this.expand).done(this.postPerform, callback)
+				this.trigger('perform', this)
+			}
 		},
 
 		postPerform : function (data) {
@@ -35,10 +39,9 @@ define(['underscore', 'backbone'], function (_, Backbone) {
 		},
 
 		expand : function () {
-			var previous = this.collection.previousOf(this),
-				isFirst = this.collection.indexOf(this) === 0
+			var previous = this.collection.previousOf(this)
 			return {
-				op       : isFirst ? 'charge' : this.get('op'),
+				op       : previous ? this.get('op') : 'charge',
 				previous : previous && previous.store.data,
 				file     : this.get('origin'),
 				mask     : this.collection.mask
@@ -58,11 +61,11 @@ define(['underscore', 'backbone'], function (_, Backbone) {
 		}
 
 	}, {
+		ACCESSORS : ['sort', 'uniq'],
 		NAMING : {
-			uniq : 'non-dups',
-			sort : 'sort-asc'
-		},
-		ACCESSORS : ['sort', 'uniq']
+			uniq : 'Remover duplicados',
+			sort : 'Ordenar'
+		}
 	})
 
 	var TextPeer = Backbone.Collection.extend({
@@ -98,16 +101,17 @@ define(['underscore', 'backbone'], function (_, Backbone) {
 		},
 
 		destroy : function (m, options) {
-			options = options || {}
-			if ( this.length < 1 ) {
+			if ( this.length === 0 ) {
 				this.reset()
 			} else {
+				options = options || {}
 				var next = this.at(options.at)
 				if (next) next.perform()
 			}
 		},
 
-		publish : function (m) {
+		publish : function () {
+			// TODO : publish when the last is destroyed
 			var self = this, last = this.last()
 			last.store.read().done(function (contents) {
 				self.trigger('publish', contents, last.id)
@@ -128,11 +132,11 @@ define(['underscore', 'backbone'], function (_, Backbone) {
 			})
 
 			this.add(m, {
-				at       : previous ? this.indexOf(this.get(previous)) + 1 : Number.MAX_VALUE,
-				silent   : true
+				at : previous ? this.indexOf(this.get(previous)) + 1 : Number.MAX_VALUE,
+				silent : true
 			})
 
-			m.perform().done(
+			m.perform(
 				_.bind(m.trigger, m, 'change:added', m)
 			)
 
