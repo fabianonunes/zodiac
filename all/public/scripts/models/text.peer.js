@@ -36,6 +36,8 @@ define(['underscore', 'backbone', 'models/text'], function (_, Backbone, TextMod
 		destroy : function (m, options) {
 			if ( this.length === 0 ) {
 				this.reset()
+			} else if (options.at === this.length) {
+				this.publish()
 			} else {
 				options = options || {}
 				var next = this.at(options.at)
