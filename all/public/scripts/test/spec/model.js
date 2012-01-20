@@ -94,6 +94,12 @@ define([
 				mock.verify()
 			})
 
+			it('should publish when last is destroyed', function () {
+				mock.expects('publish').once()
+				collection.last().destroy()
+				mock.verify()
+			})
+
 			it('should trigger publish event with the last model', function () {
 				mock.expects('trigger').withArgs('publish', ' ', collection.last().id)
 				collection.publish()
