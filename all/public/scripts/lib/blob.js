@@ -31,12 +31,12 @@ define([
 		// accessing the files.length property directly is as expensive as plucking
 		// file names. thus, its making use of pluck op to get both information
 		var names = _.pluck(dataTransfer.files, 'name'),
-			filesLength = names.length,
+			length = names.length,
 			file;
 
-		if ( filesLength > 1 ) {
+		if ( length > 1 ) {
 			file = this.createBlob(names.join('\n'));
-		} else if ( filesLength === 0 ) {
+		} else if ( length === 0 ) {
 			var type = _(dataTransfer.types).find(function(type){
 				return ~type.indexOf('text/plain') || ~type.indexOf('text/html');
 			});
