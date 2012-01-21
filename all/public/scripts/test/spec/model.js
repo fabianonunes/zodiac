@@ -106,6 +106,12 @@ define([
 				mock.verify()
 			})
 
+			it('shouldn\'t publish on reset', function () {
+				mock.expects('publish').never(0)
+				collection.clear()
+				mock.verify()
+			})
+
 		})
 
 		describe('model', function () {
