@@ -13,7 +13,7 @@ define([
 
 		events : {
 			'dragover'             : 'cancel',
-			'dragenter'            : 'debouncedShow',
+			'dragenter'            : 'dragenter',
 			'drop'                 : 'drop',
 			'drop .options .icon'  : 'opDrop',
 			'click .remove'        : 'untie',
@@ -42,20 +42,38 @@ define([
 			this._('.options')
 				.stop(true)
 				.delay(delay || 0)
-				.animate({ height : 0 })
+				.css({ border : 'none' })
+				.animate({ height : 0})
 		},
 
 		showOptions : function (evt, delay) {
 			publisher.publish('show', 300)
-			var options = this._('.options')
+			evt.dataTransfer = evt.dataTransfer || {}
+			var effect = evt.dataTransfer.effectAllowed,
+				options = this._('.options'),
+				height = options.prop('scrollHeight')
+			if(effect === 'link'){
+				options.css({ borderTop: '1px solid #F7803C' })
+				height = 0
+			}
 			options.stop(true).delay(delay || 0).animate({
-				height : options.prop('scrollHeight')
-			})
+				height : height
+			}, height/0.1)
+		},
+
+		dragenter : function (evt){
+			evt = evt.originalEvent
+			var dt = evt.dataTransfer
+			if (dt.effectAllowed === 'link'){
+				this.showOptions(evt, 0)
+			} else {
+				this.debouncedShow(evt)
+			}
 		},
 
 		// debouncing here, affects all instances
 		debouncedShow : _.debounce(function debouncedShow (evt) {
-			if(evt)	this.showOptions(evt.originalEvent, 0)
+			if(evt)	this.showOptions(evt, 0)
 		}, 350),
 
 		onDrag : function (event) {
@@ -108,6 +126,10 @@ define([
 		cancel : events.cancel,
 
 		drop : function(evt) {
+			var dt = evt.originalEvent.dataTransfer
+			if (dt && dt.effectAllowed == 'link'){
+				this.opDrop(evt)
+			}
 			this.hideOptions()
 			this.cancel(evt)
 		},
