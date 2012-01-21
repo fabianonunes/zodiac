@@ -36,7 +36,7 @@ define([
 		dragstart : function (evt) {
 			evt = evt.originalEvent
 			var op = $(evt.target).attr('class').split(' ')[0]
-			evt.dataTransfer.effectAllowed = 'move'
+			evt.dataTransfer.effectAllowed = 'link'
 			evt.dataTransfer.setData(
 				'url',
 				'data:application/json,' + encodeURIComponent(JSON.stringify({
