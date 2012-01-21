@@ -1,4 +1,5 @@
 /*global define*/
+// source : http://shadow2531.com/opera/testcases/datauri/
 define(function () {
 	function trim(s) {
 		return s.replace(/^\s\s*/, '').replace(/\s\s*$/, '')
