@@ -6,16 +6,18 @@ define([
 	return Backbone.View.extend({
 
 		constructor : function FooterView () {
-			return Backbone.View.apply(this, arguments);
+			Backbone.View.apply(this, arguments)
 		},
 
 		events : {
 			'click .uniq' : 'uniq',
-			'click .sort' : 'sort'
+			'click .sort' : 'sort',
+			'dragstart .icon' : 'dragstart'
 		},
 
 		initialize: function () {
-			_.bindAll(this);
+			_.bindAll(this)
+			this.$('.icon').attr('draggable', 'true')
 		},
 
 		_op : function (op) {
@@ -29,8 +31,20 @@ define([
 
 		sort : function () {
 			this._op('sort')
+		},
+
+		dragstart : function (evt) {
+			evt = evt.originalEvent
+			var op = $(evt.target).attr('class').split(' ')[0]
+			evt.dataTransfer.effectAllowed = 'move'
+			evt.dataTransfer.setData(
+				'url',
+				'data:application/json,' + encodeURIComponent(JSON.stringify({
+					op : op
+				}))
+			)
 		}
 
-	});
+	})
 
-});
+})

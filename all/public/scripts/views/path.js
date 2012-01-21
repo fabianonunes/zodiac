@@ -1,12 +1,12 @@
 /*global define*/
 define([
-	'jquery', 'underscore', 'backbone', 'lib/renderer', 'publisher', 'lib/blob', 'lib/event'
-], function ($, _, Backbone, renderer, publisher, blob, events) {
+	'jquery', 'underscore', 'backbone', 'lib/renderer', 'publisher', 'lib/blob', 'lib/event', 'lib/data-uri'
+], function ($, _, Backbone, renderer, publisher, blob, events, datauri) {
 
 	var PathView = Backbone.View.extend({
 
 		constructor : function PathView () {
-			return Backbone.View.apply(this, arguments);
+			Backbone.View.apply(this, arguments)
 		},
 
 		tagName : 'div',
@@ -25,61 +25,61 @@ define([
 
 		initialize : function initialize () {
 
-			_.bindAll(this);
+			_.bindAll(this)
 
-			this.model.bind('change:op', this.renderOp);
-			this.model.bind('change:length', this.renderLength);
-			this.model.bind('destroy', this.destroy);
+			this.model.bind('change:op', this.renderOp)
+			this.model.bind('change:length', this.renderLength)
+			this.model.bind('destroy', this.destroy)
 
-			this._            = _.memoize(this.$);
-			this.element      = $(this.el).attr('draggable', 'true');
-			this.subscription = publisher.subscribe('show', this.hideOptions);
+			this._            = _.memoize(this.$)
+			this.element      = $(this.el).attr('draggable', 'true')
+			this.subscription = publisher.subscribe('show', this.hideOptions)
 
 		},
 
 		hideOptions : function hideOptions (delay) {
-			this.debouncedShow(false); // clear the debouncedShow timeout
+			this.debouncedShow(false) // clear the debouncedShow timeout
 			this._('.options')
 				.stop(true)
 				.delay(delay || 0)
-				.animate({ height : 0 });
+				.animate({ height : 0 })
 		},
 
-		showOptions : function (delay) {
-			publisher.publish('show', 300);
-			var options = this._('.options');
+		showOptions : function (evt, delay) {
+			publisher.publish('show', 300)
+			var options = this._('.options')
 			options.stop(true).delay(delay || 0).animate({
 				height : options.prop('scrollHeight')
-			});
+			})
 		},
 
 		// debouncing here, affects all instances
 		debouncedShow : _.debounce(function debouncedShow (evt) {
-			if(evt)	this.showOptions(0)
+			if(evt)	this.showOptions(evt.originalEvent, 0)
 		}, 350),
 
 		onDrag : function (event) {
-			event = event.originalEvent || event;
-			var m = this.model;
-			var self = this;
+			event = event.originalEvent || event
+			var m = this.model
+			var self = this
 			blob.downloadURL( m.lines, m.getPath() ).then(function (url) {
-				var a = $('<a></a>');
-				a.attr('href', 'data:text/plain;base64,4oiaDQo%3D');
-				a.text('olá');
-				a.appendTo(self.el);
-			});
+				var a = $('<a></a>')
+				a.attr('href', 'data:text/plainbase64,4oiaDQo%3D')
+				a.text('olá')
+				a.appendTo(self.el)
+			})
 		},
 
 		destroy : function () {
-			this.unbind();
-			this._ = null; // TODO: it's necesseray clear the memoized $ ?
-			this.subscription.detach(); // TODO: is this enough to clear subscriptions ?
+			this.unbind()
+			this._ = null // TODO: it's necesseray clear the memoized $ ?
+			this.subscription.detach() // TODO: is this enough to clear subscriptions ?
 			var speed = 0.2 // 40/200
-			this.element.off().slideUp(this.element.height()/speed, this.remove);
+			this.element.off().slideUp(this.element.height()/speed, this.remove)
 		},
 
 		untie : function () {
-			this.model.destroy();
+			this.model.destroy()
 		},
 
 		render : function () {
@@ -87,14 +87,14 @@ define([
 			renderer({
 				documents : [this.model.attributes],
 				ops : PathView.oprs
-			}, this.template, this.el, dfd.resolve);
-			return dfd;
+			}, this.template, this.el, dfd.resolve)
+			return dfd
 		},
 
 		renderOp : function (model, op) {
-			this.$('.true').removeClass('true');
-			this._('.row .icon').attr('class', 'icon ' + op);
-			this._('.options .' + op).addClass('true');
+			this.$('.true').removeClass('true')
+			this._('.row .icon').attr('class', 'icon ' + op)
+			this._('.options .' + op).addClass('true')
 		},
 
 		renderLength : function (model, length) {
@@ -102,60 +102,66 @@ define([
 				.text(length)
 				.stop(true, true)
 				.fadeOut('fast')
-				.fadeIn('fast');
+				.fadeIn('fast')
 		},
 
 		cancel : events.cancel,
 
 		drop : function(evt) {
-			this.hideOptions();
-			this.cancel(evt);
+			this.hideOptions()
+			this.cancel(evt)
 		},
 
 		opDrop : function (evt) {
 
-			this.cancel(evt);
-
 			var target = $(evt.target).removeClass('over'),
-				op     = target.attr('class').split(' ')[0],
-				dt     = evt.originalEvent.dataTransfer,
-				file   = blob.createFromDataTransfer(dt);
+				dt = evt.originalEvent.dataTransfer,
+				uri = datauri(dt.getData('url')),
+				op, file
 
-			this.model.collection.blend(op, file, this.model.id);
+			if (uri && uri.mimeType == 'application/json') {
+				var options = JSON.parse(uri.data)
+				op = options.op
+				file = options.file
+			} else {
+				op = target.attr('class').split(' ')[0]
+				file = blob.createFromDataTransfer(dt)
+			}
+			this.model.collection.blend(op, file, this.model.id)
 
 		},
 
 		change : function (evt) {
 			var select = $(evt.target),
-				op = select.attr('class').split(' ')[0];
-			this.model.set({ op : op });
-			this.hideOptions();
+				op = select.attr('class').split(' ')[0]
+			this.model.set({ op : op })
+			this.hideOptions()
 		}
 
 	}, {
 
 		oprs : function oprs (chunk, context, bodies) {
 
-			var ops = 'union intersection difference symmetric grep'.split(' ');
-			var symbols = '\u222a \u2229 \u2216 \u2296 *'.split(' ');
+			var ops = 'union intersection difference symmetric grep'.split(' ')
+			var symbols = '\u222a \u2229 \u2216 \u2296 *'.split(' ')
 
-			var document = context.current(), retval = [];
+			var document = context.current(), retval = []
 
 			return ops.map(function (v, k) {
 				return {
 					type     : v,
 					symbol   : symbols[k],
 					selected : document.op === v
-				};
-			});
+				}
+			})
 		}
 
-	});
+	})
 
 	var PathListView = Backbone.View.extend({
 
 		constructor : function PathListView () {
-			return Backbone.View.apply(this, arguments);
+			return Backbone.View.apply(this, arguments)
 		},
 
 		template : 'path',
@@ -167,24 +173,24 @@ define([
 		},
 
 		initialize: function () {
-			_.bindAll(this);
-			this.collection.bind('change:added', this.render);
-			this.contains = _.memoize(this.contains, events.domhash);
+			_.bindAll(this)
+			this.collection.bind('change:added', this.render)
+			this.contains = _.memoize(this.contains, events.domhash)
 		},
 
 		render : function (model) {
 			var view  = new PathView({ model : model }),
-				index = this.collection.indexOf(model);
-			view.render().then( _.bind(this.addRow, this, index) );
+				index = this.collection.indexOf(model)
+			view.render().then( _.bind(this.addRow, this, index) )
 		},
 
 		addRow : function (index, el) {
-			var previous = this.el.children('div').eq(index);
-			el = $(el).hide();
+			var previous = this.el.children('div').eq(index)
+			el = $(el).hide()
 			if ( previous.length ) {
-				el.insertBefore(previous).slideDown('fast');
+				el.insertBefore(previous).slideDown('fast')
 			} else {
-				el.appendTo(this.el).show();
+				el.appendTo(this.el).show()
 			}
 		},
 
@@ -201,10 +207,10 @@ define([
 			return el ? $.contains(this.el[0], el) : false
 		}
 
-	});
+	})
 
-	return PathListView;
+	return PathListView
 
-});
+})
 
 
