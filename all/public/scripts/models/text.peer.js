@@ -9,7 +9,7 @@ define(['underscore', 'backbone', 'models/text'], function (_, Backbone, TextMod
 		mask         : /[1-9]\d{0,6}-\d{2}\.\d{4}\.\d\.\d{2}\.\d{4}/g,
 
 		constructor : function TextPeer () {
-			return Backbone.Collection.apply(this, arguments)
+			Backbone.Collection.apply(this, arguments)
 		},
 
 		initialize : function (models, options) {
@@ -41,7 +41,7 @@ define(['underscore', 'backbone', 'models/text'], function (_, Backbone, TextMod
 				var next = this.at(options.at)
 				if (next) {
 					next.perform()
-				} else {
+				} else if (!options.censored) {
 					this.publish()
 				}
 			}
@@ -100,7 +100,7 @@ define(['underscore', 'backbone', 'models/text'], function (_, Backbone, TextMod
 			})
 			// reversing prevent perform-next in each exclusion
 			models.reverse().forEach(function (m) {
-				m.destroy()
+				m.destroy({ censored : true })
 			})
 			this.reset()
 		}

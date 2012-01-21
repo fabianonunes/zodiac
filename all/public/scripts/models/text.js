@@ -4,7 +4,7 @@ define(['underscore', 'backbone'], function (_, Backbone) {
 	var TextModel = Backbone.Model.extend({
 
 		constructor : function TextModel () {
-			return Backbone.Model.apply(this, arguments)
+			Backbone.Model.apply(this, arguments)
 		},
 
 		initialize : function (attrs, options) {
@@ -25,7 +25,7 @@ define(['underscore', 'backbone'], function (_, Backbone) {
 		},
 
 		perform : function (callback) {
-			if (this.isAccessor()) {
+			if ( this.isAccessor() ) {
 				var previous = this.collection.previousOf(this)
 				if (!previous || previous.get('op') === this.get('op') ) {
 					return this.destroy() // never perform accessor when first or is duplicate
@@ -52,9 +52,8 @@ define(['underscore', 'backbone'], function (_, Backbone) {
 
 		destroy : function (options) {
 			options = options || {}
-			this.trigger('destroy', this, {
-				at : this.collection.indexOf(this)
-			})
+			options.at = this.collection.indexOf(this)
+			this.trigger('destroy', this, options)
 			this.unbind()
 		},
 
