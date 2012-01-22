@@ -37,6 +37,8 @@
     "node": "0.6.x"
   },
   "subdomain": "zodiac",
-  "domains": [ "zodiac.nunes.me" ],
-  "version": "1.10.0"
+  "domains": [
+    "zodiac.nunes.me"
+  ],
+  "version": "1.10.1"
 }
