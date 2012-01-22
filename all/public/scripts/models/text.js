@@ -62,10 +62,11 @@ define(['underscore', 'backbone'], function (_, Backbone) {
 		}
 
 	}, {
-		ACCESSORS : ['sort', 'uniq'],
+		ACCESSORS : ['sort', 'uniq', 'dups'],
 		NAMING : {
 			uniq : 'Remover duplicados',
-			sort : 'Ordenar'
+			sort : 'Ordenar',
+			dups : 'Duplicados'
 		}
 	})
 

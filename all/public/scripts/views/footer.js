@@ -12,6 +12,7 @@ define([
 		events : {
 			'click .uniq' : 'uniq',
 			'click .sort' : 'sort',
+			'click .dups' : 'dups',
 			'dragstart .icon' : 'dragstart'
 		},
 
@@ -31,6 +32,10 @@ define([
 
 		sort : function () {
 			this._op('sort')
+		},
+
+		dups : function () {
+			this._op('dups')
 		},
 
 		dragstart : function (evt) {
