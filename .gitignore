@@ -1,5 +1,4 @@
 *.gz
-*.min.js
 version
 node_modules/*
 all/public/scripts/production*
