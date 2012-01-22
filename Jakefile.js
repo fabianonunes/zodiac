@@ -22,7 +22,7 @@ task('build', function (params) {
 	var config = {
 		baseUrl        : 'all/public/scripts',
 		name           : 'main',
-		// excludeShallow : ['underscore', 'jquery'],
+		excludeShallow : ['lib/vendor/underscore-1.3.0', 'jquery'],
 		paths          : require('./all/public/scripts/config').paths,
 		out            : 'all/public/scripts/production.js'
 	};
