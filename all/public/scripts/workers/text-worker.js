@@ -49,6 +49,31 @@ var TextWorker = {
 
 	},
 
+	dups : function (lines2) {
+
+		var value = '',
+			length = 0,
+			o = {};
+
+		lines2.forEach(function (v) {
+			o[v] = +[o[v]] + 1;
+		});
+
+		Object.keys(o).forEach(function (v) {
+			if(o[v] > 1) {
+				value += v;
+				value += '\n';
+				length += 1;
+			}
+		});
+
+		postMessage({
+			lines : value,
+			length : length
+		});
+
+	},
+
 	difference : function (lines2, lines1) {
 
 		var value = '',
@@ -118,7 +143,7 @@ var TextWorker = {
 
 		var value = '',
 			length = 0,
-			o     = {};
+			o = {};
 
 		lines2.forEach(function (v) {
 			o[v] = +[o[v]] + 1;
