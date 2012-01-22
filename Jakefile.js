@@ -76,7 +76,8 @@ desc('push current directory tree to dotcloud');
 task('push', function (params) {
 
 	var sh = require('sh');
-	sh('dotcloud push --all zodiac');
+	// sh('dotcloud push --all zodiac');
+	sh('jitsu deploy');
 
 });
 
