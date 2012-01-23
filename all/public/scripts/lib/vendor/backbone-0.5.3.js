@@ -1,5 +1,3 @@
-define(function(require, exports, module) {
-
 (function(){
 
   // Initial Setup
@@ -1153,5 +1151,3 @@ define(function(require, exports, module) {
   };
 
 }).call(this);
-
-});
