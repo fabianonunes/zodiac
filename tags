@@ -1,0 +1,8 @@
+git checkout f3aeb70044bf6cbd0f6e703ec13fcc5c1675a8bd
+git tag 1.10.1
+git checkout d6772
+git tag 1.10.2
+git checkout e1b3fa
+git tag 1.10.3
+git checkout 0086ba
+git tag 1.10.4
