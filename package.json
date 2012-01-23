@@ -30,7 +30,7 @@
   "devDependencies": {
     "uglify-js": "*",
     "sh": "*",
-    "requirejs": "*",
+    "requirejs": "1.0.2",
     "jsdom": "*"
   },
   "engines": {
@@ -40,5 +40,5 @@
   "domains": [
     "zodiac.nunes.me"
   ],
-  "version": "1.10.5"
+  "version": "1.10.6"
 }
