@@ -1,7 +1,7 @@
 /*global define*/
 define([
-	'jquery', 'underscore', 'backbone'
-], function ($, _, Backbone) {
+	'jquery', 'underscore', 'backbone', 'lib/randexp', 'lib/blob'
+], function ($, _, Backbone, RandExp, blob) {
 
 	return Backbone.View.extend({
 
@@ -10,9 +10,10 @@ define([
 		},
 
 		events : {
-			'click .uniq' : 'uniq',
-			'click .sort' : 'sort',
-			'click .dups' : 'dups',
+			'click .uniq'     : 'uniq',
+			'click .sort'     : 'sort',
+			'click .dups'     : 'dups',
+			'click .random'   : 'random',
 			'dragstart .icon' : 'dragstart'
 		},
 
@@ -36,6 +37,34 @@ define([
 
 		dups : function () {
 			this._op('dups')
+		},
+
+		random : function () {
+			var rer = new RandExp(/[1-9]\d{0,6}-\d{2}\.(199\d|20(0\d|1[0-2]))\.\d\.\d{2}\.\d{4}/)
+			var bounds = [1000, 10000]
+			var initial = 10000
+			var numbers = []
+
+			while(initial--){
+				numbers.push(rer.gen())
+			}
+
+			var ops = ['union', 'difference', 'symmetric']
+
+			var models = 10
+
+			while(models--){
+				var length = ~~(Math.random() * (bounds[1] - bounds[0]) + bounds[0])
+				var op = ops[Math.round(Math.random() * (ops.length-1))]
+				var data = ''
+				while (length--) {
+					data += numbers[~~(Math.random() * (bounds[1] - bounds[0]) + bounds[0])]
+					data += '\n'
+				}
+				this.options.collection.blend(op, blob.createBlob(data))
+			}
+
+
 		},
 
 		dragstart : function (evt) {
