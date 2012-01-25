@@ -1,4 +1,7 @@
-/*global postMessage, onmessage:true, FileReaderSync */
+/*global self, postMessage, onmessage:true, FileReaderSync */
+
+self.BlobBuilder = self.WebKitBlobBuilder || self.MozBlobBuilder
+
 var TextWorker = {
 
 	sort : function (lines2) {
@@ -171,8 +174,6 @@ var TextWorker = {
 
 	charge : function (lines2, lines1) {
 
-		// throw JSON.stringify({data:'asdf'});
-
 		return {
 			lines : lines1.join('\n'),
 			length : lines1.length
@@ -220,9 +221,22 @@ onmessage = function (message) {
 
 	var d = message.data,
 		op = TextWorker[d.op],
-		data = op(readFile(d.previous), readFile(d.file))
+		data = op(readFile(d.previous), readFile(d.file, d.mask))
 
 	postMessage(data)
+
+		// if('undefined' !== typeof self.BlobBuilder) {
+		// var bb = new self.BlobBuilder()
+		// bb.append(lines)
+		// lines = bb.getBlob('text/plain')
+		// } else {
+		// var idx, len = lines.length, arr = new Array( len );
+		// for ( idx = 0 ; idx < len ; ++idx ) {
+		// arr[ idx ] = lines.charCodeAt(idx) & 0xFF;
+		// }
+		// lines = new Uint8Array( arr ).buffer
+		// }
+
 
 };
 
