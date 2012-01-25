@@ -1,7 +1,7 @@
 /*global define*/
 define([
-	'jquery', 'underscore', 'backbone', 'lib/randexp', 'lib/blob'
-], function ($, _, Backbone, RandExp, blob) {
+	'jquery', 'underscore', 'backbone', 'lib/blob', 'lib/random-feed'
+], function ($, _, Backbone, blob, Feeder) {
 
 	return Backbone.View.extend({
 
@@ -40,28 +40,16 @@ define([
 		},
 
 		random : function () {
-			var rer = new RandExp(/[1-9]\d{0,6}-\d{2}\.(199\d|20(0\d|1[0-2]))\.\d\.\d{2}\.\d{4}/)
-			var bounds = [1000, 10000]
-			var initial = bounds[1] - bounds[0]
-			var numbers = []
 
-			while(initial--){
-				numbers.push(rer.gen())
-			}
-
+			var mask = /[1-9]\d{0,6}-\d{2}\.(199\d|20(0\d|1[0-2]))\.\d\.\d{2}\.\d{4}/
 			var ops = ['union', 'difference', 'symmetric']
-
 			var models = 10
+			var feeder = new Feeder(mask, 10000)
 
 			while(models--){
-				var length = ~~(Math.random() * (bounds[1] - bounds[0]) + bounds[0])
-				var op = ops[Math.round(Math.random() * (ops.length-1))]
-				var data = ''
-				while (length--) {
-					data += numbers[~~(Math.random() * (bounds[1] - bounds[0]) + bounds[0])]
-					data += '\n'
-				}
-				this.options.collection.blend(op, blob.createBlob(data))
+				var op = Feeder.pick(ops)
+				var data = feeder.generate(1000, 10000).join('\n')
+				this.options.collection.blend( op, blob.createBlob(data) )
 			}
 
 

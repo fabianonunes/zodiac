@@ -1,6 +1,13 @@
 /*global define*/
 define(function () {
 
+	function  sortBy (obj, field, context) {
+		return obj.sort(function (left, right) {
+			var a = parseInt(left[field], 10), b = parseInt(right[field], 10);
+			return a < b ? -1 : a > b ? 1 : 0;
+		});
+	}
+
 	var operations = {
 
 		sort : function (lines2) {
@@ -80,24 +87,19 @@ define(function () {
 
 			var value = '',
 				length = 0,
-				uq = {},
-				v
+				uq = {}
 
-			// lines1.forEach(function (v, k) {
-			while ( (v = lines1.shift()) !== undefined ) {
+			lines1.forEach(function (v) {
 				uq[v] = true
-			}
-			// })
+			})
 
-			// lines2.forEach(function (row) {
-			while ( (v = lines2.shift()) !== undefined ) {
+			lines2.forEach(function (v) {
 				if (!uq[v]) {
 					value += v
 					value += '\n'
 					length += 1;
 				}
-			}
-			// });
+			});
 
 			return {
 				lines : value,
@@ -123,14 +125,11 @@ define(function () {
 				length = 0,
 				o     = {}, v;
 
-			// lines2.forEach(function (v, k) {
-			while ( (v = lines2.shift()) !== undefined ) {
+			lines2.forEach(function (v, k) {
 				o[v] = true;
-			}
-			// });
+			});
 
-			// lines1.forEach(function (v) {
-			while ( (v = lines1.shift()) !== undefined ) {
+			lines1.forEach(function (v) {
 				if (o[v] === true) {
 					// avoid duplicate lines
 					o[v] = false;
@@ -138,8 +137,7 @@ define(function () {
 					value += '\n';
 					length += 1;
 				}
-			}
-			// });
+			});
 
 			return {
 				lines : value,
@@ -155,28 +153,21 @@ define(function () {
 				o = {},
 				v;
 
-			// lines2.forEach(function (v) {
-			while ( (v = lines2.shift()) !== undefined ) {
+			lines2.forEach(function (v) {
 				o[v] = +[o[v]] + 1;
-			}
-			// });
+			});
 
-			// lines1.forEach(function (v) {
-			while ( (v = lines1.shift()) !== undefined ) {
+			lines1.forEach(function (v) {
 				o[v] = +[o[v]] + 1;
-			}
-			// });
+			});
 
-			var keys = Object.keys(o)
-			// keys.forEach(function (v) {
-			while ( (v = keys.shift()) ) {
+			Object.keys(o).forEach(function (v) {
 				if (o[v] === 1) {
 					value += v;
 					value += '\n';
 					length += 1;
 				}
-			}
-			// });
+			});
 
 			return {
 				lines : value,
@@ -229,13 +220,6 @@ define(function () {
 
 		}
 
-	}
-
-	function  sortBy (obj, field, context) {
-		return obj.sort(function (left, right) {
-			var a = parseInt(left[field], 10), b = parseInt(right[field], 10);
-			return a < b ? -1 : a > b ? 1 : 0;
-		});
 	}
 
 	return operations

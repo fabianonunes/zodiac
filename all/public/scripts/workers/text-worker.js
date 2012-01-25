@@ -2,7 +2,7 @@
 importScripts('../lib/require.js')
 require({
 	baseUrl : '../lib'
-}, ['operations'], function (operations) {
+}, ['operations.min'], function (operations) {
 
 	self.onmessage = function (message) {
 
@@ -11,18 +11,7 @@ require({
 			data = op(self.readFile(d.previous), self.readFile(d.file, d.mask))
 
 		self.postMessage(data)
-			// self.BlobBuilder = self.WebKitBlobBuilder || self.MozBlobBuilder
-			// if ('undefined' !== typeof self.BlobBuilder) {
-			// var bb = new self.BlobBuilder()
-			// bb.append(data.lines)
-			// data.lines = bb.getBlob('text/plain')
-			// } else {
-			// var idx, len = lines.length, arr = new Array( len );
-			// for ( idx = 0 ; idx < len ; ++idx ) {
-			// arr[ idx ] = lines.charCodeAt(idx) & 0xFF;
-			// }
-			// lines = new Uint8Array( arr ).buffer
-			// }
+
 	}
 
 	self.readFile = function (file, mask, callback) {
@@ -45,5 +34,17 @@ require({
 		return r;
 	}
 
+	// self.BlobBuilder = self.WebKitBlobBuilder || self.MozBlobBuilder
+	// if ('undefined' !== typeof self.BlobBuilder) {
+	// var bb = new self.BlobBuilder()
+	// bb.append(data.lines)
+	// data.lines = bb.getBlob('text/plain')
+	// } else {
+	// var idx, len = lines.length, arr = new Array( len );
+	// for ( idx = 0 ; idx < len ; ++idx ) {
+	// arr[ idx ] = lines.charCodeAt(idx) & 0xFF;
+	// }
+	// lines = new Uint8Array( arr ).buffer
+	// }
 
 })
