@@ -63,7 +63,7 @@ var TextWorker = {
 		});
 
 		Object.keys(o).forEach(function (v) {
-			if(o[v] > 1) {
+			if (o[v] > 1) {
 				value += v;
 				value += '\n';
 				length += 1;
@@ -88,7 +88,7 @@ var TextWorker = {
 		});
 
 		lines2.forEach(function (row) {
-			if(!uq[row]) {
+			if (!uq[row]) {
 				value += row;
 				value += '\n';
 				length += 1;
@@ -125,7 +125,7 @@ var TextWorker = {
 
 		lines1.forEach(function (v) {
 
-			if(o[v] === true) {
+			if (o[v] === true) {
 				// avoid duplicate lines
 				o[v] = false;
 				value += v;
@@ -157,7 +157,7 @@ var TextWorker = {
 		});
 
 		Object.keys(o).forEach(function (v) {
-			if(o[v] === 1) {
+			if (o[v] === 1) {
 				value += v;
 				value += '\n';
 				length += 1;
@@ -200,7 +200,7 @@ var TextWorker = {
 				return v !== (v = v.replace(r, '<b>$&</b>'));
 			});
 
-			if(found) {
+			if (found) {
 				value += original;
 				value += '\n';
 				length += 1;
@@ -225,10 +225,10 @@ onmessage = function (message) {
 
 	postMessage(data)
 
-		// if('undefined' !== typeof self.BlobBuilder) {
+		// if ('undefined' !== typeof self.BlobBuilder) {
 		// var bb = new self.BlobBuilder()
-		// bb.append(lines)
-		// lines = bb.getBlob('text/plain')
+		// bb.append(data.lines)
+		// data.lines = bb.getBlob('text/plain')
 		// } else {
 		// var idx, len = lines.length, arr = new Array( len );
 		// for ( idx = 0 ; idx < len ; ++idx ) {
@@ -240,8 +240,8 @@ onmessage = function (message) {
 
 };
 
-function readFile(file, mask, callback) {
-	if(!file){
+function readFile (file, mask, callback) {
+	if (!file){
 		return null;
 	}
 	var reader = new FileReaderSync();
@@ -260,7 +260,7 @@ function readFile(file, mask, callback) {
 	return r;
 }
 
-function sortBy(obj, field, context) {
+function sortBy (obj, field, context) {
 	return obj.sort(function (left, right) {
 		var a = parseInt(left[field], 10), b = parseInt(right[field], 10);
 		return a < b ? -1 : a > b ? 1 : 0;
