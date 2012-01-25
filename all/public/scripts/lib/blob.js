@@ -9,7 +9,6 @@ define([
 	var blob = {};
 
 	blob.createBlob = function createBlob (data) {
-
 		var path = _.uniqueId('selection_'),
 			bb   = new BlobBuilder(),
 			blob;
@@ -17,7 +16,6 @@ define([
 		bb.append(data);
 		blob = bb.getBlob('text/plain');
 		blob.name = path;
-
 		return blob;
 
 	};
