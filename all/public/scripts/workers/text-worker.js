@@ -81,19 +81,24 @@ var TextWorker = {
 
 		var value = '',
 			length = 0,
-			uq = {};
+			uq = {},
+			v;
 
-		lines1.forEach(function (v, k) {
+		// lines1.forEach(function (v, k) {
+		while ( (v = lines1.shift()) !== undefined ) {
 			uq[v] = true;
-		});
+		}
+		// });
 
-		lines2.forEach(function (row) {
-			if (!uq[row]) {
-				value += row;
+		// lines2.forEach(function (row) {
+		while ( (v = lines2.shift()) !== undefined ) {
+			if (!uq[v]) {
+				value += v;
 				value += '\n';
 				length += 1;
 			}
-		});
+		}
+		// });
 
 		return {
 			lines : value,
@@ -117,14 +122,16 @@ var TextWorker = {
 
 		var value = '',
 			length = 0,
-			o     = {};
+			o     = {}, v;
 
-		lines2.forEach(function (v, k) {
+		// lines2.forEach(function (v, k) {
+		while ( (v = lines2.shift()) !== undefined ) {
 			o[v] = true;
-		});
+		}
+		// });
 
-		lines1.forEach(function (v) {
-
+		// lines1.forEach(function (v) {
+		while ( (v = lines1.shift()) !== undefined ) {
 			if (o[v] === true) {
 				// avoid duplicate lines
 				o[v] = false;
@@ -132,8 +139,8 @@ var TextWorker = {
 				value += '\n';
 				length += 1;
 			}
-
-		});
+		}
+		// });
 
 		return {
 			lines : value,
@@ -146,23 +153,31 @@ var TextWorker = {
 
 		var value = '',
 			length = 0,
-			o = {};
+			o = {},
+			v;
 
-		lines2.forEach(function (v) {
+		// lines2.forEach(function (v) {
+		while ( (v = lines2.shift()) !== undefined ) {
 			o[v] = +[o[v]] + 1;
-		});
+		}
+		// });
 
-		lines1.forEach(function (v) {
+		// lines1.forEach(function (v) {
+		while ( (v = lines1.shift()) !== undefined ) {
 			o[v] = +[o[v]] + 1;
-		});
+		}
+		// });
 
-		Object.keys(o).forEach(function (v) {
+		var keys = Object.keys(o)
+		// keys.forEach(function (v) {
+		while ( (v = keys.shift()) ) {
 			if (o[v] === 1) {
 				value += v;
 				value += '\n';
 				length += 1;
 			}
-		});
+		}
+		// });
 
 		return {
 			lines : value,

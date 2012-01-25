@@ -41,8 +41,8 @@ define([
 
 		random : function () {
 			var rer = new RandExp(/[1-9]\d{0,6}-\d{2}\.(199\d|20(0\d|1[0-2]))\.\d\.\d{2}\.\d{4}/)
-			var bounds = [200, 2000]
-			var initial = bounds[1]
+			var bounds = [1000, 10000]
+			var initial = bounds[1] - bounds[0]
 			var numbers = []
 
 			while(initial--){
