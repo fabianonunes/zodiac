@@ -18,10 +18,10 @@ var TextWorker = {
 			length += 1;
 		});
 
-		postMessage({
+		return {
 			lines : value,
 			length : length
-		});
+		}
 
 	},
 
@@ -42,10 +42,10 @@ var TextWorker = {
 
 		});
 
-		postMessage({
+		return {
 			lines : value,
 			length : length
-		});
+		}
 
 	},
 
@@ -67,10 +67,10 @@ var TextWorker = {
 			}
 		});
 
-		postMessage({
+		return {
 			lines : value,
 			length : length
-		});
+		}
 
 	},
 
@@ -92,10 +92,10 @@ var TextWorker = {
 			}
 		});
 
-		postMessage({
+		return {
 			lines : value,
 			length : length
-		});
+		}
 
 	},
 
@@ -103,10 +103,10 @@ var TextWorker = {
 
 		var value = lines1.concat(lines2);
 
-		postMessage({
+		return {
 			lines : value.join('\n'),
 			length : value.length
-		});
+		}
 
 	},
 
@@ -132,10 +132,10 @@ var TextWorker = {
 
 		});
 
-		postMessage({
+		return {
 			lines : value,
 			length : length
-		});
+		}
 
 	},
 
@@ -161,10 +161,10 @@ var TextWorker = {
 			}
 		});
 
-		postMessage({
+		return {
 			lines : value,
 			length : length
-		});
+		}
 
 
 	},
@@ -173,10 +173,10 @@ var TextWorker = {
 
 		// throw JSON.stringify({data:'asdf'});
 
-		postMessage({
+		return {
 			lines : lines1.join('\n'),
 			length : lines1.length
-		});
+		}
 
 	},
 
@@ -207,10 +207,10 @@ var TextWorker = {
 
 		});
 
-		postMessage({
+		return {
 			lines : value,
 			length : length
-		});
+		}
 
 	}
 
@@ -219,13 +219,10 @@ var TextWorker = {
 onmessage = function (message) {
 
 	var d = message.data,
-		op = TextWorker[d.op];
+		op = TextWorker[d.op],
+		data = op(readFile(d.previous), readFile(d.file))
 
-	if(d.op === 'grep') {
-		op(readFile(d.previous), readFile(d.file));
-	} else {
-		op(readFile(d.previous), readFile(d.file, d.mask));
-	}
+	postMessage(data)
 
 };
 
