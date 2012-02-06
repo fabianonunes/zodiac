@@ -1,6 +1,6 @@
 /*global describe it sinon expect define beforeEach afterEach*/
 define([
-	'underscore', 'jquery', 'test/lib/expect-jquery', 'views/path', 'backbone'
+	'underscore', 'jquery', 'expect', 'views/path', 'backbone'
 ], function (_ , $, expect, PathListView, Backbone) {
 
 	describe('PathList View', function () {

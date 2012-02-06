@@ -1,6 +1,6 @@
 /*global describe it sinon expect define beforeEach afterEach*/
 define([
-	'underscore', 'jquery', 'test/lib/expect-jquery', 'views/dropper', 'backbone'
+	'underscore', 'jquery', 'expect', 'views/dropper', 'backbone'
 ], function (_ , $, expect, Dropper, Backbone) {
 
 	describe('Dropper View', function () {
@@ -55,13 +55,13 @@ define([
 		it('should highlight ops on dragenter', function () {
 			var op = dropper.$('.op')
 			op.trigger('dragenter')
-			expect(op).to.$haveClass('over')
+			expect(op).to.cssclass('over')
 		})
 
 		it('should de-highlight ops on dragleave', function () {
 			var op = dropper.$('.op')
 			op.trigger('dragleave')
-			expect(op).to.not.$haveClass('over')
+			expect(op).to.not.cssclass('over')
 		})
 
 		it('should blend models on op drop', function () {

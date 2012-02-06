@@ -2,7 +2,11 @@
 require(['config'], function (config) {
 	mocha.setup('bdd');
 	require.config(config);
-	require([
+	require({
+		paths : {
+			expect : 'test/lib/expect-dom'
+		}
+	},[
 		'jquery', 'underscore',
 		'test/spec/input.view', 'test/spec/dropper.view', 'test/spec/pathlist.view',
 		'test/spec/model'

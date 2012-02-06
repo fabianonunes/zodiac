@@ -1,6 +1,6 @@
 /*global describe it sinon expect define beforeEach afterEach*/
 define([
-	'underscore', 'jquery', 'models/text.peer', 'test/lib/expect-jquery', 'backbone'
+	'underscore', 'jquery', 'models/text.peer', 'expect', 'backbone'
 ], function (_ , $, Collection, expect, Backbone) {
 
 	describe('Text Model', function () {

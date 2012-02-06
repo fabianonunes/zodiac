@@ -1,6 +1,6 @@
 /*global describe it sinon expect define beforeEach afterEach*/
 define([
-	'underscore', 'jquery', 'test/lib/expect-jquery', 'views/input', 'backbone'
+	'underscore', 'jquery', 'expect', 'views/input', 'backbone'
 ], function (_ , $, expect, Input, Backbone) {
 
 	describe('Input View', function () {
@@ -24,7 +24,7 @@ define([
 
 		it('should empty elment on collection\'s reset', function () {
 			collection.trigger('reset')
-			expect(el.html()).to.be.empty()
+			expect(el).to.be.empty()
 		})
 
 		it('should empty element before updateText', function () {
