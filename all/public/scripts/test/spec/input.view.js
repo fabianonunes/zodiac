@@ -1,6 +1,6 @@
 /*global describe it sinon expect define beforeEach afterEach*/
 define([
-	'underscore', 'jquery', 'test/lib/expect-jquery', 'views/input', 'backbone'
+	'underscore', 'jquery', 'expect', 'views/input', 'backbone'
 ], function (_ , $, expect, Input, Backbone) {
 
 	describe('Input View', function () {
@@ -8,8 +8,8 @@ define([
 		var el, input, mock, collection = _.extend({ blend : sinon.stub() }, Backbone.Events);
 
 		beforeEach(function () {
-			el = $('<div>__start__</div>')
-			input = new Input({ el : el, collection : collection })
+			input = new Input({ el : $('<div>__start__</div>'), collection : collection })
+			el = input.$el
 			mock = sinon.mock(input)
 		})
 
@@ -24,7 +24,7 @@ define([
 
 		it('should empty elment on collection\'s reset', function () {
 			collection.trigger('reset')
-			expect(el.html()).to.be.empty()
+			expect(el).to.be.empty()
 		})
 
 		it('should empty element before updateText', function () {

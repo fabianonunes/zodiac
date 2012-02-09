@@ -1,20 +1,23 @@
 /*global describe it sinon expect define beforeEach afterEach*/
 define([
-	'underscore', 'jquery', 'test/lib/expect-jquery', 'views/dropper', 'backbone'
+	'underscore', 'jquery', 'expect', 'views/dropper', 'backbone'
 ], function (_ , $, expect, Dropper, Backbone) {
 
 	describe('Dropper View', function () {
 
-		var el = $('<div><div class=mask><div class="op icon"/></div></div>')
-		var dropper, mock, collection = { blend : sinon.stub() }
+		var el, dropper, mock, collection = { blend : sinon.stub() }
 
 		beforeEach(function () {
-			dropper = new Dropper({ el : el , collection : collection })
+			dropper = new Dropper({
+				el : $('<div><div class=mask><div class="op icon"/></div></div>'),
+				collection : collection
+			})
+			el = dropper.$el
 			mock = sinon.mock(dropper)
 			var saveexpect = mock.expects
 			mock.expects = function () {
 				var e = saveexpect.apply(this, arguments)
-				dropper.el.unbind()
+				dropper.$el.unbind()
 				dropper.delegateEvents()
 				return e
 			}
@@ -55,13 +58,13 @@ define([
 		it('should highlight ops on dragenter', function () {
 			var op = dropper.$('.op')
 			op.trigger('dragenter')
-			expect(op).to.$haveClass('over')
+			expect(op).to.cssclass('over')
 		})
 
 		it('should de-highlight ops on dragleave', function () {
 			var op = dropper.$('.op')
 			op.trigger('dragleave')
-			expect(op).to.not.$haveClass('over')
+			expect(op).to.not.cssclass('over')
 		})
 
 		it('should blend models on op drop', function () {

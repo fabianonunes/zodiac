@@ -32,7 +32,7 @@ define([
 			this.model.bind('destroy', this.destroy)
 
 			this._            = _.memoize(this.$)
-			this.element      = $(this.el).attr('draggable', 'true')
+			this.element      = this.$el.attr('draggable', 'true')
 			this.subscription = publisher.subscribe('show', this.hideOptions)
 
 		},
@@ -207,7 +207,7 @@ define([
 		},
 
 		addRow : function (index, el) {
-			var previous = this.el.children('div').eq(index)
+			var previous = this.$el.children('div').eq(index)
 			el = $(el).hide()
 			if ( previous.length ) {
 				el.insertBefore(previous).slideDown('fast')
@@ -218,7 +218,7 @@ define([
 
 		dragleave : function(evt) {
 			var related = events.elementFromCursor(evt)
-			if(related !== this.el[0] && !this.contains(related)) {
+			if(related !== this.el && !this.contains(related)) {
 				publisher.publish('show', 400) // forces all options to close at once
 			}
 		},
@@ -226,7 +226,7 @@ define([
 		cancel : events.cancel,
 
 		contains : function (el) {
-			return el ? $.contains(this.el[0], el) : false
+			return el ? $.contains(this.el, el) : false
 		}
 
 	})

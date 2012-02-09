@@ -1,7 +1,7 @@
 /*global define*/
 define([
-	'jquery', 'underscore', 'backbone'
-], function ($, _, Backbone) {
+	'jquery', 'underscore', 'backbone', 'lib/blob', 'lib/random-feed'
+], function ($, _, Backbone, blob, Feeder) {
 
 	return Backbone.View.extend({
 
@@ -10,9 +10,10 @@ define([
 		},
 
 		events : {
-			'click .uniq' : 'uniq',
-			'click .sort' : 'sort',
-			'click .dups' : 'dups',
+			'click .uniq'     : 'uniq',
+			'click .sort'     : 'sort',
+			'click .dups'     : 'dups',
+			'click .random'   : 'random',
 			'dragstart .icon' : 'dragstart'
 		},
 
@@ -36,6 +37,22 @@ define([
 
 		dups : function () {
 			this._op('dups')
+		},
+
+		random : function () {
+
+			var mask = /[1-9]\d{0,6}-\d{2}\.(199\d|20(0\d|1[0-2]))\.\d\.\d{2}\.\d{4}/
+			var ops = ['union', 'difference', 'symmetric']
+			var models = 10
+			var feeder = new Feeder(mask, 10000)
+
+			while(models--){
+				var op = Feeder.pick(ops)
+				var data = feeder.generate(1000, 10000).join('\n')
+				this.options.collection.blend( op, blob.createBlob(data) )
+			}
+
+
 		},
 
 		dragstart : function (evt) {

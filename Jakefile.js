@@ -57,7 +57,8 @@ task('minify', function () {
 	var pro = require("uglify-js").uglify;
 
 	var scripts = [
-		'all/public/scripts/workers/text-worker.js'
+		'all/public/scripts/workers/text-worker.js',
+		'all/public/scripts/lib/operations.js'
 	];
 
 	scripts.forEach(function(file){
