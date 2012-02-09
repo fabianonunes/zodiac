@@ -5,16 +5,19 @@ define([
 
 	describe('Dropper View', function () {
 
-		var el = $('<div><div class=mask><div class="op icon"/></div></div>')
-		var dropper, mock, collection = { blend : sinon.stub() }
+		var el, dropper, mock, collection = { blend : sinon.stub() }
 
 		beforeEach(function () {
-			dropper = new Dropper({ el : el , collection : collection })
+			dropper = new Dropper({
+				el : $('<div><div class=mask><div class="op icon"/></div></div>'),
+				collection : collection
+			})
+			el = dropper.$el
 			mock = sinon.mock(dropper)
 			var saveexpect = mock.expects
 			mock.expects = function () {
 				var e = saveexpect.apply(this, arguments)
-				dropper.el.unbind()
+				dropper.$el.unbind()
 				dropper.delegateEvents()
 				return e
 			}

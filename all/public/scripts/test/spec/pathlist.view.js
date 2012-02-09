@@ -10,13 +10,13 @@ define([
 		model      = _.extend({ attributes : {} }, Backbone.Events)
 
 		beforeEach(function () {
-			el   = $('<div></div>')
-			path = new PathListView({ el : el, collection : collection })
+			path = new PathListView({ el : $('<div></div>'), collection : collection })
+			el   = path.$el
 			mock = sinon.mock(path)
 			var saveexpect = mock.expects
 			mock.expects = function () {
 				var e = saveexpect.apply(this, arguments)
-				path.el.unbind()
+				path.$el.unbind()
 				path.delegateEvents()
 				return e
 			}

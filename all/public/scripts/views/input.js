@@ -29,14 +29,14 @@ define([
 
 		selectText : function () {
 			var range = document.createRange()
-			range.selectNode(this.el[0])
+			range.selectNode(this.el)
 			window.getSelection().addRange(range)
 		},
 
 		updateText : function (html, id) {
 			var substr, i = 0, step = 10000
 			this.queue.clear()
-			this.el.empty()
+			this.$el.empty()
 			while ( (substr = html.substring(i, i + step)) ) {
 				this.queue.add(substr)
 				i += step
@@ -44,12 +44,12 @@ define([
 		},
 
 		empty : function () {
-			this.el.empty()
+			this.$el.empty()
 		},
 
 		_injectHtml : function _injectHtml (text) {
 			text = text || ''
-			this.el[0].insertAdjacentHTML('beforeend', text)
+			this.el.insertAdjacentHTML('beforeend', text)
 		}
 
 	})

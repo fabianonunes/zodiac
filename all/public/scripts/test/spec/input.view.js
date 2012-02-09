@@ -8,8 +8,8 @@ define([
 		var el, input, mock, collection = _.extend({ blend : sinon.stub() }, Backbone.Events);
 
 		beforeEach(function () {
-			el = $('<div>__start__</div>')
-			input = new Input({ el : el, collection : collection })
+			input = new Input({ el : $('<div>__start__</div>'), collection : collection })
+			el = input.$el
 			mock = sinon.mock(input)
 		})
 

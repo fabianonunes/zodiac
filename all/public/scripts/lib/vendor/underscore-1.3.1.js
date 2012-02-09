@@ -1,7 +1,5 @@
-define(["require", "exports", "module"], function(require, exports, module) {
-
-//     Underscore.js 1.2.2
-//     (c) 2011 Jeremy Ashkenas, DocumentCloud Inc.
+//     Underscore.js 1.3.1
+//     (c) 2009-2012 Jeremy Ashkenas, DocumentCloud Inc.
 //     Underscore is freely distributable under the MIT license.
 //     Portions of Underscore are inspired or borrowed from Prototype,
 //     Oliver Steele's Functional, and John Resig's Micro-Templating.
@@ -52,24 +50,24 @@ define(["require", "exports", "module"], function(require, exports, module) {
 
   // Export the Underscore object for **Node.js** and **"CommonJS"**, with
   // backwards-compatibility for the old `require()` API. If we're not in
-  // CommonJS, add `_` to the global object.
+  // CommonJS, add `_` to the global object via a string identifier for
+  // the Closure Compiler "advanced" mode, and optionally register as an
+  // AMD module via define().
   if (typeof exports !== 'undefined') {
     if (typeof module !== 'undefined' && module.exports) {
       exports = module.exports = _;
     }
     exports._ = _;
   } else if (typeof define === 'function' && define.amd) {
-    // Register as a named module with AMD.
-    define('underscore', function() {
+    define(function() {
       return _;
     });
   } else {
-    // Exported as a string, for Closure Compiler "advanced" mode.
     root['_'] = _;
   }
 
   // Current version.
-  _.VERSION = '1.2.2';
+  _.VERSION = '1.3.1';
 
   // Collection Functions
   // --------------------
@@ -87,7 +85,7 @@ define(["require", "exports", "module"], function(require, exports, module) {
       }
     } else {
       for (var key in obj) {
-        if (hasOwnProperty.call(obj, key)) {
+        if (_.has(obj, key)) {
           if (iterator.call(context, obj[key], key, obj) === breaker) return;
         }
       }
@@ -96,20 +94,21 @@ define(["require", "exports", "module"], function(require, exports, module) {
 
   // Return the results of applying the iterator to each element.
   // Delegates to **ECMAScript 5**'s native `map` if available.
-  _.map = function(obj, iterator, context) {
+  _.map = _.collect = function(obj, iterator, context) {
     var results = [];
     if (obj == null) return results;
     if (nativeMap && obj.map === nativeMap) return obj.map(iterator, context);
     each(obj, function(value, index, list) {
       results[results.length] = iterator.call(context, value, index, list);
     });
+    if (obj.length === +obj.length) results.length = obj.length;
     return results;
   };
 
   // **Reduce** builds up a single result from a list of values, aka `inject`,
   // or `foldl`. Delegates to **ECMAScript 5**'s native `reduce` if available.
   _.reduce = _.foldl = _.inject = function(obj, iterator, memo, context) {
-    var initial = memo !== void 0;
+    var initial = arguments.length > 2;
     if (obj == null) obj = [];
     if (nativeReduce && obj.reduce === nativeReduce) {
       if (context) iterator = _.bind(iterator, context);
@@ -123,20 +122,22 @@ define(["require", "exports", "module"], function(require, exports, module) {
         memo = iterator.call(context, memo, value, index, list);
       }
     });
-    if (!initial) throw new TypeError("Reduce of empty array with no initial value");
+    if (!initial) throw new TypeError('Reduce of empty array with no initial value');
     return memo;
   };
 
   // The right-associative version of reduce, also known as `foldr`.
   // Delegates to **ECMAScript 5**'s native `reduceRight` if available.
   _.reduceRight = _.foldr = function(obj, iterator, memo, context) {
+    var initial = arguments.length > 2;
     if (obj == null) obj = [];
     if (nativeReduceRight && obj.reduceRight === nativeReduceRight) {
       if (context) iterator = _.bind(iterator, context);
-      return memo !== void 0 ? obj.reduceRight(iterator, memo) : obj.reduceRight(iterator);
+      return initial ? obj.reduceRight(iterator, memo) : obj.reduceRight(iterator);
     }
-    var reversed = (_.isArray(obj) ? obj.slice() : _.toArray(obj)).reverse();
-    return _.reduce(reversed, iterator, memo, context);
+    var reversed = _.toArray(obj).reverse();
+    if (context && !initial) iterator = _.bind(iterator, context);
+    return initial ? _.reduce(reversed, iterator, memo, context) : _.reduce(reversed, iterator);
   };
 
   // Return the first value which passes a truth test. Aliased as `detect`.
@@ -191,7 +192,7 @@ define(["require", "exports", "module"], function(require, exports, module) {
   // Delegates to **ECMAScript 5**'s native `some` if available.
   // Aliased as `any`.
   var any = _.some = _.any = function(obj, iterator, context) {
-    iterator = iterator || _.identity;
+    iterator || (iterator = _.identity);
     var result = false;
     if (obj == null) return result;
     if (nativeSome && obj.some === nativeSome) return obj.some(iterator, context);
@@ -217,7 +218,7 @@ define(["require", "exports", "module"], function(require, exports, module) {
   _.invoke = function(obj, method) {
     var args = slice.call(arguments, 2);
     return _.map(obj, function(value) {
-      return (method.call ? method || value : value[method]).apply(value, args);
+      return (_.isFunction(method) ? method || value : value[method]).apply(value, args);
     });
   };
 
@@ -411,14 +412,6 @@ define(["require", "exports", "module"], function(require, exports, module) {
     return _.filter(array, function(value){ return !_.include(rest, value); });
   };
 
-  // Take the symmetric difference between a list of arrays. Only the elements
-  // present in one of the input arrays will remain.
-  _.symDifference = function() {
-    return _.reduce(arguments, function(memo, array) {
-      return _.union(_.difference(memo, array), _.difference(array, memo));
-    });
-  };
-
   // Zip together multiple lists into a single array -- elements that share
   // an index go together.
   _.zip = function() {
@@ -518,7 +511,7 @@ define(["require", "exports", "module"], function(require, exports, module) {
     hasher || (hasher = _.identity);
     return function() {
       var key = hasher.apply(this, arguments);
-      return hasOwnProperty.call(memo, key) ? memo[key] : (memo[key] = func.apply(this, arguments));
+      return _.has(memo, key) ? memo[key] : (memo[key] = func.apply(this, arguments));
     };
   };
 
@@ -590,7 +583,7 @@ define(["require", "exports", "module"], function(require, exports, module) {
   // conditionally execute the original function.
   _.wrap = function(func, wrapper) {
     return function() {
-      var args = [func].concat(slice.call(arguments));
+      var args = [func].concat(slice.call(arguments, 0));
       return wrapper.apply(this, args);
     };
   };
@@ -598,9 +591,9 @@ define(["require", "exports", "module"], function(require, exports, module) {
   // Returns a function that is the composition of a list of functions, each
   // consuming the return value of the function that follows.
   _.compose = function() {
-    var funcs = slice.call(arguments);
+    var funcs = arguments;
     return function() {
-      var args = slice.call(arguments);
+      var args = arguments;
       for (var i = funcs.length - 1; i >= 0; i--) {
         args = [funcs[i].apply(this, args)];
       }
@@ -624,7 +617,7 @@ define(["require", "exports", "module"], function(require, exports, module) {
   _.keys = nativeKeys || function(obj) {
     if (obj !== Object(obj)) throw new TypeError('Invalid object');
     var keys = [];
-    for (var key in obj) if (hasOwnProperty.call(obj, key)) keys[keys.length] = key;
+    for (var key in obj) if (_.has(obj, key)) keys[keys.length] = key;
     return keys;
   };
 
@@ -647,7 +640,7 @@ define(["require", "exports", "module"], function(require, exports, module) {
   _.extend = function(obj) {
     each(slice.call(arguments, 1), function(source) {
       for (var prop in source) {
-        if (source[prop] !== void 0) obj[prop] = source[prop];
+        obj[prop] = source[prop];
       }
     });
     return obj;
@@ -688,8 +681,8 @@ define(["require", "exports", "module"], function(require, exports, module) {
     if (a._chain) a = a._wrapped;
     if (b._chain) b = b._wrapped;
     // Invoke a custom `isEqual` method if one is provided.
-    if (_.isFunction(a.isEqual)) return a.isEqual(b);
-    if (_.isFunction(b.isEqual)) return b.isEqual(a);
+    if (a.isEqual && _.isFunction(a.isEqual)) return a.isEqual(b);
+    if (b.isEqual && _.isFunction(b.isEqual)) return b.isEqual(a);
     // Compare `[[Class]]` names.
     var className = toString.call(a);
     if (className != toString.call(b)) return false;
@@ -698,13 +691,11 @@ define(["require", "exports", "module"], function(require, exports, module) {
       case '[object String]':
         // Primitives and their corresponding object wrappers are equivalent; thus, `"5"` is
         // equivalent to `new String("5")`.
-        return String(a) == String(b);
+        return a == String(b);
       case '[object Number]':
-        a = +a;
-        b = +b;
         // `NaN`s are equivalent, but non-reflexive. An `egal` comparison is performed for
         // other numeric values.
-        return a != a ? b != b : (a == 0 ? 1 / a == 1 / b : a == b);
+        return a != +a ? b != +b : (a == 0 ? 1 / a == 1 / b : a == +b);
       case '[object Date]':
       case '[object Boolean]':
         // Coerce dates and booleans to numeric primitive values. Dates are compared by their
@@ -744,20 +735,20 @@ define(["require", "exports", "module"], function(require, exports, module) {
       }
     } else {
       // Objects with different constructors are not equivalent.
-      if ("constructor" in a != "constructor" in b || a.constructor != b.constructor) return false;
+      if ('constructor' in a != 'constructor' in b || a.constructor != b.constructor) return false;
       // Deep compare objects.
       for (var key in a) {
-        if (hasOwnProperty.call(a, key)) {
+        if (_.has(a, key)) {
           // Count the expected number of properties.
           size++;
           // Deep compare each member.
-          if (!(result = hasOwnProperty.call(b, key) && eq(a[key], b[key], stack))) break;
+          if (!(result = _.has(b, key) && eq(a[key], b[key], stack))) break;
         }
       }
       // Ensure that both objects contain the same number of properties.
       if (result) {
         for (key in b) {
-          if (hasOwnProperty.call(b, key) && !(size--)) break;
+          if (_.has(b, key) && !(size--)) break;
         }
         result = !size;
       }
@@ -776,7 +767,7 @@ define(["require", "exports", "module"], function(require, exports, module) {
   // An "empty" object has no enumerable own-properties.
   _.isEmpty = function(obj) {
     if (_.isArray(obj) || _.isString(obj)) return obj.length === 0;
-    for (var key in obj) if (hasOwnProperty.call(obj, key)) return false;
+    for (var key in obj) if (_.has(obj, key)) return false;
     return true;
   };
 
@@ -797,13 +788,12 @@ define(["require", "exports", "module"], function(require, exports, module) {
   };
 
   // Is a given variable an arguments object?
-  if (toString.call(arguments) == '[object Arguments]') {
+  _.isArguments = function(obj) {
+    return toString.call(obj) == '[object Arguments]';
+  };
+  if (!_.isArguments(arguments)) {
     _.isArguments = function(obj) {
-      return toString.call(obj) == '[object Arguments]';
-    };
-  } else {
-    _.isArguments = function(obj) {
-      return !!(obj && hasOwnProperty.call(obj, 'callee'));
+      return !!(obj && _.has(obj, 'callee'));
     };
   }
 
@@ -851,6 +841,11 @@ define(["require", "exports", "module"], function(require, exports, module) {
   // Is a given variable undefined?
   _.isUndefined = function(obj) {
     return obj === void 0;
+  };
+
+  // Has own property?
+  _.has = function(obj, key) {
+    return hasOwnProperty.call(obj, key);
   };
 
   // Utility Functions
@@ -902,6 +897,17 @@ define(["require", "exports", "module"], function(require, exports, module) {
     escape      : /<%-([\s\S]+?)%>/g
   };
 
+  // When customizing `templateSettings`, if you don't want to define an
+  // interpolation, evaluation or escaping regex, we need one that is
+  // guaranteed not to match.
+  var noMatch = /.^/;
+
+  // Within an interpolation, evaluation, or escaping, remove HTML escaping
+  // that had been previously added.
+  var unescape = function(code) {
+    return code.replace(/\\\\/g, '\\').replace(/\\'/g, "'");
+  };
+
   // JavaScript micro-templating, similar to John Resig's implementation.
   // Underscore templating handles arbitrary delimiters, preserves whitespace,
   // and correctly escapes quotes within interpolated code.
@@ -911,15 +917,14 @@ define(["require", "exports", "module"], function(require, exports, module) {
       'with(obj||{}){__p.push(\'' +
       str.replace(/\\/g, '\\\\')
          .replace(/'/g, "\\'")
-         .replace(c.escape, function(match, code) {
-           return "',_.escape(" + code.replace(/\\'/g, "'") + "),'";
+         .replace(c.escape || noMatch, function(match, code) {
+           return "',_.escape(" + unescape(code) + "),'";
          })
-         .replace(c.interpolate, function(match, code) {
-           return "'," + code.replace(/\\'/g, "'") + ",'";
+         .replace(c.interpolate || noMatch, function(match, code) {
+           return "'," + unescape(code) + ",'";
          })
-         .replace(c.evaluate || null, function(match, code) {
-           return "');" + code.replace(/\\'/g, "'")
-                              .replace(/[\r\n\t]/g, ' ') + ";__p.push('";
+         .replace(c.evaluate || noMatch, function(match, code) {
+           return "');" + unescape(code).replace(/[\r\n\t]/g, ' ') + ";__p.push('";
          })
          .replace(/\r/g, '\\r')
          .replace(/\n/g, '\\n')
@@ -930,6 +935,11 @@ define(["require", "exports", "module"], function(require, exports, module) {
     return function(data) {
       return func.call(this, data, _);
     };
+  };
+
+  // Add a "chain" function, which will delegate to the wrapper.
+  _.chain = function(obj) {
+    return _(obj).chain();
   };
 
   // The OOP Wrapper
@@ -964,8 +974,11 @@ define(["require", "exports", "module"], function(require, exports, module) {
   each(['pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift'], function(name) {
     var method = ArrayProto[name];
     wrapper.prototype[name] = function() {
-      method.apply(this._wrapped, arguments);
-      return result(this._wrapped, this._chain);
+      var wrapped = this._wrapped;
+      method.apply(wrapped, arguments);
+      var length = wrapped.length;
+      if ((name == 'shift' || name == 'splice') && length === 0) delete wrapped[0];
+      return result(wrapped, this._chain);
     };
   });
 
@@ -989,5 +1002,3 @@ define(["require", "exports", "module"], function(require, exports, module) {
   };
 
 }).call(this);
-
-});
