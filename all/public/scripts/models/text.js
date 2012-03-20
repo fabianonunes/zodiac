@@ -18,7 +18,7 @@ define(['underscore', 'backbone'], function (_, Backbone) {
 
 		validate : function (attrs) {
 			if ( this.isAccessor() ) {
-				if (undefined !== attrs.op) {
+				if (this.get('op') !== attrs.op) {
 					return 'can\'t change op from accessors models'
 				}
 			}
