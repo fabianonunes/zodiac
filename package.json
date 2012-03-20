@@ -30,7 +30,7 @@
   "devDependencies": {
     "uglify-js": "*",
     "sh": "*",
-    "requirejs": "1.0.2",
+    "requirejs": "*",
     "jsdom": "*"
   },
   "engines": {
