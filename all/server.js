@@ -10,6 +10,8 @@ var	fs      = require('fs'),
 	stylus  = require('stylus'),
 	path    = require('path')
 
+var port = 8080
+
 app.configure(function () {
 
 	app.set('view engine', 'jade')
@@ -41,7 +43,8 @@ app.configure('production', function () {
 	app.use(matador.staticCache())
 	app.use(gzip.staticGzip(__dirname + '/public', { maxAge : 86400000*30 }))
 	app.enable('view cache')
+	port = 80
 })
 app.prefetch()
 app.mount()
-app.listen(8080)
+app.listen(port)
