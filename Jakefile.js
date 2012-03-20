@@ -20,10 +20,10 @@ task('build', function (params) {
 
 	var requirejs = require('requirejs');
 	var config = {
-		baseUrl        : 'all/public/scripts',
+		baseUrl        : './all/public/scripts',
 		name           : 'main',
 		excludeShallow : ['lib/vendor/underscore-1.3.0.min', 'jquery', 'backbone'],
-		paths          : require('./all/public/scripts/config').paths,
+		mainConfigFile : './all/public/scripts/main.js',
 		out            : 'all/public/scripts/production.js'
 	};
 

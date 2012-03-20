@@ -3,20 +3,19 @@
 /*global app:true*/
 
 var	fs      = require('fs'),
+	env     = process.env.NODE_ENV || 'development',
+	config  = require('./app/config/' + env),
 	matador = require('matador'),
-	routes  = require('./app/config/routes')
+	app     = matador.createApp(__dirname, config, {}),
+	stylus  = require('stylus'),
+	path    = require('path')
 
 app.configure(function () {
 
-	app.set('models', __dirname + '/app/models')
-	app.set('helpers', __dirname + '/app/helpers')
-	app.set('views', __dirname + '/app/views')
-	app.set('controllers', __dirname + '/app/controllers')
-
 	app.set('view engine', 'jade')
 	app.set('view options', { layout : false })
-	app.enable('view cache')
 
+	app.use(matador.favicon())
 	app.use(matador.cookieParser())
 	app.use(matador.bodyParser())
 	app.use(matador.methodOverride())
@@ -27,12 +26,13 @@ app.configure(function () {
 })
 
 app.configure('development', function () {
+	console.log('development...')
 	app.use(matador.errorHandler({
 		dumpExceptions: true,
 		showStack: true
 	}))
 	app.use(matador['static']( __dirname + '/public'))
-	routes.root.push(['get', '/dev', 'Dev'])
+	// routes.root.push(['get', '/dev', 'Dev'])
 })
 
 app.configure('production', function () {
@@ -40,7 +40,8 @@ app.configure('production', function () {
 	app.use(matador.errorHandler())
 	app.use(matador.staticCache())
 	app.use(gzip.staticGzip(__dirname + '/public', { maxAge : 86400000*30 }))
+	app.enable('view cache')
 })
-app.set('viewPartials', matador.partials.build(app.set('views')))
-matador.mount(routes)
+app.prefetch()
+app.mount()
 app.listen(8080)
