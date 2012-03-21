@@ -1,72 +1,72 @@
 /*global define*/
 define([
 	'jquery', 'backbone', 'underscore', 'lib/blob', 'lib/event'
-], function($, Backbone, _, blob, events) {
+], function ($, Backbone, _, blob, events) {
 
 	var dropper = Backbone.View.extend({
 
 		constructor : function DropperView () {
-			return Backbone.View.apply(this, arguments);
+			return Backbone.View.apply(this, arguments)
 		},
 
 		events: {
-			'dragover'      : 'cancel',
-			'dragleave'     : 'dragLeave',
-			'dragleave div' : 'onLeave',
-			'dragenter'     : 'dragEnter',
-			'dragenter div' : 'onEnter',
-			'drop .icon'    : 'onDrop',
-			'drop'          : 'drop'
+			'dragover'        : 'cancel',
+			'dragleave'       : 'leave',
+			'dragenter'       : 'enter',
+			'drop'            : 'drop',
+			'dragleave .icon' : 'iconLeave',
+			'dragenter .icon' : 'iconEnter',
+			'drop .icon'      : 'iconDrop'
 		},
 
-		initialize: function() {
-			_.bindAll(this);
-			this.mask = $('.mask', this.el);
+		initialize: function () {
+			_.bindAll(this)
+			this.mask = $('.mask', this.el)
 		},
 
-		dragEnter : function(evt) {
-			this.mask.show();
-			return this.cancel(evt);
+		enter : function (evt) {
+			this.mask.show()
+			return this.cancel(evt)
 		},
 
-		onEnter : function(evt) {
-			$(evt.target).addClass('over');
+		iconEnter : function (evt) {
+			$(evt.target).addClass('over')
 		},
 
-		dragLeave : function(evt) {
+		leave : function (evt) {
 
-			var related = events.elementFromCursor(evt);
+			var related = events.elementFromCursor(evt)
 
-			if(!related || related !== this.mask[0]) {
-				var inside = $.contains(this.mask[0], related);
-				if(!inside) this.mask.hide();
+			if (!related || related !== this.mask[0]) {
+				var inside = $.contains(this.mask[0], related)
+				if (!inside) this.mask.hide()
 			}
 
 		},
 
-		onLeave : function(evt) {
+		iconLeave : function (evt) {
 
-			var related = events.elementFromCursor(evt);
+			var related = events.elementFromCursor(evt)
 
-			if(!related || related !== evt.target) {
-				var inside = $.contains(evt.target, related);
-				if(!inside) $(evt.target).removeClass('over');
+			if (!related || related !== evt.target) {
+				var inside = $.contains(evt.target, related)
+				if (!inside) $(evt.target).removeClass('over')
 			}
 
 		},
 
-		onDrop : function(evt) {
+		iconDrop : function (evt) {
 
-			this.cancel(evt);
-			this.mask.hide();
-			evt.stopImmediatePropagation();
+			this.cancel(evt)
+			this.mask.hide()
+			evt.stopImmediatePropagation()
 
 			var target = $(evt.target).removeClass('over'),
 				op     = target.attr('class').split(' ')[0],
 				dt     = evt.originalEvent && evt.originalEvent.dataTransfer,
-				file   = blob.createFromDataTransfer(dt);
+				file   = blob.createFromDataTransfer(dt)
 
-			this.collection.blend(op, file);
+			this.collection.blend(op, file)
 
 		},
 
@@ -77,8 +77,8 @@ define([
 
 		cancel : events.cancel
 
-	});
+	})
 
-	return dropper;
+	return dropper
 
-});
+})

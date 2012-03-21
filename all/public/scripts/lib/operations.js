@@ -1,11 +1,13 @@
 /*global define*/
 define(function () {
 
+	"use strict";
+
 	function  sortBy (obj, field, context) {
 		return obj.sort(function (left, right) {
-			var a = parseInt(left[field], 10), b = parseInt(right[field], 10);
-			return a < b ? -1 : a > b ? 1 : 0;
-		});
+			var a = parseInt(left[field], 10), b = parseInt(right[field], 10)
+			return a < b ? -1 : a > b ? 1 : 0
+		})
 	}
 
 	var operations = {
@@ -97,9 +99,9 @@ define(function () {
 				if (!uq[v]) {
 					value += v
 					value += '\n'
-					length += 1;
+					length += 1
 				}
-			});
+			})
 
 			return {
 				lines : value,
@@ -110,7 +112,7 @@ define(function () {
 
 		union : function (lines2, lines1) {
 
-			var value = lines1.concat(lines2);
+			var value = lines1.concat(lines2)
 
 			return {
 				lines : value.join('\n'),
@@ -123,21 +125,21 @@ define(function () {
 
 			var value = '',
 				length = 0,
-				o     = {}, v;
+				o     = {}, v
 
 			lines2.forEach(function (v, k) {
-				o[v] = true;
-			});
+				o[v] = true
+			})
 
 			lines1.forEach(function (v) {
 				if (o[v] === true) {
 					// avoid duplicate lines
-					o[v] = false;
-					value += v;
-					value += '\n';
-					length += 1;
+					o[v] = false
+					value += v
+					value += '\n'
+					length += 1
 				}
-			});
+			})
 
 			return {
 				lines : value,
@@ -151,23 +153,23 @@ define(function () {
 			var value = '',
 				length = 0,
 				o = {},
-				v;
+				v
 
 			lines2.forEach(function (v) {
-				o[v] = +[o[v]] + 1;
-			});
+				o[v] = +[o[v]] + 1
+			})
 
 			lines1.forEach(function (v) {
-				o[v] = +[o[v]] + 1;
-			});
+				o[v] = +[o[v]] + 1
+			})
 
 			Object.keys(o).forEach(function (v) {
 				if (o[v] === 1) {
-					value += v;
-					value += '\n';
-					length += 1;
+					value += v
+					value += '\n'
+					length += 1
 				}
-			});
+			})
 
 			return {
 				lines : value,
@@ -190,28 +192,28 @@ define(function () {
 
 			var value = '',
 				length = 0,
-				uq = {};
+				uq = {}
 
 			var regexes = lines1.map(function (v) {
-				return new RegExp(v, "i");
-			});
+				return new RegExp(v, "i")
+			})
 
 			lines2.forEach(function (original) {
 
-				var v;
-				v = original;
+				var v
+				v = original
 
 				var found = regexes.some(function (r) {
-					return v !== (v = v.replace(r, '<b>$&</b>'));
-				});
+					return v !== (v = v.replace(r, '<b>$&</b>'))
+				})
 
 				if (found) {
-					value += original;
-					value += '\n';
-					length += 1;
+					value += original
+					value += '\n'
+					length += 1
 				}
 
-			});
+			})
 
 			return {
 				lines : value,

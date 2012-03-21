@@ -3,10 +3,8 @@ define(['underscore', 'backbone', 'models/text'], function (_, Backbone, TextMod
 
 	var TextPeer = Backbone.Collection.extend({
 
-		currentIndex : null,
-		model        : TextModel,
-		// TODO: decouple this
-		mask         : /[1-9]\d{0,6}-\d{2}\.\d{4}\.\d\.\d{2}\.\d{4}/g,
+		model : TextModel,
+		mask  : /[1-9]\d{0,6}-\d{2}\.\d{4}\.\d\.\d{2}\.\d{4}/g, // TODO: decouple this
 
 		constructor : function TextPeer () {
 			Backbone.Collection.apply(this, arguments)
