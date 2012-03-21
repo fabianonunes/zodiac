@@ -31,9 +31,9 @@ define([
 			this.model.bind('change:length', this.renderLength)
 			this.model.bind('destroy', this.destroy)
 
-			this._            = _.memoize(this.$)
-			this.element      = this.$el.attr('draggable', 'true')
+			this._ = _.memoize(this.$)
 			this.subscription = publisher.subscribe('show', this.hideOptions)
+			// this.$el.attr('draggable', 'true')
 
 		},
 
@@ -47,24 +47,29 @@ define([
 		},
 
 		showOptions : function (evt, delay) {
+
 			publisher.publish('show', 300)
 			evt.dataTransfer = evt.dataTransfer || {}
+
 			var effect = evt.dataTransfer.effectAllowed,
 				options = this._('.options'),
 				height = options.prop('scrollHeight')
-			if(effect === 'link'){
+
+			if (effect === 'link') {
 				options.css({ borderTop: '1px solid #F7803C' })
 				height = 0
 			}
+
 			options.stop(true).delay(delay || 0).animate({
 				height : height
 			}, height/0.1)
+
 		},
 
-		dragenter : function (evt){
+		dragenter : function (evt) {
 			evt = evt.originalEvent
 			var dt = evt.dataTransfer
-			if (dt.effectAllowed === 'link'){
+			if (dt.effectAllowed === 'link') {
 				this.showOptions(evt, 0)
 			} else {
 				this.debouncedShow(evt)
@@ -73,7 +78,7 @@ define([
 
 		// debouncing here, affects all instances
 		debouncedShow : _.debounce(function debouncedShow (evt) {
-			if(evt)	this.showOptions(evt, 0)
+			if (evt)	this.showOptions(evt, 0)
 		}, 350),
 
 		onDrag : function (event) {
@@ -83,7 +88,6 @@ define([
 			blob.downloadURL( m.lines, m.getPath() ).then(function (url) {
 				var a = $('<a></a>')
 				a.attr('href', 'data:text/plainbase64,4oiaDQo%3D')
-				a.text('olá')
 				a.appendTo(self.el)
 			})
 		},
@@ -93,7 +97,7 @@ define([
 			this._ = null // TODO: it's necesseray clear the memoized $ ?
 			this.subscription.detach() // TODO: is this enough to clear subscriptions ?
 			var speed = 0.2 // 40/200
-			this.element.off().slideUp(this.element.height()/speed, this.remove)
+			this.$el.off().slideUp(this.$el.height()/speed, this.remove)
 		},
 
 		untie : function () {
@@ -127,7 +131,7 @@ define([
 
 		drop : function(evt) {
 			var dt = evt.originalEvent.dataTransfer
-			if (dt && dt.effectAllowed == 'link'){
+			if (dt && dt.effectAllowed == 'link') {
 				this.opDrop(evt)
 			}
 			this.hideOptions()
@@ -149,6 +153,7 @@ define([
 				op = target.attr('class').split(' ')[0]
 				file = blob.createFromDataTransfer(dt)
 			}
+
 			this.model.collection.blend(op, file, this.model.id)
 
 		},
@@ -218,7 +223,7 @@ define([
 
 		dragleave : function(evt) {
 			var related = events.elementFromCursor(evt)
-			if(related !== this.el && !this.contains(related)) {
+			if ( related !== this.el && !this.contains(related) ) {
 				publisher.publish('show', 400) // forces all options to close at once
 			}
 		},

@@ -1,36 +1,36 @@
 {
-	"name": "zodiac",
-	"author": "Fabiano Nunes <@fab_tc>",
-	"scripts": {
-		"start": "./all/server.js",
-		"dev": "nodemon ./all/server.js",
-		"test": "phantomjs ./all/public/scripts/test/run.js"
-	},
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/fabianonunes/zodiac.git"
-	},
-	"dependencies": {
-		"colors": "*",
-		"jade": "*",
-		"dust": "*",
-		"nib": "*",
-		"express": "*",
-		"stylus": "*",
-		"connect-gzip": "*",
-		"matador": "*",
-		"connect": "*",
-		"requirejs": "*",
-		"sh": "*",
-		"uglify-js": "*",
-		"jsdom": "*"
-	},
-	"engines": {
-		"node": "0.6.x"
-	},
-	"subdomain": "zodiac",
-	"domains": [
-		"zodiac.nunes.me"
-	],
-	"version": "2.1.3"
+  "name": "zodiac",
+  "author": "Fabiano Nunes <@fab_tc>",
+  "scripts": {
+    "start": "./all/server.js",
+    "dev": "nodemon ./all/server.js",
+    "test": "phantomjs ./all/public/scripts/test/run.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/fabianonunes/zodiac.git"
+  },
+  "dependencies": {
+    "colors": "*",
+    "jade": "*",
+    "dust": "*",
+    "nib": "*",
+    "express": "*",
+    "stylus": "*",
+    "connect-gzip": "*",
+    "matador": "*",
+    "connect": "*",
+    "requirejs": "*",
+    "sh": "*",
+    "uglify-js": "*",
+    "jsdom": "*"
+  },
+  "engines": {
+    "node": "0.6.x"
+  },
+  "subdomain": "zodiac",
+  "domains": [
+    "zodiac.nunes.me"
+  ],
+  "version": "2.1.4"
 }
