@@ -4,21 +4,22 @@ define([
 	'underscore'
 ], function($, _){
 
-	window.BlobBuilder = window.BlobBuilder || window.WebKitBlobBuilder || window.MozBlobBuilder;
+	window.BlobBuilder = window.BlobBuilder || window.WebKitBlobBuilder || window.MozBlobBuilder
 
-	var blob = {};
+	var blob = {}
 
 	blob.createBlob = function createBlob (data) {
+
 		var path = _.uniqueId('selection_'),
 			bb   = new BlobBuilder(),
-			blob;
+			blob
 
-		bb.append(data);
-		blob = bb.getBlob('text/plain');
-		blob.name = path;
-		return blob;
+		bb.append(data)
+		blob = bb.getBlob('text/plain')
+		blob.name = path
+		return blob
 
-	};
+	}
 
 	blob.createFromDataTransfer = function createFromDataTransfer (dataTransfer) {
 
@@ -30,46 +31,43 @@ define([
 		// file names. thus, its making use of pluck op to get both information
 		var names = _.pluck(dataTransfer.files, 'name'),
 			length = names.length,
-			file;
+			file
 
 		if ( length > 1 ) {
-			file = this.createBlob(names.join('\n'));
+			file = this.createBlob(names.join('\n'))
 		} else if ( length === 0 ) {
-			var type = _(dataTransfer.types).find(function(type){
-				return ~type.indexOf('text/plain') || ~type.indexOf('text/html');
-			});
-			file = this.createBlob(dataTransfer.getData(type));
+			file = this.createBlob( dataTransfer.getData('text/plain') )
 		} else {
-			file = dataTransfer.files[0];
+			file = dataTransfer.files[0]
 		}
 
-		return file;
+		return file
 
-	};
+	}
 
 	blob.readBlob = function (file) {
 		return $.Deferred(function (dfd) {
-			var reader = new FileReader();
+			var reader = new FileReader()
 			reader.onload = function (event) {
-				dfd.resolve(event.target.result);
-			};
-			reader.readAsText(file);
-		});
-	};
+				dfd.resolve(event.target.result)
+			}
+			reader.readAsText(file)
+		})
+	}
 
 	blob.downloadURL = function (file, name) {
-		var mime = file.type;
+		var mime = file.type
 		return $.Deferred(function (dfd) {
 			blob.readBlob(file).then(function (event) {
-				var data = event.target.result;
-				dfd.resolve(mime+':'+name+'.txt:data:'+mime+';base64,'+window.btoa(data));
-			});
-		});
-	};
+				var data = event.target.result
+				dfd.resolve(mime+':'+name+'.txt:data:'+mime+'base64,'+window.btoa(data))
+			})
+		})
+	}
 
-	return blob;
+	return blob
 
-});
+})
 
 
 
