@@ -2,7 +2,7 @@
 importScripts('../lib/require.js')
 require({
 	baseUrl : '../lib'
-}, ['operations.min'], function (operations) {
+}, ['operations'], function (operations) {
 
 	self.onmessage = function (message) {
 
