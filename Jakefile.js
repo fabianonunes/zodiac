@@ -22,7 +22,7 @@ task('build', function (params) {
 	var config = {
 		baseUrl        : './all/app/public/scripts',
 		name           : 'main',
-		excludeShallow : ['lib/vendor/underscore-1.3.1', 'jquery', 'backbone'],
+		excludeShallow : ['jquery', 'backbone'],
 		mainConfigFile : './all/app/public/scripts/main.js',
 		out            : 'all/app/public/scripts/production.js'
 	};
