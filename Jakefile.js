@@ -20,11 +20,11 @@ task('build', function (params) {
 
 	var requirejs = require('requirejs');
 	var config = {
-		baseUrl        : './all/public/scripts',
+		baseUrl        : './all/app/public/scripts',
 		name           : 'main',
-		excludeShallow : ['lib/vendor/underscore-1.3.1', 'jquery', 'backbone'],
-		mainConfigFile : './all/public/scripts/main.js',
-		out            : 'all/public/scripts/production.js'
+		excludeShallow : ['jquery', 'backbone'],
+		mainConfigFile : './all/app/public/scripts/main.js',
+		out            : 'all/app/public/scripts/production.js'
 	};
 
 	requirejs.optimize(config, function () {
@@ -57,8 +57,8 @@ task('minify', function () {
 	var pro = require("uglify-js").uglify;
 
 	var scripts = [
-		'all/public/scripts/workers/text-worker.js',
-		'all/public/scripts/lib/operations.js'
+		'all/app/public/scripts/workers/text-worker.js',
+		'all/app/public/scripts/lib/operations.js'
 	];
 
 	scripts.forEach(function(file){
@@ -88,15 +88,15 @@ task('css', function (version) {
 	console.log('Rendenring '.green + 'stylus files'.red.bold);
 
 	var stylus = require('stylus');
-	var str = fs.readFileSync('all/public/styles/style.styl', 'utf8');
-	var filename = __dirname + '/all/public/styles/production-' + version + '.css';
+	var str = fs.readFileSync('all/app/public/styles/style.styl', 'utf8');
+	var filename = __dirname + '/all/app/public/styles/production-' + version + '.css';
 
 	stylus(str)
 	.include(require('nib').path)
 	.set('filename', filename )
 	.set('compress', true)
 	.define('url', stylus.url({
-		paths: [__dirname + '/all/public/images']
+		paths: [__dirname + '/all/app/public/images']
 	}))
 	.render(function (err, css) {
 		if (err) throw err;
@@ -111,7 +111,7 @@ task('templates', function  (params) {
 
 	var dust = require('dust');
 	var list = new jake.FileList();
-	list.include('all/public/scripts/templates/*html');
+	list.include('all/app/public/scripts/templates/*html');
 
 	var compiled = 'define(["dust"], function (dust){';
 
@@ -124,7 +124,7 @@ task('templates', function  (params) {
 
 	compiled += ' return dust; });';
 
-	fs.writeFileSync('all/public/scripts/templates/templates.js', compiled, 'utf8');
+	fs.writeFileSync('all/app/public/scripts/templates/templates.js', compiled, 'utf8');
 
 });
 
@@ -134,8 +134,8 @@ task('clean', function  (params) {
 	console.log('Removing prodution files'.green);
 
 	var list = new jake.FileList();
-	list.include('all/public/scripts/production-*');
-	list.include('all/public/styles/production-*');
+	list.include('all/app/public/scripts/production-*');
+	list.include('all/app/public/styles/production-*');
 
 	list.toArray().forEach(function (v) {
 		fs.unlinkSync(v);

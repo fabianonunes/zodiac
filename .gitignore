@@ -1,7 +1,8 @@
 *.gz
-version
 node_modules/*
-all/public/scripts/production*
-all/public/styles/*css
+all/version
+all/app/public/scripts/production*
+all/app/public/styles/*css
+all/app/public/scripts/templates/*js
 .monitor
 .nide

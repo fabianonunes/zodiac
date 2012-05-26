@@ -4,7 +4,7 @@
   "scripts": {
     "start": "./all/server.js",
     "dev": "nodemon ./all/server.js",
-    "test": "phantomjs ./all/public/scripts/test/run.js"
+    "test": "phantomjs ./all/app/public/scripts/test/run.js"
   },
   "repository": {
     "type": "git",
@@ -15,15 +15,12 @@
     "jade": "*",
     "dust": "*",
     "nib": "*",
-    "express": "*",
     "stylus": "*",
-    "connect-gzip": "*",
     "matador": "*",
     "connect": "*",
     "requirejs": "*",
     "sh": "*",
-    "uglify-js": "*",
-    "jsdom": "*"
+    "uglify-js": "*"
   },
   "engines": {
     "node": "0.6.x"
