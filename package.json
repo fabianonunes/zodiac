@@ -15,15 +15,12 @@
     "jade": "*",
     "dust": "*",
     "nib": "*",
-    "express": "*",
     "stylus": "*",
-    "connect-gzip": "*",
     "matador": "*",
     "connect": "*",
     "requirejs": "*",
     "sh": "*",
-    "uglify-js": "*",
-    "jsdom": "*"
+    "uglify-js": "*"
   },
   "engines": {
     "node": "0.6.x"
