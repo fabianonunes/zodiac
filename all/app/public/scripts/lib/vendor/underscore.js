@@ -1,7 +1,7 @@
 /*global define*/
 define([
 	// 'lib/vendor/underscore-1.3.3',
-	'lib/vendor/lo-dash-0.2.0'
+	'lib/vendor/lo-dash-0.2.1'
 ], function (_) {
 	"use strict";
 
