@@ -2,7 +2,7 @@
 node_modules/*
 all/version
 all/app/public/scripts/production*
-all/app/public/css/*css
+all/app/public/styles/*css
 all/app/public/scripts/templates/*js
 .monitor
 .nide
