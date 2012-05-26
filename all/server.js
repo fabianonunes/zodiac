@@ -8,9 +8,8 @@ var	fs      = require('fs'),
 	matador = require('matador'),
 	app     = matador.createApp(__dirname, config, {}),
 	stylus  = require('stylus'),
-	path    = require('path')
-
-var port = 8080
+	path    = require('path'),
+	port    = 8080
 
 app.configure(function () {
 
@@ -33,18 +32,16 @@ app.configure('development', function () {
 		dumpExceptions: true,
 		showStack: true
 	}))
-	app.use(matador['static']( __dirname + '/public'))
 	// routes.root.push(['get', '/dev', 'Dev'])
 })
 
 app.configure('production', function () {
-	var gzip = require('connect-gzip')
 	app.use(matador.errorHandler())
 	app.use(matador.staticCache())
-	app.use(gzip.staticGzip(__dirname + '/public', { maxAge : 86400000*30 }))
 	app.enable('view cache')
 	port = 80
 })
+
 app.prefetch()
 app.mount()
 app.listen(port)
