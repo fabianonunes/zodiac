@@ -109,7 +109,7 @@ task('css', function (version) {
 desc('compile dust templates');
 task('templates', function  (params) {
 
-	var dust = require('dust');
+	var dust = require('dustjs-linkedin');
 	var list = new jake.FileList();
 	list.include('all/app/public/scripts/templates/*html');
 

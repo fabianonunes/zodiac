@@ -13,7 +13,7 @@
   "dependencies": {
     "colors": "*",
     "jade": "*",
-    "dust": "*",
+    "dustjs-linkedin": "*",
     "nib": "*",
     "stylus": "*",
     "matador": "*",
