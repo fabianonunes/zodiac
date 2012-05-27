@@ -13,7 +13,7 @@
   "dependencies": {
     "colors": "*",
     "jade": "*",
-    "dust": "*",
+    "dustjs-linkedin": "*",
     "nib": "*",
     "stylus": "*",
     "matador": "*",
@@ -29,5 +29,5 @@
   "domains": [
     "zodiac.nunes.me"
   ],
-  "version": "2.1.5"
+  "version": "2.1.6"
 }
