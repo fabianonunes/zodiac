@@ -1,6 +1,6 @@
 {
   "name": "zodiac",
-  "version": "2.1.5",
+  "version": "2.1.7-4",
   "dependencies": {
     "colors": {
       "version": "0.6.0-1"
@@ -101,7 +101,7 @@
       }
     },
     "requirejs": {
-      "version": "1.0.8"
+      "version": "2.0.4"
     },
     "sh": {
       "version": "0.0.2"
