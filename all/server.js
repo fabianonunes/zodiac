@@ -39,7 +39,8 @@ app.configure('production', function () {
 	app.use(matador.errorHandler())
 	app.use(matador.staticCache())
 	app.enable('view cache')
-	port = 80
+	// port = 80 // nodejitsu
+	// port = 42800 // dotcloud
 })
 
 app.prefetch()

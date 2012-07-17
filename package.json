@@ -27,7 +27,8 @@
   },
   "subdomain": "zodiac",
   "domains": [
+    "zodiac.gauden.si",
     "zodiac.nunes.me"
   ],
-  "version": "2.1.7"
+  "version": "2.1.8"
 }
