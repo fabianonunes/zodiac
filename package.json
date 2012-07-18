@@ -16,7 +16,7 @@
     "dustjs-linkedin": "*",
     "nib": "*",
     "stylus": "*",
-    "matador": "*",
+    "matador": "1.0.29-beta",
     "connect": "*",
     "requirejs": "*",
     "sh": "*",
