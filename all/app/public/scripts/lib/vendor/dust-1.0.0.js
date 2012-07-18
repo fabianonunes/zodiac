@@ -74,10 +74,10 @@ define(["require", "exports", "module"], function(require, exports, module) {
 				return process.nextTick;
 			} else {
 				return function(callback) {
-					setTimeout(callback, 0);
+					setTimeout(callback,0);
 				}
 			}
-		})();
+		} )();
 
 		dust.isEmpty = function(value) {
 			if (dust.isArray(value) && !value.length) return true;
@@ -87,7 +87,7 @@ define(["require", "exports", "module"], function(require, exports, module) {
 
 		dust.filter = function(string, auto, filters) {
 			if (filters) {
-				for (var i = 0, len = filters.length; i < len; i++) {
+				for (var i=0, len=filters.length; i<len; i++) {
 					var name = filters[i];
 					if (name === "s") {
 						auto = null;
@@ -103,18 +103,16 @@ define(["require", "exports", "module"], function(require, exports, module) {
 		};
 
 		dust.filters = {
-			h: function(value) {
-				return dust.escapeHtml(value);
-			},
-			j: function(value) {
-				return dust.escapeJs(value);
-			},
+			h: function(value) { return dust.escapeHtml(value); },
+			j: function(value) { return dust.escapeJs(value); },
 			u: encodeURI,
-			uc: encodeURIComponent
+			uc: encodeURIComponent,
+			js: function(value) { if (!JSON) { return value; } return JSON.stringify(value); },
+			jp: function(value) { if (!JSON) { return value; } return JSON.parse(value); }
 		};
 
 		function Context(stack, global, blocks) {
-			this.stack = stack;
+			this.stack	= stack;
 			this.global = global;
 			this.blocks = blocks;
 		}
@@ -131,10 +129,9 @@ define(["require", "exports", "module"], function(require, exports, module) {
 		};
 
 		Context.prototype.get = function(key) {
-			var ctx = this.stack,
-				value;
+			var ctx = this.stack, value;
 
-			while (ctx) {
+			while(ctx) {
 				if (ctx.isObject) {
 					value = ctx.head[key];
 					if (!(value === undefined)) {
@@ -148,13 +145,13 @@ define(["require", "exports", "module"], function(require, exports, module) {
 
 		Context.prototype.getPath = function(cur, down) {
 			var ctx = this.stack,
-				len = down.length;
+					len = down.length;
 
 			if (cur && len === 0) return ctx.head;
 			if (!ctx.isObject) return undefined;
 			ctx = ctx.head;
 			var i = 0;
-			while (ctx && i < len) {
+			while(ctx && i < len) {
 				ctx = ctx[down[i]];
 				i++;
 			}
@@ -162,11 +159,11 @@ define(["require", "exports", "module"], function(require, exports, module) {
 		};
 
 		Context.prototype.push = function(head, idx, len) {
-			if (head) {
-				// loop index for a block section
-				head['$idx'] = idx;
-				// loop size for a block section
-				head['$len'] = len;
+			if( head ){
+			 // loop index for a block section
+			 head['$idx'] = idx;
+			 // loop size for a block section
+			 head['$len'] = len;
 			}
 			return new Context(new Stack(head, this.stack, idx, len), this.global, this.blocks);
 		};
@@ -179,12 +176,16 @@ define(["require", "exports", "module"], function(require, exports, module) {
 			return this.stack.head;
 		};
 
-		Context.prototype.getBlock = function(key) {
+		Context.prototype.getBlock = function(key, chk, ctx) {
+			if (typeof key === "function") {
+				key = key(chk, ctx).data;
+				chk.data = "";
+			}
+
 			var blocks = this.blocks;
 
 			if (!blocks) return;
-			var len = blocks.length,
-				fn;
+			var len = blocks.length, fn;
 			while (len--) {
 				fn = blocks[len][key];
 				if (fn) return fn;
@@ -245,7 +246,7 @@ define(["require", "exports", "module"], function(require, exports, module) {
 		Stream.prototype.flush = function() {
 			var chunk = this.head;
 
-			while (chunk) {
+			while(chunk) {
 				if (chunk.flushable) {
 					this.emit('data', chunk.data);
 				} else if (chunk.error) {
@@ -277,6 +278,17 @@ define(["require", "exports", "module"], function(require, exports, module) {
 			return this;
 		};
 
+		Stream.prototype.pipe = function(stream) {
+			this.on("data", function(data) {
+				stream.write(data, "utf8");
+			}).on("end", function() {
+				stream.end();
+			}).on("error", function(err) {
+				stream.error(err);
+			});
+			return this;
+		};
+
 		function Chunk(root, next, taps) {
 			this.root = root;
 			this.next = next;
@@ -286,7 +298,7 @@ define(["require", "exports", "module"], function(require, exports, module) {
 		}
 
 		Chunk.prototype.write = function(data) {
-			var taps = this.taps;
+			var taps	= this.taps;
 
 			if (taps) {
 				data = taps.go(data);
@@ -306,7 +318,7 @@ define(["require", "exports", "module"], function(require, exports, module) {
 
 		Chunk.prototype.map = function(callback) {
 			var cursor = new Chunk(this.root, this.next, this.taps),
-				branch = new Chunk(this.root, cursor, this.taps);
+					branch = new Chunk(this.root, cursor, this.taps);
 
 			this.next = branch;
 			this.flushable = true;
@@ -336,10 +348,7 @@ define(["require", "exports", "module"], function(require, exports, module) {
 
 		Chunk.prototype.reference = function(elem, context, auto, filters) {
 			if (typeof elem === "function") {
-				elem = elem(this, context, null, {
-					auto: auto,
-					filters: filters
-				});
+				elem = elem(this, context, null, {auto: auto, filters: filters});
 				if (elem instanceof Chunk) {
 					return elem;
 				}
@@ -360,7 +369,7 @@ define(["require", "exports", "module"], function(require, exports, module) {
 			}
 
 			var body = bodies.block,
-				skip = bodies['else'];
+					skip = bodies['else'];
 
 			if (params) {
 				context = context.push(params);
@@ -368,9 +377,8 @@ define(["require", "exports", "module"], function(require, exports, module) {
 
 			if (dust.isArray(elem)) {
 				if (body) {
-					var len = elem.length,
-						chunk = this;
-					for (var i = 0; i < len; i++) {
+					var len = elem.length, chunk = this;
+					for (var i=0; i<len; i++) {
 						chunk = body(chunk, context.push(elem[i], i, len));
 					}
 					return chunk;
@@ -387,7 +395,7 @@ define(["require", "exports", "module"], function(require, exports, module) {
 
 		Chunk.prototype.exists = function(elem, context, bodies) {
 			var body = bodies.block,
-				skip = bodies['else'];
+					skip = bodies['else'];
 
 			if (!dust.isEmpty(elem)) {
 				if (body) return body(this, context);
@@ -399,7 +407,7 @@ define(["require", "exports", "module"], function(require, exports, module) {
 
 		Chunk.prototype.notexists = function(elem, context, bodies) {
 			var body = bodies.block,
-				skip = bodies['else'];
+					skip = bodies['else'];
 
 			if (dust.isEmpty(elem)) {
 				if (body) return body(this, context);
@@ -423,9 +431,8 @@ define(["require", "exports", "module"], function(require, exports, module) {
 		};
 
 		Chunk.prototype.partial = function(elem, context, params) {
-			var ctx = context.stack,
-				tempHead = ctx.head;
-			if (params) {
+			var ctx = context.stack, tempHead = ctx.head;
+			if (params){
 				//put the params context second to match what section does. {.} matches the current context without parameters
 				//remove head
 				context = context.rebase(ctx.tail);
@@ -477,7 +484,7 @@ define(["require", "exports", "module"], function(require, exports, module) {
 		Tap.prototype.go = function(value) {
 			var tap = this;
 
-			while (tap) {
+			while(tap) {
 				value = tap.head(value);
 				tap = tap.tail;
 			}
@@ -485,95 +492,204 @@ define(["require", "exports", "module"], function(require, exports, module) {
 		};
 
 		var HCHARS = new RegExp(/[&<>\"\']/),
-			AMP = /&/g,
-			LT = /</g,
-			GT = />/g,
-			QUOT = /\"/g,
-			SQUOT = /\'/g;
+				AM	= /&/g,
+				LT		 = /</g,
+				GT		 = />/g,
+				QUOT	 = /\"/g,
+				SQUO	= /\'/g;
 
 		dust.escapeHtml = function(s) {
 			if (typeof s === "string") {
 				if (!HCHARS.test(s)) {
 					return s;
 				}
-				return s.replace(AMP, '&amp;').replace(LT, '&lt;').replace(GT, '&gt;').replace(QUOT, '&quot;').replace(SQUOT, '&#39;');
+				return s.replace(AMP,'&amp;').replace(LT,'&lt;').replace(GT,'&gt;').replace(QUOT,'&quot;').replace(SQUOT, '&#39;');
 			}
 			return s;
 		};
 
 		var BS = /\\/g,
-			CR = /\r/g,
-			LS = /\u2028/g,
-			PS = /\u2029/g,
-			NL = /\n/g,
-			LF = /\f/g,
-			SQ = /'/g,
-			DQ = /"/g,
-			TB = /\t/g;
+				CR = /\r/g,
+				LS = /\u2028/g,
+				PS = /\u2029/g,
+				NL = /\n/g,
+				LF = /\f/g,
+				SQ = /'/g,
+				DQ = /"/g,
+				TB = /\t/g;
 
 		dust.escapeJs = function(s) {
 			if (typeof s === "string") {
-				return s.replace(BS, '\\\\').replace(DQ, '\\"').replace(SQ, "\\'").replace(CR, '\\r').replace(LS, '\\u2028').replace(PS, '\\u2029').replace(NL, '\\n').replace(LF, '\\f').replace(TB, "\\t");
+				return s
+					.replace(BS, '\\\\')
+					.replace(DQ, '\\"')
+					.replace(SQ, "\\'")
+					.replace(CR, '\\r')
+					.replace(LS, '\\u2028')
+					.replace(PS, '\\u2029')
+					.replace(NL, '\\n')
+					.replace(LF, '\\f')
+					.replace(TB, "\\t");
 			}
 			return s;
 		};
 
-	})(dust);
+		})(dust);
 
 	if (typeof exports !== "undefined") {
 		module.exports = dust;
 	}
 
-	(function(dust) {
+	(function(dust){
 
-		var helpers = {
+	/* make a safe version of console if it is not available
+	 * currently supporting:
+	 *	 _console.log
+	 * */
+	var _console = (typeof console !== 'undefined')? console: {
+		log: function(){
+			 /* a noop*/
+		 }
+	};
 
-			sep: function(chunk, context, bodies) {
-				if (context.stack.index === context.stack.of - 1) {
-					return chunk;
-				}
-				return bodies.block(chunk, context);
-			},
+	function isSelect(context) {
+		var value = context.current();
+		return typeof value === "object" && value.isSelect === true;
+	}
 
-			idx: function(chunk, context, bodies) {
-				return bodies.block(chunk, context.push(context.stack.index));
-			},
+	function filter(chunk, context, bodies, params, filter) {
+		var params = params || {},
+				actual, expected;
+		if (params.key) {
+			actual = context.get(params.key);
+		} else if (isSelect(context)) {
+			actual = context.current().value;
+			if (context.current().isResolved) {
+				filter = function() { return false; };
+			}
+		} else {
+			throw "No key specified for filter and no key found in context from select statement";
+		}
+		expected = helpers.tap(params.value, chunk, context);
+		if (filter(expected, coerce(actual, params.type, context))) {
+			if (isSelect(context)) {
+				context.current().isResolved = true;
+			}
+			return chunk.render(bodies.block, context);
+		} else if (bodies['else']) {
+			return chunk.render(bodies['else'], context);
+		}
 
-			"if": function(chunk, context, bodies, params) {
-				var cond = (params.cond);
+		return chunk.write('');
+	}
 
-				if (params && params.cond) {
-					// resolve dust references in the expression
-					if (typeof cond === "function") {
-						cond = '';
-						chunk.tap(function(data) {
-							cond += data;
-							return '';
-						}).render(params.cond, context).untap();
-						if (cond === '') {
-							cond = false;
-						}
-					}
-					// eval expressions with no dust references
-					if (eval(cond)) {
-						return chunk.render(bodies.block, context);
-					}
-					if (bodies['else']) {
-						return chunk.render(bodies['else'], context);
-					}
-				}
-				// no condition
-				else {
-					if (window.console) {
-						window.console.log("No expression given!");
-					}
-				}
+	function coerce (value, type, context) {
+		if (value) {
+			switch (type || typeof(value)) {
+				case 'number': return +value;
+				case 'string': return String(value);
+				case 'boolean': return Boolean(value);
+				case 'date': return new Date(value);
+				case 'context': return context.get(value);
+			}
+		}
+
+		return value;
+	}
+
+	var helpers = {
+
+		sep: function(chunk, context, bodies) {
+			if (context.stack.index === context.stack.of - 1) {
 				return chunk;
 			}
-		};
+			return bodies.block(chunk, context);
+		},
 
-		dust.helpers = helpers;
+		idx: function(chunk, context, bodies) {
+			return bodies.block(chunk, context.push(context.stack.index));
+		},
+		contextDump: function(chunk, context, bodies) {
+			_console.log(JSON.stringify(context.stack));
+			return chunk;
+		},
+
+		// Utility helping to resolve dust references in the given chunk
+		tap: function( input, chunk, context ){
+			// return given input if there is no dust reference to resolve
+			var output = input;
+			// dust compiles a string to function, if there are references
+			if( typeof input === "function"){
+				output = '';
+				chunk.tap(function(data){
+					output += data;
+					return '';
+				}).render(input, context).untap();
+				if( output === '' ){
+					output = false;
+				}
+			}
+			return output;
+		},
+
+		"if": function( chunk, context, bodies, params ){
+			if( params && params.cond ){
+				var cond = params.cond;
+				cond = this.tap(cond, chunk, context);
+				// eval expressions with given dust references
+				if( eval( cond ) ){
+				 return chunk.render( bodies.block, context );
+				}
+				if( bodies['else'] ){
+				 return chunk.render( bodies['else'], context );
+				}
+			}
+			// no condition
+			else {
+				_console.log( "NO condition given in the if helper!" );
+			}
+			return chunk;
+		},
+		select: function(chunk, context, bodies, params) {
+			if( params && params.key){
+				var key = params.key;
+				key = this.tap(key, chunk, context);
+				return chunk.render(bodies.block, context.push({ isSelect: true, isResolved: false, value: context.get(key) }));
+			}
+			// no key
+			else {
+				_console.log( "No key given for the select tag!" );
+			}
+			return chunk;
+		},
+
+		eq: function(chunk, context, bodies, params) {
+			return filter(chunk, context, bodies, params, function(expected, actual) { return actual === expected; });
+		},
+
+		lt: function(chunk, context, bodies, params) {
+			return filter(chunk, context, bodies, params, function(expected, actual) { return actual < expected; });
+		},
+
+		lte: function(chunk, context, bodies, params) {
+			return filter(chunk, context, bodies, params, function(expected, actual) { return actual <= expected; });
+		},
+
+		gt: function(chunk, context, bodies, params) {
+			return filter(chunk, context, bodies, params, function(expected, actual) { return actual > expected; });
+		},
+
+		gte: function(chunk, context, bodies, params) {
+			return filter(chunk, context, bodies, params, function(expected, actual) { return actual >= expected; });
+		},
+
+		"else": function(chunk, context, bodies, params) {
+			return filter(chunk, context, bodies, params, function(expected, actual) { return true; });
+		}
+	};
+
+	dust.helpers = helpers;
 
 	})(exports);
 
-});
+})
