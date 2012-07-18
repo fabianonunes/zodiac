@@ -4,17 +4,10 @@ var crypto = require('crypto');
 require('colors');
 
 desc('build and push');
-task('deploy', function (params) {
-	jake.Task.build.invoke();
-	jake.Task.push.invoke();
-});
+task('deploy', ['default', 'push'])
 
 desc('build javascript/css');
-task('build', function (params) {
-
-	jake.Task.clean.invoke();
-	jake.Task.minify.invoke();
-	jake.Task.templates.invoke();
+task('default', ['clean', 'minify', 'templates'], function (params) {
 
 	console.log('Compiling '.green + 'app scripts'.red.bold);
 
