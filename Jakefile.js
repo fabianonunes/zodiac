@@ -1,4 +1,4 @@
-/*global desc task jake*/
+/*global desc,task,jake*/
 var fs = require('fs');
 var crypto = require('crypto');
 require('colors');
@@ -18,7 +18,8 @@ task('default', ['clean', 'minify', 'templates'], function (params) {
 		excludeShallow : ['jquery', 'backbone'],
 		mainConfigFile : './all/app/public/scripts/main.js',
 		out            : 'all/app/public/scripts/production.js'
-	};
+	}
+
 
 	requirejs.optimize(config, function () {
 
@@ -36,6 +37,8 @@ task('default', ['clean', 'minify', 'templates'], function (params) {
 			fs.writeFileSync(__dirname + '/all/version', version, 'utf8');
 		});
 
+	}, function (err) {
+		console.log(err)
 	});
 
 
@@ -92,7 +95,9 @@ task('css', function (version) {
 		paths: [__dirname + '/all/app/public/images']
 	}))
 	.render(function (err, css) {
-		if (err) throw err;
+		if (err) {
+			throw err;
+		}
 		fs.writeFileSync(filename, css, 'utf8');
 	});
 
