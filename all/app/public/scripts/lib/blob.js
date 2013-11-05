@@ -58,7 +58,7 @@ define([
 			dfd.reject(err)
 			$r.off()
 		})
-		reader.readAsText(file, charset ? charset : null) // firefox bug : if charset is undefined, the file isn't read
+		reader.readAsText(file, charset ? charset : 'utf-8') // firefox bug : if charset is undefined, the file isn't read
 		return dfd.promise
 	}
 
